@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 class VarGradient extends StatefulWidget {
   @override
@@ -7,6 +8,7 @@ class VarGradient extends StatefulWidget {
 
 class _VarGradientState extends State<VarGradient> {
   int index = 0;
+  final tween = MultiTween();
 
   List colorPalette = [
     [
@@ -56,7 +58,7 @@ class _VarGradientState extends State<VarGradient> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               stops: [0.1, 0.4, 0.7, 0.9],
-              colors: colorPalette[1],
+              colors: colorPalette[index],
             )),
           ),
         ],
