@@ -23,6 +23,7 @@ class Signupstatus extends ChangeNotifier {}
 class SignupState extends State<Signup> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
+  var myNameController = TextEditingController();
 
   // ignore: non_constant_identifier_names
   Widget SignUpBtn() {
@@ -96,6 +97,69 @@ class SignupState extends State<Signup> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget buildFullName() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'FullName',
+          style: labelStyle,
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: boxDecorationStyle,
+          height: 60.0,
+          child: TextField(
+            controller: myNameController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              hintText: 'FullName',
+              hintStyle: hintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildSocialBtn(AssetImage logo) {
+    return GestureDetector(
+      onTap: () => {print("Added Google Support")}, //Google SignIn Goes here
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 30.0),
+        child: Container(
+          height: 60.0,
+          width: 60.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, 2),
+                blurRadius: 6.0,
+              ),
+            ],
+            image: DecorationImage(
+              image: logo,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -173,6 +237,8 @@ class SignupState extends State<Signup> {
                         ),
                       ),
                       SizedBox(height: 30.0),
+                      buildFullName(),
+                      SizedBox(height: 30.0),
                       buildEmailLoginSignup(),
                       SizedBox(
                         height: 30.0,
@@ -180,7 +246,11 @@ class SignupState extends State<Signup> {
                       buildPasswordLoginSigup(),
                       SignUpBtn(),
                       buildSignInWithText(),
-                      buildSocialBtnRow(),
+                      buildSocialBtn(
+                        AssetImage(
+                          'assets/logos/google.jpg',
+                        ),
+                      ),
                     ],
                   ),
                 ),

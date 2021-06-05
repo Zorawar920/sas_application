@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sas_application/Signup.dart';
 import 'package:sas_application/Uniformity/VarGradient.dart';
 import './Uniformity/Widgets.dart';
 import './Uniformity/VarGradient.dart';
@@ -19,7 +20,6 @@ class Login extends StatefulWidget {
 }
 
 class LoginState extends State<Login> {
-
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
 
@@ -39,6 +39,7 @@ class LoginState extends State<Login> {
           ),
         ),
         onPressed: () {
+          //Code goes here for login
           showDialog(
             context: context,
             builder: (conttext) {
@@ -62,23 +63,66 @@ class LoginState extends State<Login> {
     );
   }
 
-  Widget ForgotPasswordBtn(){
-    return Container(
-      //padding: EdgeInsets.symmetric(vertical: 5.0),
-      child:TextButton(
-
-        onPressed: () { print('Forgot Password') ;},
-        child: Text(
-          'Forgot Password?',
-          style: TextStyle(
+  Widget buildSocialBtn(AssetImage logo) {
+    return GestureDetector(
+      onTap: () =>
+          {print("Googe Support Added")}, //Google SignIn Logic goes here
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 30.0),
+        child: Container(
+          height: 60.0,
+          width: 60.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
             color: Colors.white,
-            letterSpacing: 1.5,
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, 2),
+                blurRadius: 6.0,
+              ),
+            ],
+            image: DecorationImage(
+              image: logo,
+            ),
           ),
         ),
-      )
+      ),
+    );
+  }
+
+  Widget buildNoAccountSignupBtn() {
+    return GestureDetector(
+      onTap: () => {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (builder) => Signup(
+                      inputData: "Added",
+                    )))
+      },
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: 'Don\'t have an Account? ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            TextSpan(
+              text: 'Sign Up',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -154,6 +198,26 @@ class LoginState extends State<Login> {
     );
   }
 
+  Widget buildForgotPasswordBtn() {
+    return Container(
+      //alignment: Alignment.centerRight,
+      child: TextButton(
+        style: TextButton.styleFrom(padding: EdgeInsets.only(right: 0.0)),
+        onPressed: () => {}, //Your Navigator goes here
+        child: Text(
+          'Forgot Password?',
+          style: TextStyle(
+            color: Colors.white,
+            letterSpacing: 1.5,
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     myEmailController.dispose();
@@ -198,7 +262,14 @@ class LoginState extends State<Login> {
                       ),
                       buildPasswordLoginSigup(),
                       LoginBtn(),
-                      ForgotPasswordBtn(),
+                      buildForgotPasswordBtn(),
+                      buildSignInWithText(),
+                      buildSocialBtn(
+                        AssetImage(
+                          'assets/logos/google.jpg',
+                        ),
+                      ),
+                      buildNoAccountSignupBtn(),
                     ],
                   ),
                 ),

@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: TextStyle(
                             fontSize: 50,
                             color: Colors.white,
-                            fontFamily: 'SigmarOneRegular'),
+                            fontFamily: 'Roboto-Bold'),
                       ),
                       SizedBox(height: 90),
                       StartLoginBtn(),
