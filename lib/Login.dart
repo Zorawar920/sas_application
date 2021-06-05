@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './Uniformity/style.dart';
+import 'ForgotPassword.dart';
 
 class Login extends StatefulWidget {
   final String inputData;
@@ -203,7 +204,12 @@ class LoginState extends State<Login> {
       //alignment: Alignment.centerRight,
       child: TextButton(
         style: TextButton.styleFrom(padding: EdgeInsets.only(right: 0.0)),
-        onPressed: () => {}, //Your Navigator goes here
+        onPressed: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ForgotPassword()),
+          )
+        }, //Your Navigator goes here
         child: Text(
           'Forgot Password?',
           style: TextStyle(
