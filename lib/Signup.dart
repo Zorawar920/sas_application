@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sas_application/Login.dart';
 import 'package:sas_application/Uniformity/VarGradient.dart';
+import 'package:sas_application/firebase_services/auth.dart';
+import 'package:sas_application/main.dart';
 import './Uniformity/Widgets.dart';
 import './Uniformity/VarGradient.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,21 +12,44 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './Uniformity/style.dart';
 
+class SignUpPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+        body: Signup(
+      inputData: 'data',
+      auth: Auth(),
+    ));
+  }
+}
+
 class Signup extends StatefulWidget {
   final String inputData;
+  final AuthBase auth;
   //Constructor
-  Signup({Key? key, required this.inputData});
+  Signup({Key? key, required this.inputData, required this.auth});
 
   @override
   State<StatefulWidget> createState() => SignupState();
 }
 
-class Signupstatus extends ChangeNotifier {}
-
 class SignupState extends State<Signup> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
   var myNameController = TextEditingController();
+
+  Future<void> _signInWithUserCredential() async {
+    try {
+      String _email = myEmailController.text;
+      String _password = myPasswordController.text;
+      await widget.auth.createUserWithEmailAndPassword(_email, _password);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (builder) => LoginPage()));
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   // ignore: non_constant_identifier_names
   Widget SignUpBtn() {
@@ -40,16 +66,7 @@ class SignupState extends State<Signup> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (conttext) {
-              return AlertDialog(
-                content: Text(myEmailController.text),
-              );
-            },
-          );
-        },
+        onPressed: _signInWithUserCredential,
         child: Text(
           'SIGNUP',
           style: TextStyle(
@@ -245,12 +262,6 @@ class SignupState extends State<Signup> {
                       ),
                       buildPasswordLoginSigup(),
                       SignUpBtn(),
-                      buildSignInWithText(),
-                      buildSocialBtn(
-                        AssetImage(
-                          'assets/logos/google.jpg',
-                        ),
-                      ),
                     ],
                   ),
                 ),

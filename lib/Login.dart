@@ -1,20 +1,33 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sas_application/Signup.dart';
 import 'package:sas_application/Uniformity/VarGradient.dart';
-import './Uniformity/Widgets.dart';
+import 'package:sas_application/user_status.dart';
 import './Uniformity/VarGradient.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import './Uniformity/style.dart';
 import 'ForgotPassword.dart';
+import 'Uniformity/Widgets.dart';
+import 'package:sas_application/firebase_services/auth.dart';
+
+class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: UserStatus(
+        auth: Auth(),
+      ),
+    );
+  }
+}
 
 class Login extends StatefulWidget {
   final String inputData;
+  final AuthBase auth;
   //Constructor
-  Login(String s, {Key? key, required this.inputData});
+  Login(String s, {Key? key, required this.inputData, required this.auth});
 
   @override
   State<StatefulWidget> createState() => LoginState();
@@ -23,9 +36,96 @@ class Login extends StatefulWidget {
 class LoginState extends State<Login> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
+  bool _isLoading = false;
+
+  //Constructor
+
+  Future<void> _signInAnonymously() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await widget.auth.signInAnonymously();
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _signWithGoogle() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await widget.auth.signInWithGoogle();
+      final snackBar = SnackBar(content: Text('Sign in to Google successful'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _signInWithUserCredentials() async {
+    try {
+      String _email = myEmailController.text;
+      String _password = myPasswordController.text;
+      await widget.auth.signInWithEmailAndPassword(_email, _password);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  // Google Sign In
+  Widget loginWithGoogleBtn() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 30.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          buildSocialBtn(
+            () => print('Login with Google'),
+            AssetImage(
+              'assets/logos/google.jpg',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildSocialBtn(Function onTap, AssetImage logo) {
+    return GestureDetector(
+      onTap: _signWithGoogle,
+      child: Container(
+        height: 60.0,
+        width: 60.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 2),
+              blurRadius: 6.0,
+            ),
+          ],
+          image: DecorationImage(
+            image: logo,
+          ),
+        ),
+      ),
+    );
+  }
 
   // ignore: non_constant_identifier_names
-  Widget LoginBtn() {
+  Widget LoginBtn(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -39,17 +139,7 @@ class LoginState extends State<Login> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: () {
-          //Code goes here for login
-          showDialog(
-            context: context,
-            builder: (conttext) {
-              return AlertDialog(
-                content: Text(myEmailController.text),
-              );
-            },
-          );
-        },
+        onPressed: _signInWithUserCredentials,
         child: Text(
           'LOGIN',
           style: TextStyle(
@@ -64,43 +154,11 @@ class LoginState extends State<Login> {
     );
   }
 
-  Widget buildSocialBtn(AssetImage logo) {
-    return GestureDetector(
-      onTap: () =>
-          {print("Googe Support Added")}, //Google SignIn Logic goes here
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 30.0),
-        child: Container(
-          height: 60.0,
-          width: 60.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                offset: Offset(0, 2),
-                blurRadius: 6.0,
-              ),
-            ],
-            image: DecorationImage(
-              image: logo,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildNoAccountSignupBtn() {
     return GestureDetector(
       onTap: () => {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (builder) => Signup(
-                      inputData: "Added",
-                    )))
+            context, MaterialPageRoute(builder: (builder) => SignUpPage()))
       },
       child: RichText(
         text: TextSpan(
@@ -207,7 +265,7 @@ class LoginState extends State<Login> {
         onPressed: () => {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => ForgotPassword()),
+            MaterialPageRoute(builder: (context) => ForgotPage()),
           )
         }, //Your Navigator goes here
         child: Text(
@@ -252,29 +310,17 @@ class LoginState extends State<Login> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        'Login',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      _buildHeader(),
                       SizedBox(height: 30.0),
                       buildEmailLoginSignup(),
                       SizedBox(
                         height: 30.0,
                       ),
                       buildPasswordLoginSigup(),
-                      LoginBtn(),
                       buildForgotPasswordBtn(),
+                      LoginBtn(context),
                       buildSignInWithText(),
-                      buildSocialBtn(
-                        AssetImage(
-                          'assets/logos/google.jpg',
-                        ),
-                      ),
+                      loginWithGoogleBtn(),
                       buildNoAccountSignupBtn(),
                     ],
                   ),
@@ -283,6 +329,23 @@ class LoginState extends State<Login> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return Text(
+      'Login',
+      style: TextStyle(
+        color: Colors.white,
+        fontFamily: 'OpenSans',
+        fontSize: 30.0,
+        fontWeight: FontWeight.bold,
       ),
     );
   }

@@ -2,42 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './Uniformity/VarGradient.dart';
 import 'Uniformity/style.dart';
+import 'firebase_services/auth.dart';
 
-
-class ForgotPassword extends StatefulWidget {
-  static String id = 'forgot-password';
-
+class ForgotPage extends StatelessWidget {
+  const ForgotPage({Key? key}) : super(key: key);
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
-}
-
-class _ForgotPasswordState extends State<ForgotPassword> {
-
-  var myEmailController = TextEditingController();
-
-  Widget PopBackSignIn(){
-    return Container(
-      //padding: EdgeInsets.symmetric(vertical: 5.0),
-        child:TextButton(
-
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text(
-            'Sign In',
-            style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 1.5,
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'OpenSans',
-            ),
-          ),
-        )
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ForgotPassword(
+        auth: Auth(),
+        id: 'Forgot Password',
+      ),
     );
   }
+}
 
+class ForgotPassword extends StatefulWidget {
+  final String id;
+  final AuthBase auth;
+
+  ForgotPassword({Key? key, required this.id, required this.auth});
+
+  @override
+  State<ForgotPassword> createState() => ForgotPasswordState();
+}
+
+class ForgotPasswordState extends State<ForgotPassword> {
+  var myEmailController = TextEditingController();
+
+  Future<void> _sendResetPasswordMail() async {
+    try {
+      String email = myEmailController.text;
+      final snackBar = SnackBar(content: Text('Email is sent to $email'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      await widget.auth.forgotPasswordWithEmail(email);
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      Navigator.pop(context, true);
+    }
+  }
 
   Widget SignUpBtn() {
     return Container(
@@ -53,16 +58,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (conttext) {
-              return AlertDialog(
-                content: Text(myEmailController.text),
-              );
-            },
-          );
-        },
+        onPressed: _sendResetPasswordMail,
         child: Text(
           'Send Email',
           style: TextStyle(
@@ -76,7 +72,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       ),
     );
   }
-
 
   Widget buildEmailLoginSignup() {
     return Column(
@@ -116,9 +111,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   Widget build(BuildContext context) {
-    var _email;
     return Scaffold(
-
       // backgroundColor: Colors.lightBlueAccent,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -143,47 +136,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         ),
                       ),
                       buildEmailLoginSignup(),
-                      // Text('Enter Your Email', style: TextStyle(fontSize: 30, color: Colors.white, ),
-                      // ),
-                      // TextFormField(
-                      //   style: TextStyle(color: Colors.white),
-                      //   decoration: InputDecoration(
-                      //     labelText: 'Email',
-                      //     icon: Icon(
-                      //       Icons.mail,
-                      //       color: Colors.white,
-                      //     ),
-                      //     errorStyle: TextStyle(color: Colors.white),
-                      //     labelStyle: TextStyle(color: Colors.white),
-                      //     hintStyle: TextStyle(color: Colors.white),
-                      //     focusedBorder: UnderlineInputBorder(
-                      //       borderSide: BorderSide(color: Colors.white),
-                      //     ),
-                      //     enabledBorder: UnderlineInputBorder(
-                      //       borderSide: BorderSide(color: Colors.white),
-                      //     ),
-                      //     errorBorder: UnderlineInputBorder(
-                      //       borderSide: BorderSide(color: Colors.white),
-                      //     ),
-                      //   ),
-                      //   onSaved: (newEmail) {
-                      //     _email = newEmail;
-                      //   },
-                      // ),
                       SizedBox(height: 20),
                       SignUpBtn(),
-                      // RaisedButton(
-                      //  // child: Text('Send Email'),
-                      //   onPressed: () {
-                      //   },
-                      // ),
-                      // FlatButton(
-                      //   child: Text('Sign In'),
-                      //   onPressed: () {
-                      //     Navigator.pop(context);
-                      //   },
-                      //)
-                      PopBackSignIn(),
                     ],
                   ),
                 ),

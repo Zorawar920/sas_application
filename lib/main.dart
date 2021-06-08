@@ -1,21 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-// import './Uniformity/Widgets.dart';
 import './Login.dart';
 import './Signup.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import './Uniformity/VarGradient.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,7 +31,6 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -56,11 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         onPressed: () => {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      Login("added", inputData: "inputData")))
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) => LoginPage()))
         },
         child: Text(
           'LOGIN',
@@ -94,8 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      Signup(inputData: "inputData")))
+                  builder: (BuildContext context) => SignUpPage()))
         },
         child: Text(
           'SIGNUP',
@@ -131,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "WELCOME",
+                        "SAFE SOCIETY",
                         style: TextStyle(
                             fontSize: 50,
                             color: Colors.white,

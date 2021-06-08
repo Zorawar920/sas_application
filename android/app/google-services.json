@@ -29,6 +29,13 @@
             {
               "client_id": "964090810426-ak65o4ibspt74csbo5r7c9fj30f5khov.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "964090810426-rh5qg6eq27mi58o3hdj0q8rcmov83nbr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sasApplication"
+              }
             }
           ]
         }
