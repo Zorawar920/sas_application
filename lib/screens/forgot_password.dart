@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sas_application/Uniformity/Validation.dart';
 import '../Uniformity/VarGradient.dart';
 import '../Uniformity/style.dart';
 import '../firebase_services/auth.dart';
@@ -87,9 +88,11 @@ class ForgotPasswordState extends State<ForgotPassword> {
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
+            validator: emailValidator,
+            autovalidate: true,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',

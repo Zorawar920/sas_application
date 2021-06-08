@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sas_application/Login.dart';
+import 'package:sas_application/screens/login.dart';
 import 'package:sas_application/Uniformity/VarGradient.dart';
 import 'package:sas_application/firebase_services/auth.dart';
 import 'package:sas_application/main.dart';
@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './Uniformity/style.dart';
+import './Uniformity/Validation.dart';
 
 class SignUpPage extends StatelessWidget {
   @override
@@ -94,9 +95,11 @@ class SignupState extends State<Signup> {
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
+            validator: emailValidator,
+            autovalidate: true,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -130,8 +133,10 @@ class SignupState extends State<Signup> {
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             controller: myNameController,
+            validator: nameValidator,
+            autovalidate: true,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
               color: Colors.white,
@@ -193,9 +198,11 @@ class SignupState extends State<Signup> {
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             controller: myPasswordController,
             obscureText: true,
+            validator: passwordValidator,
+            autovalidate: true,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',

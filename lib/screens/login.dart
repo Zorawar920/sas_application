@@ -4,10 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:sas_application/Signup.dart';
 import 'package:sas_application/Uniformity/VarGradient.dart';
 import 'package:sas_application/user_status.dart';
-import './Uniformity/VarGradient.dart';
-import './Uniformity/style.dart';
-import 'screens/forgot_password.dart';
-import 'Uniformity/Widgets.dart';
+import '../Uniformity/VarGradient.dart';
+import '../Uniformity/style.dart';
+import 'forgot_password.dart';
+import '../Uniformity/Widgets.dart';
+import '../Uniformity/Validation.dart';
 import 'package:sas_application/firebase_services/auth.dart';
 
 class LoginPage extends StatelessWidget {
@@ -23,17 +24,17 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class Login extends StatefulWidget {
+class login extends StatefulWidget {
   final String inputData;
   final AuthBase auth;
   //Constructor
-  Login(String s, {Key? key, required this.inputData, required this.auth});
+  login(String s, {Key? key, required this.inputData, required this.auth});
 
   @override
   State<StatefulWidget> createState() => LoginState();
 }
 
-class LoginState extends State<Login> {
+class LoginState extends State<login> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
   bool _isLoading = false;
@@ -198,9 +199,11 @@ class LoginState extends State<Login> {
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
+            validator: emailValidator,
+            autovalidate: true,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -234,9 +237,11 @@ class LoginState extends State<Login> {
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             controller: myPasswordController,
             obscureText: true,
+            validator:passwordValidator,
+            autovalidate: true,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
