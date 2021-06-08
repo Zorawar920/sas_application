@@ -6,7 +6,7 @@ import 'package:sas_application/Uniformity/VarGradient.dart';
 import 'package:sas_application/user_status.dart';
 import './Uniformity/VarGradient.dart';
 import './Uniformity/style.dart';
-import 'ForgotPassword.dart';
+import 'screens/forgot_password.dart';
 import 'Uniformity/Widgets.dart';
 import 'package:sas_application/firebase_services/auth.dart';
 

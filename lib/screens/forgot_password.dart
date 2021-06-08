@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import './Uniformity/VarGradient.dart';
-import 'Uniformity/style.dart';
-import 'firebase_services/auth.dart';
+import 'package:flutter/widgets.dart';
+import '../Uniformity/VarGradient.dart';
+import '../Uniformity/style.dart';
+import '../firebase_services/auth.dart';
 
 class ForgotPage extends StatelessWidget {
   const ForgotPage({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class ForgotPasswordState extends State<ForgotPassword> {
     }
   }
 
-  Widget SignUpBtn() {
+  Widget signUpBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -135,9 +136,10 @@ class ForgotPasswordState extends State<ForgotPassword> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      SizedBox(height: 30.0),
                       buildEmailLoginSignup(),
                       SizedBox(height: 20),
-                      SignUpBtn(),
+                      signUpBtn(),
                     ],
                   ),
                 ),
