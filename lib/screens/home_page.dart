@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'firebase_services/auth.dart';
+import '../firebase_services/auth.dart';
 
 class HomePage extends StatelessWidget {
   final AuthBase auth;

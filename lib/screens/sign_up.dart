@@ -1,59 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sas_application/screens/login.dart';
-import 'package:sas_application/Uniformity/VarGradient.dart';
+import 'package:sas_application/screens/log_in.dart';
+import 'package:sas_application/Uniformity/var_gradient.dart';
 import 'package:sas_application/firebase_services/auth.dart';
 import 'package:sas_application/main.dart';
-import './Uniformity/Widgets.dart';
-import './Uniformity/VarGradient.dart';
+import '../Uniformity/widgets.dart';
+import '../Uniformity/var_gradient.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './Uniformity/style.dart';
-import './Uniformity/Validation.dart';
+import '../Uniformity/style.dart';
+import '../Uniformity/custom_validator.dart';
 
 class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        body: Signup(
+        body: SignUp(
       inputData: 'data',
       auth: Auth(),
     ));
   }
 }
 
-class Signup extends StatefulWidget {
+class SignUp extends StatefulWidget {
   final String inputData;
   final AuthBase auth;
   //Constructor
-  Signup({Key? key, required this.inputData, required this.auth});
+  SignUp({Key? key, required this.inputData, required this.auth});
 
   @override
-  State<StatefulWidget> createState() => SignupState();
+  State<StatefulWidget> createState() => SignUpState();
 }
 
-class SignupState extends State<Signup> {
+class SignUpState extends State<SignUp> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
   var myNameController = TextEditingController();
+  final globalFormKey = GlobalKey<FormState>();
 
   Future<void> _signInWithUserCredential() async {
     try {
-      String _email = myEmailController.text;
-      String _password = myPasswordController.text;
+      String _email = myEmailController.text.trim();
+      String _password = myPasswordController.text.trim();
       await widget.auth.createUserWithEmailAndPassword(_email, _password);
       Navigator.push(
           context, MaterialPageRoute(builder: (builder) => LoginPage()));
     } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Sign up Failed")));
       print(e.toString());
     }
   }
 
   // ignore: non_constant_identifier_names
-  Widget SignUpBtn() {
+  Widget signUpBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -67,7 +70,14 @@ class SignupState extends State<Signup> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: _signInWithUserCredential,
+        onPressed: () {
+          if (globalFormKey.currentState!.validate()) {
+            _signInWithUserCredential();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Please Enter all Credentials")));
+          }
+        },
         child: Text(
           'SIGNUP',
           style: TextStyle(
@@ -98,8 +108,10 @@ class SignupState extends State<Signup> {
           child: TextFormField(
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
-            validator: emailValidator,
-            autovalidate: true,
+            validator: (value) {
+              return ValidateEmail(value!).validate();
+            }, //Email validator
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -135,8 +147,10 @@ class SignupState extends State<Signup> {
           height: 60.0,
           child: TextFormField(
             controller: myNameController,
-            validator: nameValidator,
-            autovalidate: true,
+            validator: (value) {
+              return ValidateName(value!).validate();
+            }, //Name validator
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
               color: Colors.white,
@@ -158,33 +172,6 @@ class SignupState extends State<Signup> {
     );
   }
 
-  Widget buildSocialBtn(AssetImage logo) {
-    return GestureDetector(
-      onTap: () => {print("Added Google Support")}, //Google SignIn Goes here
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 30.0),
-        child: Container(
-          height: 60.0,
-          width: 60.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                offset: Offset(0, 2),
-                blurRadius: 6.0,
-              ),
-            ],
-            image: DecorationImage(
-              image: logo,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget buildPasswordLoginSigup() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,8 +188,12 @@ class SignupState extends State<Signup> {
           child: TextFormField(
             controller: myPasswordController,
             obscureText: true,
-            validator: passwordValidator,
-            autovalidate: true,
+            validator: (value) {
+              print(value);
+              return ValidatePassword(value!).validation();
+            },
+            autovalidateMode:
+                AutovalidateMode.onUserInteraction, //Password Validator
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -232,48 +223,51 @@ class SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Stack(
-            children: <Widget>[
-              VarGradient(),
-              Container(
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 40.0,
-                    vertical: 120.0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
+    return Form(
+      key: globalFormKey,
+      child: Scaffold(
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Stack(
+              children: <Widget>[
+                VarGradient(),
+                Container(
+                  height: double.infinity,
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 40.0,
+                      vertical: 120.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Sign Up',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'OpenSans',
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 30.0),
-                      buildFullName(),
-                      SizedBox(height: 30.0),
-                      buildEmailLoginSignup(),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      buildPasswordLoginSigup(),
-                      SignUpBtn(),
-                    ],
+                        SizedBox(height: 30.0),
+                        buildFullName(),
+                        SizedBox(height: 30.0),
+                        buildEmailLoginSignup(),
+                        SizedBox(
+                          height: 30.0,
+                        ),
+                        buildPasswordLoginSigup(),
+                        signUpBtn(),
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

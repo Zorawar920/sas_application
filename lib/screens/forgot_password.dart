@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:sas_application/Uniformity/Validation.dart';
-import '../Uniformity/VarGradient.dart';
+import '../Uniformity/var_gradient.dart';
 import '../Uniformity/style.dart';
 import '../firebase_services/auth.dart';
+import '../Uniformity/custom_validator.dart';
 
 class ForgotPage extends StatelessWidget {
   const ForgotPage({Key? key}) : super(key: key);
@@ -32,6 +32,7 @@ class ForgotPassword extends StatefulWidget {
 
 class ForgotPasswordState extends State<ForgotPassword> {
   var myEmailController = TextEditingController();
+  final globalKey = GlobalKey<FormState>();
 
   Future<void> _sendResetPasswordMail() async {
     try {
@@ -60,7 +61,14 @@ class ForgotPasswordState extends State<ForgotPassword> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: _sendResetPasswordMail,
+        onPressed: () {
+          if (globalKey.currentState!.validate()) {
+            _sendResetPasswordMail();
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Enter valid Email")));
+          }
+        },
         child: Text(
           'Send Email',
           style: TextStyle(
@@ -91,8 +99,10 @@ class ForgotPasswordState extends State<ForgotPassword> {
           child: TextFormField(
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
-            validator: emailValidator,
-            autovalidate: true,
+            validator: (value) {
+              return ValidateEmail(value!).validate();
+            },
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -125,6 +135,7 @@ class ForgotPasswordState extends State<ForgotPassword> {
             children: <Widget>[
               VarGradient(),
               Form(
+                key: globalKey,
                 child: Padding(
                   padding: EdgeInsets.all(30.0),
                   child: Column(

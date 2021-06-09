@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'screens/login.dart';
-import './Signup.dart';
-import './Uniformity/VarGradient.dart';
+import 'screens/log_in.dart';
+import 'screens/sign_up.dart';
+import 'Uniformity/var_gradient.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,9 +36,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // ignore: unused_element
-  void _changingGradient() {}
-
   Widget StartLoginBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),

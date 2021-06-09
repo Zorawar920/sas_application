@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sas_application/Signup.dart';
-import 'package:sas_application/Uniformity/VarGradient.dart';
+import 'package:sas_application/screens/sign_up.dart';
+import 'package:sas_application/Uniformity/var_gradient.dart';
 import 'package:sas_application/user_status.dart';
-import '../Uniformity/VarGradient.dart';
+import '../Uniformity/var_gradient.dart';
 import '../Uniformity/style.dart';
 import 'forgot_password.dart';
-import '../Uniformity/Widgets.dart';
-import '../Uniformity/Validation.dart';
+import '../Uniformity/widgets.dart';
+import '../Uniformity/custom_validator.dart';
 import 'package:sas_application/firebase_services/auth.dart';
 
 class LoginPage extends StatelessWidget {
@@ -24,20 +24,21 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-class login extends StatefulWidget {
+class LogIn extends StatefulWidget {
   final String inputData;
   final AuthBase auth;
   //Constructor
-  login(String s, {Key? key, required this.inputData, required this.auth});
+  LogIn(String s, {Key? key, required this.inputData, required this.auth});
 
   @override
-  State<StatefulWidget> createState() => LoginState();
+  State<StatefulWidget> createState() => LogInState();
 }
 
-class LoginState extends State<login> {
+class LogInState extends State<LogIn> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
   bool _isLoading = false;
+  final globalKey = GlobalKey<FormState>();
 
   //Constructor
 
@@ -79,6 +80,8 @@ class LoginState extends State<login> {
       String _password = myPasswordController.text;
       await widget.auth.signInWithEmailAndPassword(_email, _password);
     } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Log in Failed")));
       print(e.toString());
     }
   }
@@ -126,7 +129,7 @@ class LoginState extends State<login> {
   }
 
   // ignore: non_constant_identifier_names
-  Widget LoginBtn(BuildContext context) {
+  Widget LogInBtn(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -140,7 +143,14 @@ class LoginState extends State<login> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: _signInWithUserCredentials,
+        onPressed: () {
+          if (globalKey.currentState!.validate()) {
+            _signInWithUserCredentials();
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Enter All Credentials")));
+          }
+        },
         child: Text(
           'LOGIN',
           style: TextStyle(
@@ -202,8 +212,10 @@ class LoginState extends State<login> {
           child: TextFormField(
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
-            validator: emailValidator,
-            autovalidate: true,
+            validator: (value) {
+              return ValidateEmail(value!).validate();
+            }, //Email Validator
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -240,8 +252,10 @@ class LoginState extends State<login> {
           child: TextFormField(
             controller: myPasswordController,
             obscureText: true,
-            validator:passwordValidator,
-            autovalidate: true,
+            validator: (value) {
+              return ValidatePassword(value!).validation();
+            }, //Password Validator
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -296,42 +310,45 @@ class LoginState extends State<login> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Stack(
-            children: <Widget>[
-              VarGradient(),
-              Container(
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 40.0,
-                    vertical: 120.0,
+    return Form(
+      key: globalKey,
+      child: Scaffold(
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Stack(
+              children: <Widget>[
+                VarGradient(),
+                Container(
+                  height: double.infinity,
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 40.0,
+                      vertical: 120.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _buildHeader(),
+                        SizedBox(height: 30.0),
+                        buildEmailLoginSignup(),
+                        SizedBox(
+                          height: 30.0,
+                        ),
+                        buildPasswordLoginSigup(),
+                        buildForgotPasswordBtn(),
+                        LogInBtn(context),
+                        buildSignInWithText(),
+                        loginWithGoogleBtn(),
+                        buildNoAccountSignupBtn(),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _buildHeader(),
-                      SizedBox(height: 30.0),
-                      buildEmailLoginSignup(),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      buildPasswordLoginSigup(),
-                      buildForgotPasswordBtn(),
-                      LoginBtn(context),
-                      buildSignInWithText(),
-                      loginWithGoogleBtn(),
-                      buildNoAccountSignupBtn(),
-                    ],
-                  ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),

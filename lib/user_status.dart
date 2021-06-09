@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sas_application/screens/login.dart';
-import 'package:sas_application/home_page.dart';
+import 'package:sas_application/screens/log_in.dart';
+import 'package:sas_application/screens/home_page.dart';
 import 'package:sas_application/firebase_services/auth.dart';
 
 class UserStatus extends StatelessWidget {
@@ -17,7 +17,7 @@ class UserStatus extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           final User? user = snapshot.data;
           if (user == null) {
-            return login(
+            return LogIn(
               "Login Page",
               inputData: "Transmit Data",
               auth: auth,
