@@ -36,6 +36,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Widget buildAppScreenLogo() {
+    return Container(
+        child: Image.asset(
+      'assets/logos/initial_app_screen_logo_1.png',
+      height: 250.0,
+      width: 250.0,
+    ));
+  }
+
   Widget StartLoginBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
@@ -122,14 +131,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      buildAppScreenLogo(),
+                      SizedBox(height: 10),
                       Text(
-                        "SAFE SOCIETY",
+                        'SAFE SOCIETY',
                         style: TextStyle(
-                            fontSize: 50,
-                            color: Colors.white,
-                            fontFamily: 'Roboto-Bold'),
+                          color: Colors.white,
+                          fontFamily: 'OpenSans',
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      SizedBox(height: 90),
+                      SizedBox(height: 70),
                       StartLoginBtn(),
                       SizedBox(
                         height: 10,

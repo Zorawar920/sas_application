@@ -58,7 +58,7 @@ class SignUpState extends State<SignUp> {
   // ignore: non_constant_identifier_names
   Widget signUpBtn() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
+      padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -237,13 +237,19 @@ class SignUpState extends State<SignUp> {
                   height: double.infinity,
                   child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 40.0,
-                      vertical: 120.0,
+                    padding: EdgeInsets.only(
+                      right: 40.0,
+                      left: 40.0,
+                      top: 60.0,
+                      bottom: 20.0,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        buildAppScreenLogo(),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                         Text(
                           'Sign Up',
                           style: TextStyle(
@@ -253,12 +259,12 @@ class SignUpState extends State<SignUp> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 30.0),
+                        SizedBox(height: 20.0),
                         buildFullName(),
-                        SizedBox(height: 30.0),
+                        SizedBox(height: 20.0),
                         buildEmailLoginSignup(),
                         SizedBox(
-                          height: 30.0,
+                          height: 20.0,
                         ),
                         buildPasswordLoginSigup(),
                         signUpBtn(),

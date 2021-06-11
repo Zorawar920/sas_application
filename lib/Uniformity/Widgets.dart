@@ -12,13 +12,22 @@ Widget buildSignInWithText() {
           fontWeight: FontWeight.w400,
         ),
       ),
-      SizedBox(height: 20.0),
+      SizedBox(height: 10.0),
       Text(
         'Sign in with',
         style: labelStyle,
       ),
     ],
   );
+}
+
+Widget buildAppScreenLogo() {
+  return Container(
+      child: Image.asset(
+    'assets/logos/initial_app_screen_logo_1.png',
+    height: 220.0,
+    width: 220.0,
+  ));
 }
 
 Widget buildSocialButton(AssetImage logo) {
