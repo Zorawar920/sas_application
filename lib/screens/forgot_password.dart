@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -34,16 +35,31 @@ class ForgotPasswordState extends State<ForgotPassword> {
   var myEmailController = TextEditingController();
   final globalKey = GlobalKey<FormState>();
 
+  String get email => myEmailController.text;
   Future<void> _sendResetPasswordMail() async {
     try {
-      String email = myEmailController.text;
-      final snackBar = SnackBar(content: Text('Email is sent to $email'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      await widget.auth.forgotPasswordWithEmail(email);
-    } catch (e) {
-      print(e.toString());
-    } finally {
-      Navigator.pop(context, true);
+      await widget.auth.signInWithEmailAndPassword(email, 'password');
+      await widget.auth.currentUser!.reload();
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "invalid-email":
+          final snackBar =
+              SnackBar(content: Text(' This Email is invalid: $email'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          break;
+        case "wrong-password":
+          final snackBar =
+              SnackBar(content: Text('Reset Password Email is sent to $email'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          await widget.auth.forgotPasswordWithEmail(email);
+          Navigator.pop(context, true);
+          break;
+        case "user-not-found":
+          final snackBar =
+              SnackBar(content: Text('This Email does not exist: $email'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          break;
+      }
     }
   }
 
