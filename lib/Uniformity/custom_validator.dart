@@ -12,15 +12,31 @@ class ValidatePassword {
   }
 }
 
+class ValidateConfirmPassword {
+  String newpassvalue;
+  String oldpassvalue;
+  ValidateConfirmPassword(this.newpassvalue, this.oldpassvalue);
+
+  String? validation() {
+    if (this.oldpassvalue.isEmpty) {
+      return 'Please Enter Password Field First';
+    } else if (this.oldpassvalue != this.newpassvalue) {
+      return 'Password does not match';
+    } else {
+      return null;
+    }
+  }
+}
+
 class ValidateEmail {
   String emailValue;
   ValidateEmail(this.emailValue);
-
+  RegExp regx = RegExp(r'\w+@\w+\.\w+');
   String? validate() {
     if (this.emailValue.isEmpty) {
-      return 'Please Enter Email';
-    } else if (!emailValue.contains("@")) {
-      return 'Please enter valid email address';
+      return 'Please Enter an Email';
+    } else if (!regx.hasMatch(emailValue)) {
+      return 'Please Enter a Vaild Email';
     }
   }
 }
@@ -32,6 +48,8 @@ class ValidateName {
   String? validate() {
     if (this.nameValue.isEmpty) {
       return 'Please Enter Your Name';
+    } else if (this.nameValue.length >= 25) {
+      return 'Please Enter a Vaild Name';
     }
   }
 }

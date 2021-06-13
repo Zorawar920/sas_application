@@ -222,7 +222,8 @@ class LogInState extends State<LogIn> {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
+              errorStyle: labelStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.email,
                 color: Colors.white,
@@ -262,7 +263,8 @@ class LogInState extends State<LogIn> {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
+              errorStyle: labelStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.lock,
                 color: Colors.white,
@@ -286,7 +288,7 @@ class LogInState extends State<LogIn> {
             context,
             MaterialPageRoute(builder: (context) => ForgotPage()),
           )
-        }, //Your Navigator goes here
+        },
         child: Text(
           'Forgot Password?',
           style: TextStyle(

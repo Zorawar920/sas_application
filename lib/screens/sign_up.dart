@@ -38,7 +38,10 @@ class SignUp extends StatefulWidget {
 class SignUpState extends State<SignUp> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
-  var myNameController = TextEditingController();
+  var myConfirmPasswordController = TextEditingController();
+  var myFirstNameController = TextEditingController();
+  var myLastNameController = TextEditingController();
+  String? passwordValue;
   final globalFormKey = GlobalKey<FormState>();
 
   Future<void> _signInWithUserCredential() async {
@@ -48,10 +51,26 @@ class SignUpState extends State<SignUp> {
       await widget.auth.createUserWithEmailAndPassword(_email, _password);
       Navigator.push(
           context, MaterialPageRoute(builder: (builder) => LoginPage()));
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Sign up Failed")));
-      print(e.toString());
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case "email-already-in-use":
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("There's already an account with this email")));
+          break;
+        case "network-request-failed":
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Sign Up failed due to Network error")));
+          break;
+        case "invalid-email":
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Entered Email is invalid")));
+          break;
+        default:
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Sign Up failed")));
+          break;
+      }
+      print(e.code);
     }
   }
 
@@ -118,7 +137,8 @@ class SignUpState extends State<SignUp> {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
+              errorStyle: labelStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.email,
                 color: Colors.white,
@@ -132,12 +152,12 @@ class SignUpState extends State<SignUp> {
     );
   }
 
-  Widget buildFullName() {
+  Widget buildFirstName() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'FullName',
+          'FirstName',
           style: labelStyle,
         ),
         SizedBox(height: 10.0),
@@ -146,7 +166,7 @@ class SignUpState extends State<SignUp> {
           decoration: boxDecorationStyle,
           height: 60.0,
           child: TextFormField(
-            controller: myNameController,
+            controller: myFirstNameController,
             validator: (value) {
               return ValidateName(value!).validate();
             }, //Name validator
@@ -158,12 +178,54 @@ class SignUpState extends State<SignUp> {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
+              errorStyle: labelStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.person,
                 color: Colors.white,
               ),
-              hintText: 'FullName',
+              hintText: 'FirstName',
+              hintStyle: hintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildLastName() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'LastName',
+          style: labelStyle,
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: boxDecorationStyle,
+          height: 60.0,
+          child: TextFormField(
+            controller: myLastNameController,
+            validator: (value) {
+              return ValidateName(value!).validate();
+            }, //Name validator
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              errorStyle: labelStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
+              prefixIcon: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              hintText: 'LatName',
               hintStyle: hintTextStyle,
             ),
           ),
@@ -189,7 +251,7 @@ class SignUpState extends State<SignUp> {
             controller: myPasswordController,
             obscureText: true,
             validator: (value) {
-              print(value);
+              passwordValue = value;
               return ValidatePassword(value!).validation();
             },
             autovalidateMode:
@@ -200,7 +262,8 @@ class SignUpState extends State<SignUp> {
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
+              errorStyle: labelStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.lock,
                 color: Colors.white,
@@ -211,6 +274,85 @@ class SignUpState extends State<SignUp> {
           ),
         ),
       ],
+    );
+  }
+
+  buildPasswordConfirmSigup() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Confirm Password',
+          style: labelStyle,
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: boxDecorationStyle,
+          height: 60.0,
+          child: TextFormField(
+            controller: myConfirmPasswordController,
+            obscureText: true,
+            validator: (value) {
+              print(value);
+              return ValidateConfirmPassword(value!, myPasswordController.text)
+                  .validation();
+            },
+            autovalidateMode:
+                AutovalidateMode.onUserInteraction, //Password Validator
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              errorStyle: labelStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
+              prefixIcon: Icon(
+                Icons.lock,
+                color: Colors.white,
+              ),
+              hintText: 'Enter your Password',
+              hintStyle: hintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildAccountLoginBtn() {
+    return GestureDetector(
+      onTap: () => {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (builder) => LoginPage()),
+            (route) => false)
+        //Navigator.push(
+        //    context, MaterialPageRoute(builder: (builder) => LoginPage()))
+      },
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: 'Have an Account? ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            TextSpan(
+              text: 'Log In',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -241,7 +383,7 @@ class SignUpState extends State<SignUp> {
                       right: 40.0,
                       left: 40.0,
                       top: 60.0,
-                      bottom: 20.0,
+                      bottom: 30.0,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -259,15 +401,20 @@ class SignUpState extends State<SignUp> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 20.0),
-                        buildFullName(),
-                        SizedBox(height: 20.0),
+                        SizedBox(height: 10.0),
+                        buildFirstName(),
+                        SizedBox(height: 10.0),
+                        buildLastName(),
+                        SizedBox(height: 10.0),
                         buildEmailLoginSignup(),
                         SizedBox(
-                          height: 20.0,
+                          height: 10.0,
                         ),
                         buildPasswordLoginSigup(),
+                        SizedBox(height: 10.0),
+                        buildPasswordConfirmSigup(),
                         signUpBtn(),
+                        buildAccountLoginBtn(),
                       ],
                     ),
                   ),
