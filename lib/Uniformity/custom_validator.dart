@@ -20,7 +20,7 @@ class ValidateEmail {
     if (this.emailValue.isEmpty) {
       return 'Please Enter Email';
     } else if (!emailValue.contains("@")) {
-      return 'That does not look like an email';
+      return 'Please enter valid email address';
     }
   }
 }

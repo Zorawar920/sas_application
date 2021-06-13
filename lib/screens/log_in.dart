@@ -81,7 +81,7 @@ class LogInState extends State<LogIn> {
       await widget.auth.signInWithEmailAndPassword(_email, _password);
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Log in Failed")));
+          .showSnackBar(SnackBar(content: Text("Invalid Email or Password")));
       print(e.toString());
     }
   }
