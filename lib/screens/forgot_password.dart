@@ -44,7 +44,7 @@ class ForgotPasswordState extends State<ForgotPassword> {
       switch (e.code) {
         case "invalid-email":
           final snackBar =
-              SnackBar(content: Text(' This Email is invalid: $email'));
+              SnackBar(content: Text('This Email is invalid: $email'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           break;
         case "wrong-password":
@@ -55,8 +55,8 @@ class ForgotPasswordState extends State<ForgotPassword> {
           Navigator.pop(context, true);
           break;
         case "user-not-found":
-          final snackBar =
-              SnackBar(content: Text('This Email does not exist: $email'));
+          final snackBar = SnackBar(
+              content: Text('This Email does not exist in system: $email'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           break;
       }

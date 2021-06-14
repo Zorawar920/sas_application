@@ -147,8 +147,8 @@ class LogInState extends State<LogIn> {
           if (globalKey.currentState!.validate()) {
             _signInWithUserCredentials();
           } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("Enter All Credentials")));
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Please enter valid credentials")));
           }
         },
         child: Text(
