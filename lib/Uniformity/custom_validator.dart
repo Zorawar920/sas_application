@@ -8,6 +8,8 @@ class ValidatePassword {
       return 'Please Enter Password ';
     } else if (passwordValue.length < 6) {
       return 'Password Should be atleast 6 characters long';
+    } else if (passwordValue.length > 20) {
+      return 'Password Sould be less than 20 characters';
     }
   }
 }
@@ -37,6 +39,8 @@ class ValidateEmail {
       return 'Please Enter an Email';
     } else if (!regx.hasMatch(emailValue)) {
       return 'Please Enter a Vaild Email';
+    } else if (this.emailValue.length > 30) {
+      return 'Email should be less than 30 Characters';
     }
   }
 }
@@ -48,8 +52,8 @@ class ValidateName {
   String? validate() {
     if (this.nameValue.isEmpty) {
       return 'Please Enter Your Name';
-    } else if (this.nameValue.length >= 25) {
-      return 'Please Enter a Vaild Name';
+    } else if (this.nameValue.length >= 20) {
+      return 'Name should be less than 20 Characters';
     }
   }
 }

@@ -220,7 +220,7 @@ class SignUpState extends State<SignUp> {
             decoration: InputDecoration(
               border: InputBorder.none,
               errorStyle: labelStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 0.0),
               prefixIcon: Icon(
                 Icons.person,
                 color: Colors.white,
