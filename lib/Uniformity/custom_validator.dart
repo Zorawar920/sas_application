@@ -9,7 +9,7 @@ class ValidatePassword {
     } else if (passwordValue.length < 6) {
       return 'Password Should be atleast 6 characters long';
     } else if (passwordValue.length > 20) {
-      return 'Password Sould be less than 20 characters';
+      return 'Password Should be less than 20 characters';
     }
   }
 }
@@ -36,9 +36,9 @@ class ValidateEmail {
   RegExp regx = RegExp(r'\w+@\w+\.\w+');
   String? validate() {
     if (this.emailValue.isEmpty) {
-      return 'Please Enter an Email';
+      return 'Please Enter Email';
     } else if (!regx.hasMatch(emailValue)) {
-      return 'Please Enter a Vaild Email';
+      return 'Please Enter a Valid Email';
     } else if (this.emailValue.length > 30) {
       return 'Email should be less than 30 Characters';
     }
