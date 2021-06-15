@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "964090810426",
+    "project_id": "sas-application-946e3",
+    "storage_bucket": "sas-application-946e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964090810426:android:2f6c88911f03a8e8a7a503",
+        "android_client_info": {
+          "package_name": "com.example.sas_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964090810426-210ssjk7fog3vkkjo6mu2gvcen0p834k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sas_application",
+            "certificate_hash": "08780578b874c642b7854708341ffabdedd14d4c"
+          }
+        },
+        {
+          "client_id": "964090810426-ak65o4ibspt74csbo5r7c9fj30f5khov.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-1GSpLukqiXROL5BCaYAtLNOZBHrhrbg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964090810426-ak65o4ibspt74csbo5r7c9fj30f5khov.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "964090810426-rh5qg6eq27mi58o3hdj0q8rcmov83nbr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.sasApplication"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
