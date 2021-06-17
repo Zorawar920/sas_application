@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sas_application/Uniformity/Widgets.dart';
 import '../Uniformity/var_gradient.dart';
 import '../Uniformity/style.dart';
 import '../firebase_services/auth.dart';
@@ -153,10 +154,15 @@ class ForgotPasswordState extends State<ForgotPassword> {
               Form(
                 key: globalKey,
                 child: Padding(
-                  padding: EdgeInsets.all(30.0),
+                  padding: EdgeInsets.only(right: 40.0,
+                    left: 40.0,
+                    top: 20.0,
+                    bottom: 20.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
+                      buildAppScreenLogo(),
+                      SizedBox(height: 40),
                       Text(
                         'Forgot Password',
                         style: TextStyle(
@@ -168,7 +174,6 @@ class ForgotPasswordState extends State<ForgotPassword> {
                       ),
                       SizedBox(height: 30.0),
                       buildEmailLoginSignup(),
-                      SizedBox(height: 20),
                       signUpBtn(),
                     ],
                   ),
