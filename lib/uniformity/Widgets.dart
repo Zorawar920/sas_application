@@ -65,23 +65,3 @@ Widget buildSocialBtnRow() {
     ),
   );
 }
-
-Widget ForgotPasswordBtn() {
-  return Container(
-      //padding: EdgeInsets.symmetric(vertical: 5.0),
-      child: TextButton(
-    onPressed: () {
-      print('Forgot Password');
-    },
-    child: Text(
-      'Forgot Password?',
-      style: TextStyle(
-        color: Colors.white,
-        letterSpacing: 1.5,
-        fontSize: 16.0,
-        fontWeight: FontWeight.bold,
-        fontFamily: 'OpenSans',
-      ),
-    ),
-  ));
-}

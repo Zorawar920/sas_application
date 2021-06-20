@@ -60,7 +60,9 @@ class Auth implements AuthBase {
       String email, String password) async {
     final userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
-    return userCredential.user;
+    final user = userCredential.user;
+    user!.sendEmailVerification();
+    return user;
   }
 
   @override

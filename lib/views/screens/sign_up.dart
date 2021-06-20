@@ -1,35 +1,34 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sas_application/screens/log_in.dart';
-import 'package:sas_application/Uniformity/var_gradient.dart';
-import 'package:sas_application/firebase_services/auth.dart';
-import 'package:sas_application/main.dart';
-import '../Uniformity/widgets.dart';
-import '../Uniformity/var_gradient.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../Uniformity/style.dart';
-import '../Uniformity/custom_validator.dart';
+import 'package:sas_application/uniformity/Widgets.dart';
+import 'package:sas_application/uniformity/style.dart';
+import 'package:sas_application/uniformity/var_gradient.dart';
+import 'package:sas_application/view_models/sign_up_view_model.dart';
+import 'package:stacked/stacked.dart';
+import 'log_in.dart';
 
 class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-        body: SignUp(
-      inputData: 'data',
-      auth: Auth(),
-    ));
+    return ViewModelBuilder<SignUpViewModel>.reactive(
+        builder: (context, viewModel, child) => MaterialApp(
+              home: SignUp(
+                signUpViewModel: viewModel,
+                inputData: "Login State",
+                key: key,
+              ),
+            ),
+        viewModelBuilder: () => SignUpViewModel());
   }
 }
 
 class SignUp extends StatefulWidget {
+  final SignUpViewModel signUpViewModel;
   final String inputData;
-  final AuthBase auth;
   //Constructor
-  SignUp({Key? key, required this.inputData, required this.auth});
+  SignUp({Key? key, required this.inputData, required this.signUpViewModel});
 
   @override
   State<StatefulWidget> createState() => SignUpState();
@@ -43,39 +42,10 @@ class SignUpState extends State<SignUp> {
   var myLastNameController = TextEditingController();
   String? passwordValue;
   final globalFormKey = GlobalKey<FormState>();
-
-  Future<void> _signInWithUserCredential() async {
-    try {
-      String _email = myEmailController.text.trim();
-      String _password = myPasswordController.text.trim();
-      await widget.auth.createUserWithEmailAndPassword(_email, _password);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (builder) => LoginPage()));
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case "email-already-in-use":
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("There's already an account with this email")));
-          break;
-        case "network-request-failed":
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Sign Up failed due to Network error")));
-          break;
-        case "invalid-email":
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Entered Email is invalid")));
-          break;
-        default:
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Sign Up failed")));
-          break;
-      }
-      print(e.code);
-    }
-  }
+  String get _email => myEmailController.text;
 
   // ignore: non_constant_identifier_names
-  Widget signUpBtn() {
+  Widget signUpBtn(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
@@ -89,9 +59,15 @@ class SignUpState extends State<SignUp> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: () {
+        onPressed: () async {
           if (globalFormKey.currentState!.validate()) {
-            _signInWithUserCredential();
+            widget.signUpViewModel.createUserWithCredentials(
+                myEmailController, myPasswordController, context);
+
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: new Row(
+              children: <Widget>[new Text('Reset Link sent to $_email')],
+            )));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Please Enter all Credentials")));
@@ -128,7 +104,7 @@ class SignUpState extends State<SignUp> {
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
-              return ValidateEmail(value!).validate();
+              return widget.signUpViewModel.validateEmail(value!);
             }, //Email validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
@@ -168,7 +144,7 @@ class SignUpState extends State<SignUp> {
           child: TextFormField(
             controller: myFirstNameController,
             validator: (value) {
-              return ValidateName(value!).validate();
+              return widget.signUpViewModel.validateName(value!);
             }, //Name validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.emailAddress,
@@ -209,7 +185,7 @@ class SignUpState extends State<SignUp> {
           child: TextFormField(
             controller: myLastNameController,
             validator: (value) {
-              return ValidateName(value!).validate();
+              return widget.signUpViewModel.validateName(value!);
             }, //Name validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.emailAddress,
@@ -252,7 +228,7 @@ class SignUpState extends State<SignUp> {
             obscureText: true,
             validator: (value) {
               passwordValue = value;
-              return ValidatePassword(value!).validation();
+              return widget.signUpViewModel.validatePassword(passwordValue);
             },
             autovalidateMode:
                 AutovalidateMode.onUserInteraction, //Password Validator
@@ -295,8 +271,8 @@ class SignUpState extends State<SignUp> {
             obscureText: true,
             validator: (value) {
               print(value);
-              return ValidateConfirmPassword(value!, myPasswordController.text)
-                  .validation();
+              return widget.signUpViewModel
+                  .validateConfirmPassword(myPasswordController.text, value!);
             },
             autovalidateMode:
                 AutovalidateMode.onUserInteraction, //Password Validator
@@ -328,8 +304,6 @@ class SignUpState extends State<SignUp> {
             context,
             MaterialPageRoute(builder: (builder) => LoginPage()),
             (route) => false)
-        //Navigator.push(
-        //    context, MaterialPageRoute(builder: (builder) => LoginPage()))
       },
       child: RichText(
         text: TextSpan(
@@ -413,7 +387,7 @@ class SignUpState extends State<SignUp> {
                         buildPasswordLoginSigup(),
                         SizedBox(height: 10.0),
                         buildPasswordConfirmSigup(),
-                        signUpBtn(),
+                        signUpBtn(context),
                         buildAccountLoginBtn(),
                       ],
                     ),

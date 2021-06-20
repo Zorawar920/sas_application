@@ -1,34 +1,38 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sas_application/screens/sign_up.dart';
-import 'package:sas_application/Uniformity/var_gradient.dart';
-import 'package:sas_application/user_status.dart';
-import '../Uniformity/var_gradient.dart';
-import '../Uniformity/style.dart';
+import 'package:sas_application/uniformity/Widgets.dart';
+import 'package:sas_application/uniformity/style.dart';
+import 'package:sas_application/uniformity/var_gradient.dart';
+import 'package:sas_application/view_models/login_view_model.dart';
+import 'package:sas_application/views/screens/sign_up.dart';
+import 'package:stacked/stacked.dart';
 import 'forgot_password.dart';
-import '../Uniformity/widgets.dart';
-import '../Uniformity/custom_validator.dart';
-import 'package:sas_application/firebase_services/auth.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: UserStatus(
-        auth: Auth(),
-      ),
-    );
+    return ViewModelBuilder<LoginViewModel>.reactive(
+        builder: (context, viewModel, child) => MaterialApp(
+              home: LogIn(
+                loginViewModel: viewModel,
+                inputData: "Login State",
+                key: key,
+              ),
+            ),
+        viewModelBuilder: () => LoginViewModel());
   }
 }
 
 class LogIn extends StatefulWidget {
   final String inputData;
-  final AuthBase auth;
+  final LoginViewModel loginViewModel;
+
   //Constructor
-  LogIn(String s, {Key? key, required this.inputData, required this.auth});
+  LogIn({Key? key, required this.inputData, required this.loginViewModel});
 
   @override
   State<StatefulWidget> createState() => LogInState();
@@ -37,76 +41,28 @@ class LogIn extends StatefulWidget {
 class LogInState extends State<LogIn> {
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
-  bool _isLoading = false;
   final globalKey = GlobalKey<FormState>();
 
-  //Constructor
-
-  Future<void> _signInAnonymously() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-      await widget.auth.signInAnonymously();
-    } catch (e) {
-      print(e.toString());
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _signWithGoogle() async {
-    try {
-      setState(() {
-        _isLoading = true;
-      });
-      await widget.auth.signInWithGoogle();
-      final snackBar = SnackBar(content: Text('Sign in to Google successful'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } catch (e) {
-      print(e.toString());
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _signInWithUserCredentials() async {
-    try {
-      String _email = myEmailController.text;
-      String _password = myPasswordController.text;
-      await widget.auth.signInWithEmailAndPassword(_email, _password);
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Invalid Email or Password")));
-      print(e.toString());
-    }
-  }
-
-  // Google Sign In
-  Widget loginWithGoogleBtn() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          buildSocialBtn(
-            () => print('Login with Google'),
-            AssetImage(
-              'assets/logos/google.jpg',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildSocialBtn(Function onTap, AssetImage logo) {
+  Widget buildSocialBtn(BuildContext context, Function onTap, AssetImage logo) {
     return GestureDetector(
-      onTap: _signWithGoogle,
+      onTap: () async {
+        widget.loginViewModel.signInWithGoogle(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: new Row(
+          children: <Widget>[
+            new CircularProgressIndicator(),
+            new Text(' '),
+            new Text('Signing in With Google...',
+                style: TextStyle(
+                  color: Colors.white,
+                  letterSpacing: 1.5,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'OpenSans',
+                ))
+          ],
+        )));
+      },
       child: Container(
         height: 60.0,
         width: 60.0,
@@ -145,7 +101,23 @@ class LogInState extends State<LogIn> {
         ),
         onPressed: () {
           if (globalKey.currentState!.validate()) {
-            _signInWithUserCredentials();
+            widget.loginViewModel.signInWithUserCredentials(
+                myEmailController, myPasswordController, context);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: new Row(
+              children: <Widget>[
+                new CircularProgressIndicator(),
+                new Text(' '),
+                new Text('Signing in ...',
+                    style: TextStyle(
+                      color: Colors.white,
+                      letterSpacing: 1.5,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'OpenSans',
+                    ))
+              ],
+            )));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text("Please enter valid credentials")));
@@ -213,8 +185,9 @@ class LogInState extends State<LogIn> {
             controller: myEmailController,
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
-              return ValidateEmail(value!).validate();
-            }, //Email Validator
+              return widget.loginViewModel.validateEmail(value!);
+            },
+            //Email Validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
               color: Colors.white,
@@ -237,7 +210,7 @@ class LogInState extends State<LogIn> {
     );
   }
 
-  Widget buildPasswordLoginSigup() {
+  Widget buildPasswordLoginSignup() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -254,8 +227,9 @@ class LogInState extends State<LogIn> {
             controller: myPasswordController,
             obscureText: true,
             validator: (value) {
-              return ValidatePassword(value!).validation();
-            }, //Password Validator
+              return widget.loginViewModel.validatePassword(value!);
+            },
+            //Password Validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
               color: Colors.white,
@@ -304,9 +278,24 @@ class LogInState extends State<LogIn> {
   }
 
   @override
+  void initState() {
+    //State Management for Widgets
+    // TODO: implement initState
+    super.initState();
+    BackButtonInterceptor.add(myInterceptor);
+  }
+
+  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Back Button Pressed")));
+    return true;
+  }
+
+  @override
   void dispose() {
     myEmailController.dispose();
     myPasswordController.dispose();
+    BackButtonInterceptor.remove(myInterceptor);
     super.dispose();
   }
 
@@ -339,17 +328,39 @@ class LogInState extends State<LogIn> {
                         SizedBox(
                           height: 10.0,
                         ),
-                        _buildHeader(),
+                        Text(
+                          'Login',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'OpenSans',
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         SizedBox(height: 20.0),
                         buildEmailLoginSignup(),
                         SizedBox(
                           height: 20.0,
                         ),
-                        buildPasswordLoginSigup(),
+                        buildPasswordLoginSignup(),
                         buildForgotPasswordBtn(),
                         LogInBtn(context),
                         buildSignInWithText(),
-                        loginWithGoogleBtn(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              buildSocialBtn(
+                                context,
+                                () => print('Login with Google'),
+                                AssetImage(
+                                  'assets/logos/google.jpg',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         buildNoAccountSignupBtn(),
                       ],
                     ),
@@ -359,23 +370,6 @@ class LogInState extends State<LogIn> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-    return Text(
-      'Login',
-      style: TextStyle(
-        color: Colors.white,
-        fontFamily: 'OpenSans',
-        fontSize: 30.0,
-        fontWeight: FontWeight.bold,
       ),
     );
   }
