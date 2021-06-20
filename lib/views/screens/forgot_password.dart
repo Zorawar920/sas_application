@@ -6,7 +6,10 @@ import 'package:sas_application/uniformity/Widgets.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
 import 'package:sas_application/view_models/forgot_password_view_model.dart';
+import 'package:sas_application/views/screens/log_in.dart';
 import 'package:stacked/stacked.dart';
+
+import '../../singleton_instance.dart';
 
 class ForgotPage extends StatelessWidget {
   const ForgotPage({Key? key}) : super(key: key);
@@ -15,6 +18,7 @@ class ForgotPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<ForgotPasswordViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: ForgotPassword(
                 forgotPasswordViewModel: viewModel,
                 id: "Login State",
@@ -37,6 +41,7 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class ForgotPasswordState extends State<ForgotPassword> {
+  final VarGradient _varGradient = singletonInstance<VarGradient>();
   var myEmailController = TextEditingController();
   final globalKey = GlobalKey<FormState>();
 
@@ -79,6 +84,31 @@ class ForgotPasswordState extends State<ForgotPassword> {
     );
   }
 
+  Widget buildRememberPasswordBtn(BuildContext context) {
+    return Container(
+      //alignment: Alignment.centerRight,
+      child: TextButton(
+        style: TextButton.styleFrom(padding: EdgeInsets.only(right: 0.0)),
+        onPressed: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()),
+          )
+        },
+        child: Text(
+          'Remember Password?',
+          style: TextStyle(
+            color: Colors.white,
+            letterSpacing: 1.5,
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildEmailLoginSignup() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,15 +130,16 @@ class ForgotPasswordState extends State<ForgotPassword> {
             },
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
+              errorStyle: errorStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.email,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'Enter your Email',
               hintStyle: hintTextStyle,
@@ -148,7 +179,7 @@ class ForgotPasswordState extends State<ForgotPassword> {
           onTap: () => FocusScope.of(context).unfocus(),
           child: Stack(
             children: <Widget>[
-              VarGradient(),
+              _varGradient,
               Form(
                 key: globalKey,
                 child: Padding(
@@ -171,6 +202,8 @@ class ForgotPasswordState extends State<ForgotPassword> {
                       SizedBox(height: 30.0),
                       buildEmailLoginSignup(),
                       signUpBtn(context),
+                      SizedBox(height: 10.0),
+                      buildRememberPasswordBtn(context)
                     ],
                   ),
                 ),

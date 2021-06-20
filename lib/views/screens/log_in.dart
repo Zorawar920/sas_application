@@ -2,6 +2,7 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:sas_application/singleton_instance.dart';
 import 'package:sas_application/uniformity/Widgets.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
@@ -17,6 +18,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder<LoginViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: LogIn(
                 loginViewModel: viewModel,
                 inputData: "Login State",
@@ -39,6 +41,7 @@ class LogIn extends StatefulWidget {
 }
 
 class LogInState extends State<LogIn> {
+  final VarGradient _varGradient = singletonInstance<VarGradient>();
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
   final globalKey = GlobalKey<FormState>();
@@ -190,16 +193,16 @@ class LogInState extends State<LogIn> {
             //Email Validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorStyle: labelStyle,
+              errorStyle: errorStyle,
               contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.email,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'Enter your Email',
               hintStyle: hintTextStyle,
@@ -232,16 +235,16 @@ class LogInState extends State<LogIn> {
             //Password Validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorStyle: labelStyle,
+              errorStyle: errorStyle,
               contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'Enter your Password',
               hintStyle: hintTextStyle,
@@ -310,7 +313,7 @@ class LogInState extends State<LogIn> {
             onTap: () => FocusScope.of(context).unfocus(),
             child: Stack(
               children: <Widget>[
-                VarGradient(),
+                _varGradient,
                 Container(
                   height: double.infinity,
                   child: SingleChildScrollView(

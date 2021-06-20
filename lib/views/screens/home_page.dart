@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sas_application/view_models/home_view_model.dart';
 import 'package:stacked/stacked.dart';
+import 'package:sas_application/views/screens/user_screen.dart';
+import 'package:sas_application/view_models/user_screen_view_model.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,7 +25,6 @@ class HomePage extends StatelessWidget {
 }
 
 class Home extends StatefulWidget {
-
   final HomeViewModel homeViewModel;
 
   Home({Key? key, required this.homeViewModel});
@@ -32,7 +33,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -48,6 +48,15 @@ class _HomeState extends State<Home> {
                   },
                   child: Text('Logout'))
             ],
+          ),
+          body: Center(
+            child: ElevatedButton(
+              onPressed: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (builder) => UserScreen()))
+              },
+              child: Text("User Profile"),
+            ),
           ),
         ),
         onWillPop: () async => false);

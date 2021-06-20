@@ -6,6 +6,7 @@ import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
 import 'package:sas_application/view_models/sign_up_view_model.dart';
 import 'package:stacked/stacked.dart';
+import '../../singleton_instance.dart';
 import 'log_in.dart';
 
 class SignUpPage extends StatelessWidget {
@@ -14,6 +15,7 @@ class SignUpPage extends StatelessWidget {
     // TODO: implement build
     return ViewModelBuilder<SignUpViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: SignUp(
                 signUpViewModel: viewModel,
                 inputData: "Login State",
@@ -35,6 +37,7 @@ class SignUp extends StatefulWidget {
 }
 
 class SignUpState extends State<SignUp> {
+  final VarGradient _varGradient = singletonInstance<VarGradient>();
   var myEmailController = TextEditingController();
   var myPasswordController = TextEditingController();
   var myConfirmPasswordController = TextEditingController();
@@ -108,16 +111,16 @@ class SignUpState extends State<SignUp> {
             }, //Email validator
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorStyle: labelStyle,
+              errorStyle: errorStyle,
               contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.email,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'Enter your Email',
               hintStyle: hintTextStyle,
@@ -149,16 +152,16 @@ class SignUpState extends State<SignUp> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorStyle: labelStyle,
+              errorStyle: errorStyle,
               contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.person,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'FirstName',
               hintStyle: hintTextStyle,
@@ -190,16 +193,16 @@ class SignUpState extends State<SignUp> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorStyle: labelStyle,
+              errorStyle: errorStyle,
               contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 0.0),
               prefixIcon: Icon(
                 Icons.person,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'LatName',
               hintStyle: hintTextStyle,
@@ -233,16 +236,16 @@ class SignUpState extends State<SignUp> {
             autovalidateMode:
                 AutovalidateMode.onUserInteraction, //Password Validator
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorStyle: labelStyle,
+              errorStyle: errorStyle,
               contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'Enter your Password',
               hintStyle: hintTextStyle,
@@ -277,16 +280,16 @@ class SignUpState extends State<SignUp> {
             autovalidateMode:
                 AutovalidateMode.onUserInteraction, //Password Validator
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF527DAA),
               fontFamily: 'OpenSans',
             ),
             decoration: InputDecoration(
               border: InputBorder.none,
-              errorStyle: labelStyle,
+              errorStyle: errorStyle,
               contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               prefixIcon: Icon(
                 Icons.lock,
-                color: Colors.white,
+                color: Color(0xFF527DAA),
               ),
               hintText: 'Enter your Password',
               hintStyle: hintTextStyle,
@@ -348,7 +351,7 @@ class SignUpState extends State<SignUp> {
             onTap: () => FocusScope.of(context).unfocus(),
             child: Stack(
               children: <Widget>[
-                VarGradient(),
+                _varGradient,
                 Container(
                   height: double.infinity,
                   child: SingleChildScrollView(

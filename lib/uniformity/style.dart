@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 final hintTextStyle = TextStyle(
-  color: Colors.white54,
+  color: Color(0xFF527DAA),
   fontFamily: 'OpenSans',
 );
 
@@ -11,8 +11,14 @@ final labelStyle = TextStyle(
   fontFamily: 'OpenSans',
 );
 
+final errorStyle = TextStyle(
+  color: Color(0xFF527DAA),
+  fontWeight: FontWeight.bold,
+  fontFamily: 'OpenSans',
+);
+
 final boxDecorationStyle = BoxDecoration(
-  color: Color(0xFF6CA8F1),
+  color: Colors.white,
   borderRadius: BorderRadius.circular(10.0),
   boxShadow: [
     BoxShadow(

@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:simple_animations/simple_animations.dart';
 
 class VarGradient extends StatefulWidget {
   @override
@@ -8,7 +8,20 @@ class VarGradient extends StatefulWidget {
 
 class _VarGradientState extends State<VarGradient> {
   int index = 0;
-  final tween = MultiTween();
+  @override
+  void initState() {
+    super.initState();
+    // defines a timer
+    Timer.periodic(Duration(seconds: 3), (Timer t) {
+      setState(() {
+        if (index < 4) {
+          index = index + 1;
+        } else {
+          index = 0;
+        }
+      });
+    });
+  }
 
   List colorPalette = [
     [
@@ -40,29 +53,28 @@ class _VarGradientState extends State<VarGradient> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
       height: double.infinity,
       width: double.infinity,
-      child: Stack(
-        children: [
-          AnimatedContainer(
-            duration: Duration(seconds: 2),
-            onEnd: () {
-              setState(() {
-                index = index + 1;
-              });
-            }, //onEnd
-
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [0.1, 0.4, 0.7, 0.9],
-              colors: colorPalette[index],
-            )),
-          ),
-        ],
-      ),
+      duration: Duration(seconds: 2),
+      //child: Container(decoration: ,),
+      curve: Curves.easeIn,
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        stops: [0.1, 0.4, 0.7, 0.9],
+        colors: colorPalette[index],
+      )),
+      onEnd: () {
+        setState(() {
+          if (index < 4) {
+            index = index + 1;
+          } else {
+            index = 0;
+          }
+        });
+      },
     );
   }
 }
