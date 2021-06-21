@@ -11,6 +11,12 @@ final labelStyle = TextStyle(
   fontFamily: 'OpenSans',
 );
 
+final UserlabelStyle = TextStyle(
+  color: Colors.blueGrey,
+  fontWeight: FontWeight.bold,
+  fontFamily: 'OpenSans',
+);
+
 final errorStyle = TextStyle(
   color: Color(0xFF527DAA),
   fontWeight: FontWeight.bold,
@@ -28,3 +34,4 @@ final boxDecorationStyle = BoxDecoration(
     ),
   ],
 );
+
