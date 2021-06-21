@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:back_button_interceptor/back_button_interceptor.dart';
+import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/view_models/home_view_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:sas_application/views/screens/user_screen.dart';
 import 'package:sas_application/view_models/user_screen_view_model.dart';
+
+import '../../enums.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -49,15 +52,7 @@ class _HomeState extends State<Home> {
                   child: Text('Logout'))
             ],
           ),
-          body: Center(
-            child: ElevatedButton(
-              onPressed: () => {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (builder) => UserScreen()))
-              },
-              child: Text("User Profile"),
-            ),
-          ),
+          bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.profile),
         ),
         onWillPop: () async => false);
   }

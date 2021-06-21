@@ -34,6 +34,7 @@ dependencies:
   flutter_otp: ^0.3.2
   simple_animations: ^3.1.1
   form_field_validator: ^1.1.0
+  flutter_svg: ^0.20.0-nullsafety.3 # help us to use SVG in our app
   #Firebase dependencies
    
   # The following adds the Cupertino Icons font to your application.
