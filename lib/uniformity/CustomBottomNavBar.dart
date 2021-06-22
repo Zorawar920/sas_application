@@ -11,7 +11,7 @@ class CustomBottomNavBar extends StatelessWidget {
   }) : super(key: key);
 
   final MenuState selectedMenu;
-  final kPrimaryColor = Color(0xFFFF7643);
+  final kPrimaryColor = Color(0xFF527DAA);
   final kPrimaryLightColor = Color(0xFFFFECDF);
 
   @override
@@ -39,34 +39,42 @@ class CustomBottomNavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               IconButton(
-                icon: Icon(Icons.home_outlined,
+                icon: SvgPicture.asset(
+                  "assets/icons/Shop_Icon.svg",
                   color: MenuState.home == selectedMenu
-                      ? Colors.black
-                      : Colors.blueAccent,
+                      ? kPrimaryColor
+                      : inActiveIconColor,
                 ),
-                onPressed: () =>{
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
-                  )
+                onPressed: () => {
+                  if (MenuState.home != selectedMenu)
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      )
+                    }
                 },
               ),
               IconButton(
-                icon: Icon(Icons.chat_bubble),
+                icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
                 onPressed: () {},
               ),
               IconButton(
-                icon: Icon(Icons.person,
-                  color: MenuState.profile == selectedMenu
-                      ? Colors.black
-                      : Colors.blue,
-                ),
-                onPressed: () =>
-                {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (builder) => UserScreen()))
-                },
-              ),
+                  icon: SvgPicture.asset(
+                    "assets/icons/User Icon.svg",
+                    color: MenuState.profile == selectedMenu
+                        ? kPrimaryColor
+                        : inActiveIconColor,
+                  ),
+                  onPressed: () => {
+                        if (MenuState.profile != selectedMenu)
+                          {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => UserScreen()))
+                          }
+                      }),
             ],
           )),
     );

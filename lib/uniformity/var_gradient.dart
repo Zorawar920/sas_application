@@ -12,7 +12,7 @@ class _VarGradientState extends State<VarGradient> {
   void initState() {
     super.initState();
     // defines a timer
-    Timer.periodic(Duration(seconds: 3), (Timer t) {
+    Timer.periodic(Duration(milliseconds: 1200), (Timer t) {
       setState(() {
         if (index < 4) {
           index = index + 1;
@@ -25,7 +25,7 @@ class _VarGradientState extends State<VarGradient> {
 
   List colorPalette = [
     [
-      Color(0xFF73AEF5),
+      Color(0xFF90CAF9),
       Color(0xFF61A4F1),
       Color(0xFF478DE0),
       Color(0xFF398AE5)
@@ -56,7 +56,7 @@ class _VarGradientState extends State<VarGradient> {
     return AnimatedContainer(
       height: double.infinity,
       width: double.infinity,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: 1),
       //child: Container(decoration: ,),
       curve: Curves.easeIn,
       decoration: BoxDecoration(
@@ -66,15 +66,6 @@ class _VarGradientState extends State<VarGradient> {
         stops: [0.1, 0.4, 0.7, 0.9],
         colors: colorPalette[index],
       )),
-      onEnd: () {
-        setState(() {
-          if (index < 4) {
-            index = index + 1;
-          } else {
-            index = 0;
-          }
-        });
-      },
     );
   }
 }

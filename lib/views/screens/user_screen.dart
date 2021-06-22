@@ -13,6 +13,7 @@ class UserScreen extends StatelessWidget {
     // TODO: implement build
     return ViewModelBuilder<UserScreenViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
+              debugShowCheckedModeBanner: false,
               home: UserScreenApp(
                 userScreenViewModel: viewModel,
               ),
@@ -30,7 +31,6 @@ class UserScreenApp extends StatefulWidget {
 }
 
 class UserScreenState extends State<UserScreenApp> {
-
   final globalFormKey = GlobalKey<FormState>();
   var myFirstNameController = TextEditingController();
   var myLastNameController = TextEditingController();
@@ -46,10 +46,10 @@ class UserScreenState extends State<UserScreenApp> {
   Widget buildAppScreenLogo() {
     return Container(
         child: Image.asset(
-          'assets/logos/initial_app_screen_logo_1.png',
-          height: 220.0,
-          width: 220.0,
-        ));
+      'assets/logos/initial_app_screen_logo_1.png',
+      height: 220.0,
+      width: 220.0,
+    ));
   }
 
   Widget buildFirstName() {
@@ -288,7 +288,7 @@ class UserScreenState extends State<UserScreenApp> {
                 Icons.phone,
                 color: Color(0xFF527DAA),
               ),
-              hintText: ' Enter name of your Emergency Contact',
+              hintText: ' Enter Emergency Contact',
               hintStyle: hintTextStyle,
             ),
           ),
@@ -461,7 +461,7 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
-  Widget signUpBtn(BuildContext context) {
+  Widget submitBtn(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
@@ -475,9 +475,7 @@ class UserScreenState extends State<UserScreenApp> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: () {
-
-        },
+        onPressed: () {},
         child: Text(
           'SUBMIT',
           style: TextStyle(
@@ -492,17 +490,46 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
-
+  Widget signOutBtn(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 30.0),
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blueGrey,
+          onPrimary: Colors.white,
+          elevation: 10.0,
+          padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+        ),
+        onPressed: () async {
+          widget.userScreenViewModel.signOutAnonymously(context);
+        },
+        child: Text(
+          'LogOut',
+          style: TextStyle(
+            color: Colors.white,
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
       body: Form(
-      key: globalFormKey,
-      child: Scaffold(
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
+        key: globalFormKey,
+        child: Scaffold(
+          body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.light,
             child: Stack(
               children: <Widget>[
                 Container(
@@ -547,13 +574,13 @@ class UserScreenState extends State<UserScreenApp> {
                         buildEContact2(),
                         SizedBox(height: 15.0),
                         buildEContact3(),
+                        //SizedBox(height: 15.0),
+                        //buildEContact4(),
+                        //SizedBox(height: 15.0),
+                        //buildEContact5(),
                         SizedBox(height: 15.0),
-                        buildEContact4(),
-                        SizedBox(height: 15.0),
-                        buildEContact5(),
-                        SizedBox(height: 25.0),
-                        signUpBtn(context),
-
+                        submitBtn(context),
+                        signOutBtn(context)
                       ],
                     ),
                   ),
@@ -563,7 +590,7 @@ class UserScreenState extends State<UserScreenApp> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
+      bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.profile),
     );
   }
 }

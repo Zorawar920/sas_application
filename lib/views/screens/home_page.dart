@@ -8,7 +8,7 @@ import 'package:stacked/stacked.dart';
 import 'package:sas_application/views/screens/user_screen.dart';
 import 'package:sas_application/view_models/user_screen_view_model.dart';
 
-import '../../enums.dart';
+import 'package:sas_application/enums.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -38,21 +38,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return WillPopScope(
         child: Scaffold(
-          appBar: AppBar(
-            title: Text('Home Page'),
-            automaticallyImplyLeading: false,
-            actions: <Widget>[
-              ElevatedButton(
-                  onPressed: () async {
-                    widget.homeViewModel.signOutAnonymously(context);
-                  },
-                  child: Text('Logout'))
-            ],
-          ),
-          bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.profile),
+          bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
         ),
         onWillPop: () async => false);
   }

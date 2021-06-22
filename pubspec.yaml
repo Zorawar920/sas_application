@@ -31,7 +31,9 @@ dependencies:
   google_sign_in: ^5.0.4
   provider: ^5.0.0
   stacked: ^2.1.4
+  sqflite: ^2.0.0+3
   flutter_otp: ^0.3.2
+  path_provider: ^2.0.2
   simple_animations: ^3.1.1
   form_field_validator: ^1.1.0
   flutter_svg: ^0.20.0-nullsafety.3 # help us to use SVG in our app
@@ -68,6 +70,7 @@ flutter:
   assets:
     - assets/logos/google.jpg
     - assets/logos/
+    - assets/icons/
 
   fonts:
     - family: OpenSans
