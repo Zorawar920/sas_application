@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -78,5 +79,12 @@ class Auth implements AuthBase {
     // TODO: implement forgotPasswordWithEmail
 
     return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
+  Future<void>enterEmergencyContact(String contactName, String contactNumber) async{
+    CollectionReference emergencyContact = FirebaseFirestore.instance.collection("Emergency Contact");
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid.toString();
+
   }
 }

@@ -508,7 +508,7 @@ class UserScreenState extends State<UserScreenApp> {
           widget.userScreenViewModel.signOutAnonymously(context);
         },
         child: Text(
-          'LogOut',
+          'Log Out',
           style: TextStyle(
             color: Colors.white,
             letterSpacing: 1.5,
@@ -568,12 +568,12 @@ class UserScreenState extends State<UserScreenApp> {
                         buildGender(),
                         SizedBox(height: 15.0),
                         buildAge(),
-                        SizedBox(height: 15.0),
-                        buildEContact1(),
-                        SizedBox(height: 15.0),
-                        buildEContact2(),
-                        SizedBox(height: 15.0),
-                        buildEContact3(),
+                        //SizedBox(height: 15.0),
+                        //buildEContact1(),
+                        //SizedBox(height: 15.0),
+                        //buildEContact2(),
+                        //SizedBox(height: 15.0),
+                        //buildEContact3(),
                         //SizedBox(height: 15.0),
                         //buildEContact4(),
                         //SizedBox(height: 15.0),
