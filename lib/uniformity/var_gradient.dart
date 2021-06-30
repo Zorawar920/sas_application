@@ -12,15 +12,17 @@ class _VarGradientState extends State<VarGradient> {
   void initState() {
     super.initState();
     // defines a timer
-    Timer.periodic(Duration(milliseconds: 1200), (Timer t) {
-      setState(() {
-        if (index < 4) {
-          index = index + 1;
-        } else {
-          index = 0;
-        }
+    if (mounted) {
+      Timer.periodic(Duration(milliseconds: 1200), (Timer t) {
+        setState(() {
+          if (index < 4) {
+            index = index + 1;
+          } else {
+            index = 0;
+          }
+        });
       });
-    });
+    }
   }
 
   List colorPalette = [

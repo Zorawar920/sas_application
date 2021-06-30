@@ -3,7 +3,6 @@ import 'package:sas_application/models/firebase_model.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_otp/flutter_otp.dart';
 import 'package:sas_application/views/screens/log_in.dart';
-//import 'package:sms/sms.dart';
 
 class UserScreenViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
@@ -17,13 +16,6 @@ class UserScreenViewModel extends FireBaseModel {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (builder) => LoginPage()),
         (Route<dynamic> route) => false);
-  }
-
-  void onEmergencyContactAddtion(String countryCode, String phoneNumber) {
-    String address = (countryCode) + phoneNumber;
-    //SmsSender sender = new SmsSender();
-    //sender.sendSms(
-    //    new SmsMessage(address, "You have been added as an Emergency contact"));
   }
 
   String? validateName(nameValue) {

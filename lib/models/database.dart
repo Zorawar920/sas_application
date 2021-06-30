@@ -1,9 +1,7 @@
-import 'dart:ffi';
 import 'dart:io' as io;
 import 'package:sas_application/models/user_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 
 class DBHelper {

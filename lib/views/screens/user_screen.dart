@@ -379,88 +379,6 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
-  Widget buildEContact4() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Emergency Contact 4',
-          style: UserlabelStyle,
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: TextFormField(
-            controller: emergencyController4,
-            validator: (value) {
-              return widget.userScreenViewModel.validateEContact(value!);
-            }, //Name validator
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            keyboardType: TextInputType.phone,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.phone,
-                color: Color(0xFF527DAA),
-              ),
-              hintText: ' Enter Emergency Contact',
-              hintStyle: hintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildEContact5() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Emergency Contact 5',
-          style: UserlabelStyle,
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: TextFormField(
-            controller: emergencyController5,
-            validator: (value) {
-              return widget.userScreenViewModel.validateEContact(value!);
-            }, //Name validator
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            keyboardType: TextInputType.phone,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.phone,
-                color: Color(0xFF527DAA),
-              ),
-              hintText: ' Enter Emergency Contact',
-              hintStyle: hintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget submitBtn(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30.0),
@@ -499,7 +417,7 @@ class UserScreenState extends State<UserScreenApp> {
           primary: Colors.blueGrey,
           onPrimary: Colors.white,
           elevation: 10.0,
-          padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+          padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
