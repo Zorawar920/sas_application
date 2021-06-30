@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sas_application/views/screens/chat_window.dart';
 import 'package:sas_application/views/screens/emergency_contact.dart';
 import 'package:sas_application/views/screens/home_page.dart';
 import 'package:sas_application/views/screens/user_screen.dart';
@@ -57,8 +58,18 @@ class CustomBottomNavBar extends StatelessWidget {
                 },
               ),
               IconButton(
-                icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
-                onPressed: () {},
+                icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg",
+                    color: MenuState.message == selectedMenu
+                        ? kPrimaryColor
+                        : inActiveIconColor),
+                onPressed: () {
+                  // if (MenuState.message != selectedMenu) {
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => ChatWindowScreen()));
+                  // }
+                },
               ),
               IconButton(
                   icon: SvgPicture.asset(
@@ -68,14 +79,15 @@ class CustomBottomNavBar extends StatelessWidget {
                         : inActiveIconColor,
                   ),
                   onPressed: () => {
-                    if (MenuState.econtact != selectedMenu)
-                      {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (builder) => EmergencyContactScreen()))
-                      }
-                  }),
+                        if (MenuState.econtact != selectedMenu)
+                          {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) =>
+                                        EmergencyContactScreen()))
+                          }
+                      }),
               IconButton(
                   icon: SvgPicture.asset(
                     "assets/icons/User Icon.svg",

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/emergency_contact_view_model.dart';
+import 'package:sas_application/views/screens/chat_window.dart';
 import 'package:stacked/stacked.dart';
 import '../../enums.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -51,7 +52,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp> {
     ));
   }
 
-  List<Widget> _details(cnt) {
+  List<Widget> _details(cnt, ctx) {
     List<Widget> listing = [];
     if (contactInformation.isEmpty) {
       listing.add(userDetails(contact: cnt));
@@ -61,15 +62,20 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp> {
             contact: cnt,
             name: contactInformation[i]['Name'],
             number: contactInformation[i]['Number'],
-            index: i));
+            index: i,
+            context: ctx));
       }
     }
     return listing;
   }
 
   Widget userDetails(
-      {required Contact contact, String? name, String? number, int? index}) {
-    if (contact == null) {
+      {required Contact contact,
+      String? name,
+      String? number,
+      int? index,
+      BuildContext? context}) {
+    if (contact == null || contactInformation.isEmpty) {
       return Text("No contact selected.",
           style: TextStyle(
             color: Color(0xFF527DAA),
@@ -95,7 +101,13 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp> {
               ),
               Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
                 TextButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                    Navigator.push(
+                        context!,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ChatWindowScreen(name, number)))
+                  },
                   child: Text(
                     'Connect',
                     style: TextStyle(
@@ -297,7 +309,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp> {
                         SizedBox(height: 25.0),
                         addContact1Btn(context),
                         SizedBox(height: 25.0),
-                        ..._details(_contact)
+                        ..._details(_contact, context)
                       ],
                     ),
                   ),

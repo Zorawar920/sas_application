@@ -204,7 +204,7 @@ class SignUpState extends State<SignUp> {
                 Icons.person,
                 color: Color(0xFF527DAA),
               ),
-              hintText: 'LatName',
+              hintText: 'LastName',
               hintStyle: hintTextStyle,
             ),
           ),
