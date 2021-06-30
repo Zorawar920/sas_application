@@ -12,14 +12,17 @@ class _VarGradientState extends State<VarGradient> {
   void initState() {
     super.initState();
     // defines a timer
+
     Timer.periodic(Duration(milliseconds: 1200), (Timer t) {
-      setState(() {
-        if (index < 4) {
-          index = index + 1;
-        } else {
-          index = 0;
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (index < 4) {
+            index = index + 1;
+          } else {
+            index = 0;
+          }
+        });
+      }
     });
   }
 
@@ -50,6 +53,11 @@ class _VarGradientState extends State<VarGradient> {
     ],
     [Color(0xFFD1C4E9), Color(0xFFB39DDB), Color(0xFF9575CD), Color(0xFF7E57C2)]
   ];
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

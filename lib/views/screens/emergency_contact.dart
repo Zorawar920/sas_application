@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,11 +15,11 @@ class EmergencyContactScreen extends StatelessWidget {
     // TODO: implement build
     return ViewModelBuilder<EmergencyContactViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: EmergencyContactScreenApp(
-            emergencyContactViewModel: viewModel,
-          ),
-        ),
+              debugShowCheckedModeBanner: false,
+              home: EmergencyContactScreenApp(
+                emergencyContactViewModel: viewModel,
+              ),
+            ),
         viewModelBuilder: () => EmergencyContactViewModel());
   }
 }
@@ -30,54 +29,45 @@ class EmergencyContactScreenApp extends StatefulWidget {
 
   EmergencyContactScreenApp({required this.emergencyContactViewModel});
 
-
   @override
-  _EmergencyContactScreenAppState createState() => _EmergencyContactScreenAppState();
+  _EmergencyContactScreenAppState createState() =>
+      _EmergencyContactScreenAppState();
 
   static void getDetails() {}
 }
 
 class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp> {
-
   final globalFormKey = GlobalKey<FormState>();
-  String contactName ="";
-  String contactNumber ="";
-  String number ="";
+  String contactName = "";
+  String contactNumber = "";
+  String number = "";
   Contact? _contact;
 
-  getDetails()  {
-    var contact = widget.emergencyContactViewModel.getContactDetails() ;
-    setState(() {
-      _contact = contact as Contact?;
-
-      contactName = _contact!.fullName;
-      contactNumber = _contact!.phoneNumber.number.toString();
-    });
-  }
-  
   Widget buildAppScreenLogo() {
     return Container(
         child: Image.asset(
-          'assets/logos/initial_app_screen_logo_1.png',
-          height: 220.0,
-          width: 220.0,
-        ));
+      'assets/logos/initial_app_screen_logo_1.png',
+      height: 220.0,
+      width: 220.0,
+    ));
   }
 
-
-  Widget addContact1Btn() {
+  Widget addContact1Btn(BuildContext context) {
     return Container(
       //padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
       child: ElevatedButton.icon(
-        icon:Icon(Icons.add_circle),
-        label: Text('Select Emergency Contact 1',style:TextStyle(
-          color: Colors.white,
-          letterSpacing: 1.5,
-          fontSize: 13.0,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'OpenSans',
-        ),),
+        icon: Icon(Icons.add_circle),
+        label: Text(
+          'Select Emergency Contact 1',
+          style: TextStyle(
+            color: Colors.white,
+            letterSpacing: 1.5,
+            fontSize: 13.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           primary: Colors.blueGrey,
           onPrimary: Colors.white,
@@ -87,9 +77,27 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: getDetails(),
+        onPressed: () async {
+          try {
+            await widget.emergencyContactViewModel.getContactDetails(context);
+            setState(() {
+              _contact = widget.emergencyContactViewModel.contact;
+              contactName = _contact!.fullName;
+              contactNumber = _contact!.phoneNumber.number.toString();
+            });
+          } catch (e) {
+            print(e.toString());
+          }
+        },
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    widget.emergencyContactViewModel.askPermissions(context);
   }
 
   @override
@@ -98,55 +106,54 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp> {
       body: Form(
         key: globalFormKey,
         child: Scaffold(
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                //height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(
-                  right: 40.0,
-                  left: 40.0,
-                  top: 60.0,
-                  bottom: 30.0,
-                  ),
-
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      buildAppScreenLogo(),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        'Add Emergency Contacts',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
+          body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.light,
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  //height: double.infinity,
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      right: 40.0,
+                      left: 40.0,
+                      top: 60.0,
+                      bottom: 30.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        buildAppScreenLogo(),
+                        SizedBox(
+                          height: 10.0,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 25.0),
-                      addContact1Btn(),
-                      new Text(_contact == null ? 'No contact selected.' :contactName +contactNumber,
-                      ),
-                    ],
+                        Text(
+                          'Add Emergency Contacts',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontFamily: 'OpenSans',
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 25.0),
+                        addContact1Btn(context),
+                        new Text(
+                          _contact == null
+                              ? 'No contact selected.'
+                              : contactName + contactNumber,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
-        ),
       ),
-
       bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.econtact),
     );
   }
-
 }
-

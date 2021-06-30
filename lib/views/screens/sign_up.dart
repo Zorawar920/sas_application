@@ -1,6 +1,7 @@
 import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/uniformity/Widgets.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
@@ -65,15 +66,27 @@ class SignUpState extends State<SignUp> {
         onPressed: () async {
           if (globalFormKey.currentState!.validate()) {
             widget.signUpViewModel.createUserWithCredentials(
-                myEmailController, myPasswordController, context);
-
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: new Row(
-              children: <Widget>[new Text('Reset Link sent to $_email')],
-            )));
+                myEmailController,
+                myPasswordController,
+                myFirstNameController,
+                myLastNameController,
+                context);
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Please Enter all Credentials")));
+            showPlatformDialog(
+                context: context,
+                builder: (context) {
+                  return BasicDialogAlert(
+                    title: Text("Missing Credentials"),
+                    content: Text("Please Enter all Credentials"),
+                    actions: [
+                      BasicDialogAction(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          title: Text("OK"))
+                    ],
+                  );
+                });
           }
         },
         child: Text(

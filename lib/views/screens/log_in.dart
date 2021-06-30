@@ -2,6 +2,7 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/singleton_instance.dart';
 import 'package:sas_application/uniformity/Widgets.dart';
 import 'package:sas_application/uniformity/style.dart';
@@ -10,6 +11,7 @@ import 'package:sas_application/view_models/login_view_model.dart';
 import 'package:sas_application/views/screens/sign_up.dart';
 import 'package:stacked/stacked.dart';
 import 'forgot_password.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -50,21 +52,11 @@ class LogInState extends State<LogIn> {
     return GestureDetector(
       onTap: () async {
         widget.loginViewModel.signInWithGoogle(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: new Row(
-          children: <Widget>[
-            new CircularProgressIndicator(),
-            new Text(' '),
-            new Text('Signing in With Google...',
-                style: TextStyle(
-                  color: Colors.white,
-                  letterSpacing: 1.5,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'OpenSans',
-                ))
-          ],
-        )));
+        showPlatformDialog(
+            context: context,
+            builder: (context) => FutureProgressDialog(
+                widget.loginViewModel.getFuture(),
+                message: Text('Signing in With Google...')));
       },
       child: Container(
         height: 60.0,
@@ -106,24 +98,27 @@ class LogInState extends State<LogIn> {
           if (globalKey.currentState!.validate()) {
             widget.loginViewModel.signInWithUserCredentials(
                 myEmailController, myPasswordController, context);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: new Row(
-              children: <Widget>[
-                new CircularProgressIndicator(),
-                new Text(' '),
-                new Text('Signing in ...',
-                    style: TextStyle(
-                      color: Colors.white,
-                      letterSpacing: 1.5,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'OpenSans',
-                    ))
-              ],
-            )));
+            showPlatformDialog(
+                context: context,
+                builder: (context) => FutureProgressDialog(
+                    widget.loginViewModel.getFuture(),
+                    message: Text('Signing in...')));
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Please enter valid credentials")));
+            showPlatformDialog(
+                context: context,
+                builder: (context) {
+                  return BasicDialogAlert(
+                    title: Text("Invalid Credentials"),
+                    content: Text("Please enter valid credentials"),
+                    actions: [
+                      BasicDialogAction(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          title: Text("OK"))
+                    ],
+                  );
+                });
           }
         },
         child: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/views/screens/home_page.dart';
 
@@ -7,6 +8,13 @@ class LoginViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
 
   void printLatest(TextEditingController textEditingController) {}
+
+  Future getFuture() {
+    return Future(() async {
+      await Future.delayed(Duration(seconds: 5));
+      return 'Hello, Future Progress Dialog!';
+    });
+  }
 
   //Firebase Authentications
   Future signInWithUserCredentials(
@@ -23,13 +31,39 @@ class LoginViewModel extends FireBaseModel {
             MaterialPageRoute(builder: (builder) => HomePage()),
             (Route<dynamic> route) => false);
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Email not verified")));
+        showPlatformDialog(
+            context: context,
+            builder: (context) {
+              return BasicDialogAlert(
+                title: Text("Email Verification Issue"),
+                content: Text("Email not verified: $_email"),
+                actions: [
+                  BasicDialogAction(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      title: Text("OK"))
+                ],
+              );
+            });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              "Login Failure. Please Login Again with correct credentials.")));
+      showPlatformDialog(
+          context: context,
+          builder: (context) {
+            return BasicDialogAlert(
+              title: Text("Login Issue"),
+              content: Text(
+                  "Login Failure. Please Login Again with correct credentials."),
+              actions: [
+                BasicDialogAction(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    title: Text("OK"))
+              ],
+            );
+          });
     }
   }
 

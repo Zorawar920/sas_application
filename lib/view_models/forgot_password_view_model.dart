@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/views/screens/log_in.dart';
 
@@ -16,22 +17,62 @@ class ForgotPasswordViewModel extends FireBaseModel {
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "invalid-email":
-          final snackBar =
-              SnackBar(content: Text('This Email is invalid: $email'));
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          showPlatformDialog(
+              context: context,
+              builder: (context) {
+                return BasicDialogAlert(
+                  title: Text("Invalid Mail"),
+                  content: Text("This Email is invalid: $email"),
+                  actions: [
+                    BasicDialogAction(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => LoginPage()));
+                        },
+                        title: Text("OK"))
+                  ],
+                );
+              });
           break;
         case "wrong-password":
-          final snackBar =
-              SnackBar(content: Text('Reset Password Email is sent to $email'));
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
           await _fireBaseModel.auth.forgotPasswordWithEmail(email);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (builder) => LoginPage()));
+          showPlatformDialog(
+              context: context,
+              builder: (context) {
+                return BasicDialogAlert(
+                  title: Text("Forgot Password Mail"),
+                  content: Text("Reset Password Email is sent to $email"),
+                  actions: [
+                    BasicDialogAction(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => LoginPage()));
+                        },
+                        title: Text("OK"))
+                  ],
+                );
+              });
           break;
         case "user-not-found":
-          final snackBar = SnackBar(
-              content: Text('This Email does not exist in system: $email'));
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          showPlatformDialog(
+              context: context,
+              builder: (context) {
+                return BasicDialogAlert(
+                  title: Text("User Not Found"),
+                  content: Text("This Email does not exist in system: $email"),
+                  actions: [
+                    BasicDialogAction(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        title: Text("OK"))
+                  ],
+                );
+              });
           break;
       }
     }

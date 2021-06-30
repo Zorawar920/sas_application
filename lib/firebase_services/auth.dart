@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sas_application/firebase_services/firebase_db.dart';
+import 'package:sas_application/models/user_model.dart';
 
 abstract class AuthBase {
   User? get currentUser;
@@ -41,6 +43,13 @@ class Auth implements AuthBase {
           idToken: googleAuth.idToken,
           accessToken: googleAuth.accessToken,
         ));
+        if (userCredential.additionalUserInfo!.isNewUser) {
+          UserModel userModel = new UserModel(
+              userId: userCredential.user!.uid,
+              emailAddress: userCredential.user!.email.toString(),
+              fullName: userCredential.user!.displayName.toString());
+          await FirebaseDbService().addUserData(userModel);
+        }
         return userCredential.user;
       } else {
         throw FirebaseAuthException(
@@ -59,11 +68,15 @@ class Auth implements AuthBase {
   @override
   Future<User?> createUserWithEmailAndPassword(
       String email, String password) async {
-    final userCredential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
-    final user = userCredential.user;
-    user!.sendEmailVerification();
-    return user;
+    try {
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      final user = userCredential.user;
+      user!.sendEmailVerification();
+      return user;
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -79,12 +92,5 @@ class Auth implements AuthBase {
     // TODO: implement forgotPasswordWithEmail
 
     return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-  }
-
-  Future<void>enterEmergencyContact(String contactName, String contactNumber) async{
-    CollectionReference emergencyContact = FirebaseFirestore.instance.collection("Emergency Contact");
-    FirebaseAuth auth = FirebaseAuth.instance;
-    String uid = auth.currentUser!.uid.toString();
-
   }
 }
