@@ -2,6 +2,7 @@ import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/uniformity/Widgets.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
@@ -66,8 +67,21 @@ class ForgotPasswordState extends State<ForgotPassword> {
             widget.forgotPasswordViewModel
                 .sendResetPasswordMail(email, context);
           } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("Enter valid Email")));
+            showPlatformDialog(
+                context: context,
+                builder: (context) {
+                  return BasicDialogAlert(
+                    title: Text("Invalid E-mail"),
+                    content: Text("Enter valid Email"),
+                    actions: [
+                      BasicDialogAction(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          title: Text("OK"))
+                    ],
+                  );
+                });
           }
         },
         child: Text(
