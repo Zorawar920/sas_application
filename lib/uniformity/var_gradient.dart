@@ -23,7 +23,7 @@ class _VarGradientState extends State<VarGradient> {
           }
         });
       }
-    }
+    });
   }
 
   List colorPalette = [
