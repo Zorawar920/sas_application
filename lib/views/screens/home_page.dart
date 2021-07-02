@@ -1,15 +1,20 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/view_models/home_view_model.dart';
+import 'package:sms/sms.dart';
 import 'package:stacked/stacked.dart';
-
 
 import 'package:sas_application/enums.dart';
 
+
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeViewModel>.reactive(
@@ -35,8 +40,32 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: Scaffold(
+    return Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                    padding: const EdgeInsets.all(20),
+                    textColor: Colors.white,
+                    color: Colors.red,
+                    onPressed: () async {
+                      await widget.homeViewModel.map();
+                       // Navigator.push(context, MaterialPageRoute(builder: (builder) => SosMap()));
+                    }, child: Text(
+                  'SOS',
+                  style: TextStyle(
+                    color: Color(0xFFF7F9FC),
+                    letterSpacing: 1.5,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'OpenSans',
+                  ),
+                ))
+              ],
+            )
+          ),
+
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children:<Widget>[
@@ -51,7 +80,6 @@ class _HomeState extends State<Home> {
             ],
           ),
           bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
-        ),
-        onWillPop: () async => false);
+        );
   }
 }
