@@ -27,7 +27,10 @@ class SignUpViewModel extends FireBaseModel {
       UserModel userModel = new UserModel(
           userId: _fireBaseModel.auth.currentUser!.uid,
           fullName: name,
-          emailAddress: _email);
+          emailAddress: _email,
+          phoneNumber: "",
+          gender: ""
+        );
 
       _fireBaseModel.firebaseDbService.addUserData(userModel);
 

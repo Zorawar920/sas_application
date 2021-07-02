@@ -3,11 +3,14 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:sas_application/models/firebase_model.dart';
 import 'package:flutter/material.dart';
+import 'package:sas_application/models/user_model.dart';
 //import 'package:flutter_otp/flutter_otp.dart';
 import 'package:sas_application/views/screens/log_in.dart';
 
 class UserScreenViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
+
+
 
   Future getFuture() {
     return Future(() async {
@@ -33,6 +36,40 @@ class UserScreenViewModel extends FireBaseModel {
     }
   }
 
+  Future<void> updateUser(firstName, lastName, phoneNumber,email, gender, BuildContext context) async{
+    try{
+      _fireBaseModel.setBusy(true);
+      String _phoneNumber = phoneNumber.text.trim();
+      String _gender = gender.text.trim();
+      String _firstname = firstName.text.trim();
+      String _lastname = lastName.text.trim();
+      String _email = email.text.trim();
+      String name = _firstname + " " + _lastname;
+      UserModel userModel = new UserModel(
+          userId:_fireBaseModel.auth.currentUser!.uid,
+          fullName: name,
+          emailAddress: _email,
+          phoneNumber: _phoneNumber,
+          gender: _gender
+      );
+      await _fireBaseModel.firebaseDbService.updateUserData(userModel);
+      _fireBaseModel.setBusy(false);
+      }catch(e){
+        print(e.toString());
+  }
+}
+
+  Future<void> verifyPhoneNumber( TextEditingController phoneController, BuildContext context) async {
+    try {
+
+      _fireBaseModel.setBusy(true);
+      await _fireBaseModel.auth.VerifyNumber(phoneController, context);
+      _fireBaseModel.setBusy(false);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   String? validateName(nameValue) {
     if (nameValue.isEmpty) {
       return 'Please Enter Your Name';
@@ -42,19 +79,11 @@ class UserScreenViewModel extends FireBaseModel {
   }
 
   String? validatePhone(phoneValue) {
-    const pattern = r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$';
+    const pattern = r'^\+(?:[0-9] ?){6,14}[0-9]$';
     final regExp = RegExp(pattern);
     if (phoneValue.isEmpty) {
       return 'Please Enter Phone Number';
     } else if (!regExp.hasMatch(phoneValue)) {
-      return 'Please Enter Valid Phone Number';
-    }
-  }
-
-  String? validateEContact(phoneValue) {
-    const pattern = r'^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$';
-    final regExp = RegExp(pattern);
-    if (!regExp.hasMatch(phoneValue)) {
       return 'Please Enter Valid Phone Number';
     }
   }
@@ -70,6 +99,17 @@ class UserScreenViewModel extends FireBaseModel {
       return 'Please Enter Your Age';
     } else if (int.parse(age) < 12 || int.parse(age) > 80) {
       return 'Enter valid age';
+    }
+  }
+
+  String? validateEmail(emailValue) {
+    RegExp regex = RegExp(r'\w+@\w+\.\w+');
+    if (emailValue.isEmpty) {
+      return 'Please Enter Email';
+    } else if (!regex.hasMatch(emailValue)) {
+      return 'Please Enter a Valid Email';
+    } else if (emailValue.length > 30) {
+      return 'Email should be less than 30 Characters';
     }
   }
 }

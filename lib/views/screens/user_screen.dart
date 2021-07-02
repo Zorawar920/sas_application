@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/uniformity/style.dart';
+import 'package:sas_application/view_models/user_screen_view_model.dart';
+import 'package:sas_application/view_models/user_screen_view_model.dart';
 import 'package:sas_application/view_models/user_screen_view_model.dart';
 import 'package:stacked/stacked.dart';
 
@@ -37,11 +40,7 @@ class UserScreenState extends State<UserScreenApp> {
   var phoneNumberController = TextEditingController();
   var ageController = TextEditingController();
   var genderController = TextEditingController();
-  var emergencyController1 = TextEditingController();
-  var emergencyController2 = TextEditingController();
-  var emergencyController3 = TextEditingController();
-  var emergencyController4 = TextEditingController();
-  var emergencyController5 = TextEditingController();
+  var myEmailController = TextEditingController();
 
   Widget buildAppScreenLogo() {
     return Container(
@@ -134,6 +133,47 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
+  Widget buildEmail() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Email',
+          style: UserlabelStyle,
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: boxDecorationStyle,
+          height: 60.0,
+          child: TextFormField(
+            controller: myEmailController,
+            keyboardType: TextInputType.emailAddress,
+            validator: (value) {
+              return widget.userScreenViewModel.validateEmail(value!);
+            }, //Email validator
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: TextStyle(
+              color: Color(0xFF527DAA),
+              fontFamily: 'OpenSans',
+            ),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              errorStyle: errorStyle,
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
+              prefixIcon: Icon(
+                Icons.email,
+                color: Color(0xFF527DAA),
+              ),
+              hintText: 'Enter your Email',
+              hintStyle: hintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget buildGender() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,11 +218,51 @@ class UserScreenState extends State<UserScreenApp> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Contact Number',
-          style: UserlabelStyle,
+        Row(
+         children: <Widget>[
+           Text(
+             'Contact Number',
+             style: UserlabelStyle,
+           ),
+           TextButton(
+             style: TextButton.styleFrom(padding: EdgeInsets.only(left: 100.0)),
+             onPressed: () => {if(phoneNumberController.text.isNotEmpty)
+               {
+               widget.userScreenViewModel.verifyPhoneNumber(phoneNumberController, context)}
+               else{
+    showPlatformDialog(
+    context: context,
+    builder: (context) {
+    return BasicDialogAlert(
+    //title: Text("Please enter the number"),
+    content: Text("Please enter the number"),
+    actions: [
+    BasicDialogAction(
+    onPressed: () {
+    Navigator.of(context).pop();
+    },
+    title: Text("OK"))
+    ],
+    );
+    })
+               }
+             },
+             child: Text(
+               'Verify',
+               style: TextStyle(
+                 color: Colors.red,
+                 letterSpacing: 1.5,
+                 fontSize: 12.0,
+                 fontWeight: FontWeight.bold,
+                 fontFamily: 'OpenSans',
+               ),
+             ),
+           ),
+         ],
+
         ),
-        SizedBox(height: 5.0),
+
+        //SizedBox(height: 5.0),
         Container(
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
@@ -215,170 +295,6 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
-  Widget buildAge() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Age',
-          style: UserlabelStyle,
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: TextFormField(
-            controller: ageController,
-            keyboardType: TextInputType.number,
-            validator: (value) {
-              return widget.userScreenViewModel.validateAge(value!);
-            }, //Name validator
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.person,
-                color: Color(0xFF527DAA),
-              ),
-              hintText: 'Enter your Age',
-              hintStyle: hintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildEContact1() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Emergency Contact 1',
-          style: UserlabelStyle,
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: TextFormField(
-            controller: emergencyController1,
-            validator: (value) {
-              return widget.userScreenViewModel.validatePhone(value!);
-            }, //Name validator
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            keyboardType: TextInputType.phone,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.phone,
-                color: Color(0xFF527DAA),
-              ),
-              hintText: ' Enter Emergency Contact',
-              hintStyle: hintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildEContact2() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Emergency Contact 2',
-          style: UserlabelStyle,
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: TextFormField(
-            controller: emergencyController2,
-            validator: (value) {
-              return widget.userScreenViewModel.validateEContact(value!);
-            },
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            keyboardType: TextInputType.phone,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.phone,
-                color: Color(0xFF527DAA),
-              ),
-              hintText: ' Enter Emergency Contact',
-              hintStyle: hintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildEContact3() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Emergency Contact 3',
-          style: UserlabelStyle,
-        ),
-        SizedBox(height: 5.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: TextFormField(
-            controller: emergencyController3,
-            validator: (value) {
-              return widget.userScreenViewModel.validateEContact(value!);
-            }, //Name validator
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            keyboardType: TextInputType.phone,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.phone,
-                color: Color(0xFF527DAA),
-              ),
-              hintText: ' Enter Emergency Contact',
-              hintStyle: hintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget submitBtn(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30.0),
@@ -393,7 +309,33 @@ class UserScreenState extends State<UserScreenApp> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: () {},
+        onPressed: () async {
+          if (globalFormKey.currentState!.validate()) {
+            widget.userScreenViewModel.updateUser(
+                myFirstNameController,
+                myLastNameController,
+                phoneNumberController,
+                myEmailController,
+                genderController,
+                context);
+          } else {
+            showPlatformDialog(
+                context: context,
+                builder: (context) {
+                  return BasicDialogAlert(
+                    title: Text("Missing Details"),
+                    content: Text("Please Enter all Details"),
+                    actions: [
+                      BasicDialogAction(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          title: Text("OK"))
+                    ],
+                  );
+                });
+          }
+        },
         child: Text(
           'SUBMIT',
           style: TextStyle(
@@ -410,7 +352,7 @@ class UserScreenState extends State<UserScreenApp> {
 
   Widget signOutBtn(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 30.0),
+      padding: EdgeInsets.symmetric(vertical: 0.0),
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -483,19 +425,9 @@ class UserScreenState extends State<UserScreenApp> {
                         SizedBox(height: 15.0),
                         buildPhoneNumber(),
                         SizedBox(height: 15.0),
-                        buildGender(),
+                        buildEmail(),
                         SizedBox(height: 15.0),
-                        buildAge(),
-                        //SizedBox(height: 15.0),
-                        //buildEContact1(),
-                        //SizedBox(height: 15.0),
-                        //buildEContact2(),
-                        //SizedBox(height: 15.0),
-                        //buildEContact3(),
-                        //SizedBox(height: 15.0),
-                        //buildEContact4(),
-                        //SizedBox(height: 15.0),
-                        //buildEContact5(),
+                        buildGender(),
                         SizedBox(height: 15.0),
                         submitBtn(context),
                         signOutBtn(context)
