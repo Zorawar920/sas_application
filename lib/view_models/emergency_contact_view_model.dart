@@ -1,17 +1,22 @@
 import 'dart:async';
 // ignore: import_of_legacy_library_into_null_safe
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contact_picker/contact_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sas_application/models/firebase_model.dart';
+import 'package:sas_application/views/screens/emergency_contact.dart';
 import 'package:sms/sms.dart';
 
 class EmergencyContactViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
   bool? _hasPermission;
   Contact? contact;
+  String? emergencyContactName;
+  String? emergencyContactDetail;
+  List emergencyContactDetails = [];
 
   Future<void> askPermissions(BuildContext context) async {
     PermissionStatus? permissionStatus;
@@ -66,6 +71,13 @@ class EmergencyContactViewModel extends FireBaseModel {
     }
   }
 
+  Future<void> addContactInformation(
+      String contactName, String contactNumber) async {
+    var uid = _fireBaseModel.auth.currentUser!.uid;
+    await _fireBaseModel.firebaseDbService
+        .addEmergencyContact(contactName, contactNumber, uid);
+  }
+
   void handleInvalidPermissions(PermissionStatus permissionStatus) {
     if (permissionStatus == PermissionStatus.denied) {
       throw PlatformException(
@@ -78,6 +90,16 @@ class EmergencyContactViewModel extends FireBaseModel {
           message: 'Contacts data is not available on device',
           details: null);
     }
+  }
+
+  Future<List> getList() async {
+    var snapshots = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_fireBaseModel.auth.currentUser!.uid)
+        .collection("emergency-contacts")
+        .get();
+    final allData = snapshots.docs.map((doc) => doc.data()).toList();
+    return allData;
   }
 
   Future<void> getContactDetails(BuildContext context) async {
@@ -116,6 +138,15 @@ class EmergencyContactViewModel extends FireBaseModel {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<void> deleteData(docId) async {
+    await _fireBaseModel.firebaseDbService.instance
+        .collection("users")
+        .doc(_fireBaseModel.auth.currentUser!.uid)
+        .collection("emergency-contacts")
+        .doc(docId)
+        .delete();
   }
 
   void onEmergencyContactAddtion(String phoneNumber) {
