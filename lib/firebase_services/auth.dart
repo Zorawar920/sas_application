@@ -16,14 +16,14 @@ abstract class AuthBase {
   Future<User?> signInWithEmailAndPassword(String email, String password);
   Future<User?> createUserWithEmailAndPassword(String email, String password);
   Future forgotPasswordWithEmail(String email);
-  Future<void>VerifyNumber(TextEditingController phoneController, BuildContext context);
+  Future<void> VerifyNumber(
+      TextEditingController phoneController, BuildContext context);
 }
 
 class Auth implements AuthBase {
   User? get currentUser => FirebaseAuth.instance.currentUser;
   var _codeController = TextEditingController();
   Stream<User?> authStateChanges() => FirebaseAuth.instance.authStateChanges();
-
 
   Future<User?> signInAnonymously() async {
     final userCredential = await FirebaseAuth.instance.signInAnonymously();
@@ -102,49 +102,25 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<void> VerifyNumber( TextEditingController phoneController, context) async {
+  Future<void> VerifyNumber(
+      TextEditingController phoneController, context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.verifyPhoneNumber(
-
-        phoneNumber: phoneController.text,
-        timeout: Duration(seconds: 10),
-        verificationCompleted: (AuthCredential credential) async
-        {
-          Navigator.of(context).pop();
-          final result = await _auth.signInWithCredential(credential);
-          final user = result.user;
-          if(user != null){
-            await FirebaseAuth.instance.currentUser!.delete();
-            print('Number Verified');
-            showPlatformDialog(
-                context: context,
-                builder: (context) {
-                  return BasicDialogAlert(
-                    title: Text("Phone Verification"),
-                    content: Text("Your phone Number is verified"),
-                    actions: [
-                      BasicDialogAction(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          title: Text("OK"))
-                    ],
-                  );
-                });
-          }else{
-            print("Error");
-          }
-
-          //This callback would gets called when verification is done auto maticlly
-        },
-
-        verificationFailed: (FirebaseAuthException e){
+      phoneNumber: phoneController.text,
+      timeout: Duration(seconds: 120),
+      verificationCompleted: (AuthCredential credential) async {
+        Navigator.of(context).pop();
+        final result = await _auth.signInWithCredential(credential);
+        final user = result.user;
+        if (user != null) {
+          await FirebaseAuth.instance.currentUser!.delete();
+          print('Number Verified');
           showPlatformDialog(
               context: context,
               builder: (context) {
                 return BasicDialogAlert(
                   title: Text("Phone Verification"),
-                  content: Text(e.message.toString()),
+                  content: Text("Your phone Number is verified"),
                   actions: [
                     BasicDialogAction(
                         onPressed: () {
@@ -154,51 +130,73 @@ class Auth implements AuthBase {
                   ],
                 );
               });
-          print(e);
-        },
+        } else {
+          print("Error");
+        }
 
-        codeSent: (String verificationId, [int? forceResendingToken])
-        {
-          showPlatformDialog(
-              context: context,
-              builder: (context) {
-                return BasicDialogAlert(
-                  title: Text("Phone Verification"),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[Text('Enter the verification code:'),
-                      SizedBox(height: 5.0),
-                      TextField(
-                        controller: _codeController,
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    BasicDialogAction(
-                      onPressed: ()async {
+        //This callback would gets called when verification is done auto maticlly
+      },
+
+      verificationFailed: (FirebaseAuthException e) {
+        showPlatformDialog(
+            context: context,
+            builder: (context) {
+              return BasicDialogAlert(
+                title: Text("Phone Verification"),
+                content: Text(e.message.toString()),
+                actions: [
+                  BasicDialogAction(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      title: Text("OK"))
+                ],
+              );
+            });
+        print(e);
+      },
+
+      codeSent: (String verificationId, [int? forceResendingToken]) {
+        showPlatformDialog(
+            context: context,
+            builder: (context) {
+              return BasicDialogAlert(
+                title: Text("Phone Verification"),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Enter the verification code:'),
+                    SizedBox(height: 5.0),
+                    TextField(
+                      controller: _codeController,
+                    ),
+                  ],
+                ),
+                actions: [
+                  BasicDialogAction(
+                      onPressed: () async {
                         final code = _codeController.text.trim();
-                        AuthCredential authCredential = PhoneAuthProvider
-                            .credential(
-                            verificationId: verificationId, smsCode: code);
+                        AuthCredential authCredential =
+                            PhoneAuthProvider.credential(
+                                verificationId: verificationId, smsCode: code);
                         print(authCredential.providerId.toString());
-                        UserCredential result = await _auth
-                            .signInWithCredential(authCredential);
+                        UserCredential result =
+                            await _auth.signInWithCredential(authCredential);
                         User? user = result.user;
-
 
                         if (user != null) {
                           await FirebaseAuth.instance.currentUser!.delete();
                           print('Number Verified');
                           numberVerified(context);
-                        }
-                        else{
+                        } else {
                           print("Error");
                           showPlatformDialog(
                               context: context,
                               builder: (context) {
                                 return BasicDialogAlert(
                                   title: Text("Phone Verification"),
-                                  content: Text("Phone number not verified. Please try again."),
+                                  content: Text(
+                                      "Phone number not verified. Please try again."),
                                   actions: [
                                     BasicDialogAction(
                                         onPressed: () {
@@ -208,44 +206,41 @@ class Auth implements AuthBase {
                                   ],
                                 );
                               });
-
                         }
                         //Navigator.of(context).pop();
                       },
-                      title: Text("Confirm")
-                    ),
-                    BasicDialogAction(
-                      onPressed: (){
-                        Navigator.of(context).pop();
-                      },
-                      title: Text("Close"),
-                    )
-                  ],
-                );
-              }
-          );
-        },
+                      title: Text("Confirm")),
+                  BasicDialogAction(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    title: Text("Close"),
+                  )
+                ],
+              );
+            });
+      },
 
-      codeAutoRetrievalTimeout: (String verificationId) {  },
-        //codeAutoRetrievalTimeout: null
+      codeAutoRetrievalTimeout: (String verificationId) {},
+      //codeAutoRetrievalTimeout: null
     );
   }
-void numberVerified(BuildContext context) {
-  showPlatformDialog(
-      context: context,
-      builder: (context) {
-        return BasicDialogAlert(
-          title: Text("Phone Verification"),
-          content: Text("Phone number is verified"),
-          actions: [
-            BasicDialogAction(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                title: Text("OK"))
-          ],
-        );
-      });
-}
-}
 
+  void numberVerified(BuildContext context) {
+    showPlatformDialog(
+        context: context,
+        builder: (context) {
+          return BasicDialogAlert(
+            title: Text("Phone Verification"),
+            content: Text("Phone number is verified"),
+            actions: [
+              BasicDialogAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  title: Text("OK"))
+            ],
+          );
+        });
+  }
+}

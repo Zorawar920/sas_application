@@ -39,12 +39,14 @@ class EmergencyContactScreenApp extends StatefulWidget {
 
 class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
     with AutomaticKeepAliveClientMixin {
+  bool emergencyContactState = true;
   late bool sameContact;
   final globalFormKey = GlobalKey<FormState>();
   String contactName = "";
   String contactNumber = "";
   Contact? _contact;
   List contactInformation = [];
+  String myPhoneNumber = " ";
 
   Widget buildAppScreenLogo() {
     return Container(
@@ -155,7 +157,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                             ],
                           ));
                   widget.emergencyContactViewModel
-                      .addContactInformation(contactName, contactNumber);
+                      .formatPhoneNumber(contactName, contactNumber);
                 }
               });
             }
@@ -165,6 +167,243 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
         },
       ),
     );
+  }
+
+  Widget headLineAddEmergencyContacts() {
+    return Text(
+      'Add Emergency Contacts',
+      style: TextStyle(
+        color: Colors.blue,
+        fontFamily: 'OpenSans',
+        fontSize: 30.0,
+        fontWeight: FontWeight.bold,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget headLineWhoAddedMe() {
+    return Text(
+      'Who Added Me As Emergency Contact',
+      style: TextStyle(
+        color: Colors.blue,
+        fontFamily: 'OpenSans',
+        fontSize: 30.0,
+        fontWeight: FontWeight.bold,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget showEmergencyContacts() {
+    return Expanded(
+      child: StreamBuilder(
+          stream: widget.emergencyContactViewModel.firebaseDbService.instance
+              .collection("users")
+              .doc(widget.emergencyContactViewModel.auth.currentUser!.uid)
+              .collection("emergency-contacts")
+              .snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+            if (!streamSnapshot.hasData) return Text("");
+            return ListView.builder(
+                padding: EdgeInsets.only(right: 15, left: 15),
+                shrinkWrap: true,
+                physics: AlwaysScrollableScrollPhysics(),
+                itemCount: streamSnapshot.data!.docs.length,
+                itemBuilder: (ctx, index) {
+                  return Card(
+                      shadowColor: Colors.black,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            title: Text(
+                                streamSnapshot.data!.docs[index]
+                                    ['emergency-contact-name'],
+                                style: UserlabelStyle),
+                            subtitle: Text(
+                                streamSnapshot.data!.docs[index]
+                                    ['emergency-contact-number'],
+                                style: TextStyle(
+                                  color: Color(0xFF527DAA),
+                                  fontFamily: 'OpenSans',
+                                )),
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                TextButton(
+                                  onPressed: () => {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ChatWindowScreen(
+                                                streamSnapshot
+                                                    .data!
+                                                    .docs[index][
+                                                        'emergency-contact-name']
+                                                    .toString(),
+                                                streamSnapshot
+                                                    .data!
+                                                    .docs[index][
+                                                        'emergency-contact-number']
+                                                    .toString())))
+                                  },
+                                  child: Text(
+                                    'Connect',
+                                    style: TextStyle(
+                                      color: Color(0xFF527DAA),
+                                      letterSpacing: 1.5,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  onPressed: () async => {
+                                    widget.emergencyContactViewModel.deleteData(
+                                        streamSnapshot.data!.docs[index].id)
+                                  },
+                                  child: Text(
+                                    'Remove',
+                                    style: TextStyle(
+                                      color: Color(0xFF527DAA),
+                                      letterSpacing: 1.5,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'OpenSans',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                              ])
+                        ],
+                      ));
+                });
+          }),
+    );
+  }
+
+  Widget whoAddedMeDetail(
+      {required bool noVal,
+      required String name,
+      required String number,
+      required String email}) {
+    if (noVal) {
+      return Text("You are not in anyone's emergency contact list",
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            fontFamily: 'OpenSans',
+          ));
+    } else {
+      return Card(
+          //margin: EdgeInsets.only(top: 13, bottom: 13),
+          shadowColor: Colors.black,
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                  contentPadding: EdgeInsets.all(10),
+                  title: Text(name, style: UserlabelStyle),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text(number,
+                          style: TextStyle(
+                            color: Color(0xFF527DAA),
+                            fontFamily: 'OpenSans',
+                          )),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text(email,
+                          style: TextStyle(
+                            color: Color(0xFF527DAA),
+                            fontFamily: 'OpenSans',
+                          )),
+                      SizedBox(
+                        height: 2,
+                      ),
+                    ],
+                  )),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
+                const SizedBox(width: 8),
+              ])
+            ],
+          ));
+    }
+  }
+
+  String getNumber() {
+    widget.emergencyContactViewModel.getMyNumber().then((value) => {
+          if (value != null)
+            {myPhoneNumber = value}
+          else
+            {
+              showPlatformDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                        title: Text("Cannot Find Your Number"),
+                        content:
+                            Text("Please Add your Number in User Profile Page"),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                widget.emergencyContactViewModel
+                                    .onEmergencyContactAddtion(contactNumber);
+                                Navigator.pop(context, "OK");
+                              },
+                              child: Text("OK")),
+                        ],
+                      ))
+            }
+        });
+    return myPhoneNumber;
+  }
+
+  Widget showWhoAddedMe() {
+    return FutureBuilder<List>(
+        future: widget.emergencyContactViewModel.getWhoAddedMeList(getNumber()),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data!.isEmpty) {
+              return Expanded(
+                  child: whoAddedMeDetail(
+                      noVal: true, name: " ", email: " ", number: " "));
+            } else {
+              return Expanded(
+                  child: ListView.builder(
+                      padding: EdgeInsets.only(right: 15, left: 15),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return whoAddedMeDetail(
+                            noVal: false,
+                            name: snapshot.data![index]['Name'],
+                            number: snapshot.data![index]['Phone'] == null
+                                ? "User hasn't provided a number yet"
+                                : snapshot.data![index]['Phone'],
+                            email: snapshot.data![index]['email']);
+                      }));
+            }
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
   }
 
   @override
@@ -193,120 +432,29 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                       SizedBox(
                         height: 10.0,
                       ),
-                      Text(
-                        'Add Emergency Contacts',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (emergencyContactState == true) {
+                                emergencyContactState = false;
+                              } else {
+                                emergencyContactState = true;
+                              }
+                            });
+                          },
+                          child: emergencyContactState
+                              ? headLineAddEmergencyContacts()
+                              : headLineWhoAddedMe()),
                       SizedBox(height: 25.0),
-                      addContact1Btn(context)
+                      emergencyContactState
+                          ? addContact1Btn(context)
+                          : SizedBox(),
                     ],
                   ),
                 ),
-                Expanded(
-                  child: StreamBuilder(
-                      stream: widget
-                          .emergencyContactViewModel.firebaseDbService.instance
-                          .collection("users")
-                          .doc(widget
-                              .emergencyContactViewModel.auth.currentUser!.uid)
-                          .collection("emergency-contacts")
-                          .snapshots(),
-                      builder: (context,
-                          AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-                        if (!streamSnapshot.hasData) return Text("");
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            itemCount: streamSnapshot.data!.docs.length,
-                            itemBuilder: (ctx, index) {
-                              return Card(
-                                  shadowColor: Colors.black,
-                                  elevation: 4,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      ListTile(
-                                        title: Text(
-                                            streamSnapshot.data!.docs[index]
-                                                ['emergency-contact-name'],
-                                            style: UserlabelStyle),
-                                        subtitle: Text(
-                                            streamSnapshot.data!.docs[index]
-                                                ['emergency-contact-number'],
-                                            style: TextStyle(
-                                              color: Color(0xFF527DAA),
-                                              fontFamily: 'OpenSans',
-                                            )),
-                                      ),
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: <Widget>[
-                                            TextButton(
-                                              onPressed: () => {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ChatWindowScreen(
-                                                                streamSnapshot
-                                                                    .data!
-                                                                    .docs[index]
-                                                                        [
-                                                                        'emergency-contact-name']
-                                                                    .toString(),
-                                                                streamSnapshot
-                                                                    .data!
-                                                                    .docs[index]
-                                                                        [
-                                                                        'emergency-contact-number']
-                                                                    .toString())))
-                                              },
-                                              child: Text(
-                                                'Connect',
-                                                style: TextStyle(
-                                                  color: Color(0xFF527DAA),
-                                                  letterSpacing: 1.5,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'OpenSans',
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            TextButton(
-                                              onPressed: () async => {
-                                                widget.emergencyContactViewModel
-                                                    .deleteData(streamSnapshot
-                                                        .data!.docs[index].id)
-                                              },
-                                              child: Text(
-                                                'Remove',
-                                                style: TextStyle(
-                                                  color: Color(0xFF527DAA),
-                                                  letterSpacing: 1.5,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'OpenSans',
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                          ])
-                                    ],
-                                  ));
-                            });
-                      }),
-                )
+                emergencyContactState
+                    ? showEmergencyContacts()
+                    : showWhoAddedMe(),
               ],
             ),
           ),

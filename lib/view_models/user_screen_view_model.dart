@@ -10,8 +10,6 @@ import 'package:sas_application/views/screens/log_in.dart';
 class UserScreenViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
 
-
-
   Future getFuture() {
     return Future(() async {
       await Future.delayed(Duration(seconds: 5));
@@ -36,8 +34,9 @@ class UserScreenViewModel extends FireBaseModel {
     }
   }
 
-  Future<void> updateUser(firstName, lastName, phoneNumber,email, gender, BuildContext context) async{
-    try{
+  Future<void> updateUser(firstName, lastName, phoneNumber, email, gender,
+      BuildContext context) async {
+    try {
       _fireBaseModel.setBusy(true);
       String _phoneNumber = phoneNumber.text.trim();
       String _gender = gender.text.trim();
@@ -46,22 +45,21 @@ class UserScreenViewModel extends FireBaseModel {
       String _email = email.text.trim();
       String name = _firstname + " " + _lastname;
       UserModel userModel = new UserModel(
-          userId:_fireBaseModel.auth.currentUser!.uid,
+          userId: _fireBaseModel.auth.currentUser!.uid,
           fullName: name,
           emailAddress: _email,
           phoneNumber: _phoneNumber,
-          gender: _gender
-      );
+          gender: _gender);
       await _fireBaseModel.firebaseDbService.updateUserData(userModel);
       _fireBaseModel.setBusy(false);
-      }catch(e){
-        print(e.toString());
+    } catch (e) {
+      print(e.toString());
+    }
   }
-}
 
-  Future<void> verifyPhoneNumber( TextEditingController phoneController, BuildContext context) async {
+  Future<void> verifyPhoneNumber(
+      TextEditingController phoneController, BuildContext context) async {
     try {
-
       _fireBaseModel.setBusy(true);
       await _fireBaseModel.auth.VerifyNumber(phoneController, context);
       _fireBaseModel.setBusy(false);

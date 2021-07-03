@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io' show Platform;
+import 'package:flutter_sms/flutter_sms.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contact_picker/contact_picker.dart';
@@ -71,13 +73,6 @@ class EmergencyContactViewModel extends FireBaseModel {
     }
   }
 
-  Future<void> addContactInformation(
-      String contactName, String contactNumber) async {
-    var uid = _fireBaseModel.auth.currentUser!.uid;
-    await _fireBaseModel.firebaseDbService
-        .addEmergencyContact(contactName, contactNumber, uid);
-  }
-
   void handleInvalidPermissions(PermissionStatus permissionStatus) {
     if (permissionStatus == PermissionStatus.denied) {
       throw PlatformException(
@@ -92,6 +87,84 @@ class EmergencyContactViewModel extends FireBaseModel {
     }
   }
 
+  Future<void> addContactInformation(
+      String contactName, String contactNumber) async {
+    var uid = _fireBaseModel.auth.currentUser!.uid;
+    await _fireBaseModel.firebaseDbService
+        .addEmergencyContact(contactName, contactNumber, uid);
+  }
+
+  //Function to add +91 if missing or replace 0 with +91.
+  Future<void> formatPhoneNumber(
+      String contactName, String contactNumber) async {
+    contactNumber = contactNumber.trim();
+    var formattedNumber;
+    if (contactNumber.startsWith("+91")) {
+      formattedNumber = fomatter(contactNumber);
+      addContactInformation(contactName, formattedNumber);
+    } else if (!contactNumber.startsWith("+91") &&
+        !contactNumber.startsWith("+1") &&
+        !contactNumber.startsWith("+")) {
+      if (contactNumber.startsWith("0")) {
+        contactNumber = contactNumber.replaceFirst("0", "+91");
+        formattedNumber = fomatter(contactNumber);
+        addContactInformation(contactName, formattedNumber);
+      } else {
+        contactNumber = "+91" + contactNumber;
+        formattedNumber = fomatter(contactNumber);
+        addContactInformation(contactName, formattedNumber);
+      }
+    } else if (contactNumber.startsWith("+1")) {
+      formattedNumber = fomatter(contactNumber);
+      addContactInformation(contactName, formattedNumber);
+    }
+  }
+
+  //Funtion to remove space, - and () from a Phonenumber.
+  String fomatter(String number) {
+    String newNumber;
+    List tokens;
+    if (number.contains(" ")) {
+      tokens = number.split(" ");
+      newNumber = tokens.join();
+      if (newNumber.contains("(") && newNumber.contains(")")) {
+        tokens = newNumber.split("(");
+        newNumber = tokens.join();
+        tokens = newNumber.split(")");
+        newNumber = tokens.join();
+        if (newNumber.contains("-")) {
+          tokens = newNumber.split("-");
+          newNumber = tokens.join();
+        } else {
+          return newNumber;
+        }
+      } else if (newNumber.contains("-")) {
+        tokens = newNumber.split("-");
+        return tokens.join();
+      }
+      return newNumber;
+    } else if (number.contains("(") &&
+        number.contains(")") &&
+        !number.contains(" ") &&
+        !number.contains("-")) {
+      tokens = number.split("(");
+      newNumber = tokens.join();
+      tokens = newNumber.split(")");
+      newNumber = tokens.join();
+      return newNumber;
+    } else if (number.contains("-") &&
+        !number.contains("(") &&
+        !number.contains(")") &&
+        !number.contains(" ")) {
+      tokens = number.split("-");
+      newNumber = tokens.join();
+      return newNumber;
+    } else {
+      newNumber = number;
+      return newNumber;
+    }
+  }
+
   Future<List> getList() async {
     var snapshots = await FirebaseFirestore.instance
         .collection('users')
@@ -99,7 +172,47 @@ class EmergencyContactViewModel extends FireBaseModel {
         .collection("emergency-contacts")
         .get();
     final allData = snapshots.docs.map((doc) => doc.data()).toList();
+    print(allData);
     return allData;
+  }
+
+  Future<List> getWhoAddedMeList(String myPhoneNumber) async {
+    var snapshots = await FirebaseFirestore.instance.collection('users').get();
+    final allData = snapshots.docs.map((doc) => doc.data()).toList();
+    List whoAddedMe = [];
+
+    for (Map usersMap in allData) {
+      var snapShot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(usersMap['userId'])
+          .collection("emergency-contacts")
+          .get();
+      final data = snapShot.docs.map((doc) => doc.data()).toList();
+      for (Map map in data) {
+        if (map["emergency-contact-number"] == myPhoneNumber) {
+          whoAddedMe.add({
+            'Name': usersMap["full_name"],
+            'Phone': usersMap['phone_number'],
+            'email': usersMap['e-mail id']
+          });
+        }
+      }
+    }
+    return whoAddedMe;
+  }
+
+  Future<String> getMyNumber() async {
+    var snapshots = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(_fireBaseModel.auth.currentUser!.uid)
+        .get();
+    var data = snapshots.data();
+    if (data!['phone_number'] == null) {
+      return data['phone_number'];
+    } else {
+      var num = fomatter(data['phone_number']);
+      return num;
+    }
   }
 
   Future<void> getContactDetails(BuildContext context) async {
@@ -149,11 +262,21 @@ class EmergencyContactViewModel extends FireBaseModel {
         .delete();
   }
 
-  void onEmergencyContactAddtion(String phoneNumber) {
+  Future<void> onEmergencyContactAddtion(String phoneNumber) async {
     String address = phoneNumber;
-    SmsSender sender = new SmsSender();
-    sender.sendSms(
-        new SmsMessage(address, "You have been added as an Emergency contact"));
+    if (Platform.isAndroid) {
+      SmsSender sender = new SmsSender();
+      sender.sendSms(new SmsMessage(
+          address, "You have been added as an Emergency contact"));
+    } else if (Platform.isIOS) {
+      try {
+        await sendSMS(
+            message: "You have been added as an Emergency contact",
+            recipients: [phoneNumber]);
+      } catch (e) {
+        print("Error while sending a message : $e");
+      }
+    }
   }
 
   String? validatePhone(phoneValue) {
