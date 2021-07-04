@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/views/screens/home_page.dart';
+import 'package:sas_application/views/screens/user_screen.dart';
 
 class LoginViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
@@ -28,7 +29,7 @@ class LoginViewModel extends FireBaseModel {
       _fireBaseModel.setBusy(false);
       if (_authenticatedUser!.emailVerified) {
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => HomePage()),
+            MaterialPageRoute(builder: (builder) => UserScreen()),
             (Route<dynamic> route) => false);
       } else {
         showPlatformDialog(
@@ -74,7 +75,7 @@ class LoginViewModel extends FireBaseModel {
       _fireBaseModel.setBusy(false);
       if (result != null) {
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => HomePage()),
+            MaterialPageRoute(builder: (builder) => UserScreen()),
             (Route<dynamic> route) => false);
       }
     } catch (e) {

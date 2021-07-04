@@ -9,6 +9,7 @@ import 'package:sas_application/models/user_model.dart';
 
 abstract class AuthBase {
   User? get currentUser;
+  bool isPhoneVerified =false;
   Future<User?> signInAnonymously();
   Future<User?> signOut();
   Stream<User?> authStateChanges();
@@ -17,7 +18,8 @@ abstract class AuthBase {
   Future<User?> createUserWithEmailAndPassword(String email, String password);
   Future forgotPasswordWithEmail(String email);
   Future<void> VerifyNumber(
-      TextEditingController phoneController, BuildContext context);
+      String phone, BuildContext context);
+
 }
 
 class Auth implements AuthBase {
@@ -36,6 +38,9 @@ class Auth implements AuthBase {
     final signInApi = GoogleSignIn();
     await signInApi.signOut();
   }
+
+  @override
+  bool isPhoneVerified=false;
 
   Future<User?> signInWithGoogle() async {
     final googleSignIn = GoogleSignIn();
@@ -103,41 +108,18 @@ class Auth implements AuthBase {
 
   @override
   Future<void> VerifyNumber(
-      TextEditingController phoneController, context) async {
+      String phone, context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.verifyPhoneNumber(
-      phoneNumber: phoneController.text,
-      timeout: Duration(seconds: 120),
-      verificationCompleted: (AuthCredential credential) async {
-        Navigator.of(context).pop();
-        final result = await _auth.signInWithCredential(credential);
-        final user = result.user;
-        if (user != null) {
-          await FirebaseAuth.instance.currentUser!.delete();
-          print('Number Verified');
-          showPlatformDialog(
-              context: context,
-              builder: (context) {
-                return BasicDialogAlert(
-                  title: Text("Phone Verification"),
-                  content: Text("Your phone Number is verified"),
-                  actions: [
-                    BasicDialogAction(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        title: Text("OK"))
-                  ],
-                );
-              });
-        } else {
-          print("Error");
-        }
 
-        //This callback would gets called when verification is done auto maticlly
-      },
+      phoneNumber: phone,
+      timeout: Duration(seconds: 120),
+
+      verificationCompleted: (AuthCredential credential) async
+        {},
 
       verificationFailed: (FirebaseAuthException e) {
+        isPhoneVerified=false;
         showPlatformDialog(
             context: context,
             builder: (context) {
@@ -176,37 +158,59 @@ class Auth implements AuthBase {
                   BasicDialogAction(
                       onPressed: () async {
                         final code = _codeController.text.trim();
-                        AuthCredential authCredential =
-                            PhoneAuthProvider.credential(
-                                verificationId: verificationId, smsCode: code);
-                        print(authCredential.providerId.toString());
-                        UserCredential result =
-                            await _auth.signInWithCredential(authCredential);
-                        User? user = result.user;
 
-                        if (user != null) {
-                          await FirebaseAuth.instance.currentUser!.delete();
-                          print('Number Verified');
-                          numberVerified(context);
-                        } else {
-                          print("Error");
-                          showPlatformDialog(
-                              context: context,
-                              builder: (context) {
-                                return BasicDialogAlert(
-                                  title: Text("Phone Verification"),
-                                  content: Text(
-                                      "Phone number not verified. Please try again."),
-                                  actions: [
-                                    BasicDialogAction(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        title: Text("OK"))
-                                  ],
-                                );
-                              });
-                        }
+                          try{
+                            AuthCredential authCredential = PhoneAuthProvider
+                                .credential(
+                                verificationId: verificationId, smsCode: code);
+                            UserCredential result = await _auth.currentUser!.linkWithCredential(authCredential);
+                            User? user = result.user;
+
+                            if (user != null) {
+                              print('Number Verified');
+                              isPhoneVerified =true;
+                              numberVerified(context);
+                            }
+                            else{
+                              print("Error");
+                              isPhoneVerified=false;
+                              showPlatformDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return BasicDialogAlert(
+                                      title: Text("Phone Verification"),
+                                      content: Text("Phone number not verified. Please try again."),
+                                      actions: [
+                                        BasicDialogAction(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            title: Text("OK"))
+                                      ],
+                                    );
+                                  });
+                            }
+                          }on FirebaseAuthException catch (e) {
+                            switch (e.code) {
+                              case "invalid-verification-code":
+                                isPhoneVerified=false;
+                                showPlatformDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return BasicDialogAlert(
+                                        title: Text("Phone Verification"),
+                                        content: Text("OTP entered is not correct. Please enter correct OTP"),
+                                        actions: [
+                                          BasicDialogAction(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              title: Text("OK"))
+                                        ],
+                                      );
+                                    });
+                            }
+                          }
                         //Navigator.of(context).pop();
                       },
                       title: Text("Confirm")),
@@ -244,3 +248,7 @@ class Auth implements AuthBase {
         });
   }
 }
+
+
+
+

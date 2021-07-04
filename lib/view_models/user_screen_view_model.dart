@@ -4,6 +4,7 @@ import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:sas_application/models/firebase_model.dart';
 import 'package:flutter/material.dart';
 import 'package:sas_application/models/user_model.dart';
+import 'package:sas_application/views/screens/emergency_contact.dart';
 //import 'package:flutter_otp/flutter_otp.dart';
 import 'package:sas_application/views/screens/log_in.dart';
 
@@ -38,11 +39,11 @@ class UserScreenViewModel extends FireBaseModel {
       BuildContext context) async {
     try {
       _fireBaseModel.setBusy(true);
-      String _phoneNumber = phoneNumber.text.trim();
+      String _phoneNumber = phoneNumber;
       String _gender = gender.text.trim();
       String _firstname = firstName.text.trim();
       String _lastname = lastName.text.trim();
-      String _email = email.text.trim();
+      String _email = email;
       String name = _firstname + " " + _lastname;
       UserModel userModel = new UserModel(
           userId: _fireBaseModel.auth.currentUser!.uid,
@@ -52,19 +53,28 @@ class UserScreenViewModel extends FireBaseModel {
           gender: _gender);
       await _fireBaseModel.firebaseDbService.updateUserData(userModel);
       _fireBaseModel.setBusy(false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (builder) => EmergencyContactScreen()),
+              (Route<dynamic> route) => false);
     } catch (e) {
       print(e.toString());
     }
   }
 
   Future<void> verifyPhoneNumber(
-      TextEditingController phoneController, BuildContext context) async {
+      String phone, BuildContext context) async {
     try {
       _fireBaseModel.setBusy(true);
-      await _fireBaseModel.auth.VerifyNumber(phoneController, context);
+      await _fireBaseModel.auth.VerifyNumber(phone, context);
       _fireBaseModel.setBusy(false);
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  String? validateCountryCode(value){
+    if(value==null){
+      return 'Please enter the country code';
     }
   }
 
@@ -81,7 +91,7 @@ class UserScreenViewModel extends FireBaseModel {
     final regExp = RegExp(pattern);
     if (phoneValue.isEmpty) {
       return 'Please Enter Phone Number';
-    } else if (!regExp.hasMatch(phoneValue)) {
+    } else if (phoneValue.length != 10) {
       return 'Please Enter Valid Phone Number';
     }
   }

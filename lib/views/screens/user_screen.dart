@@ -1,6 +1,11 @@
+import 'dart:ffi';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/user_screen_view_model.dart';
@@ -41,6 +46,11 @@ class UserScreenState extends State<UserScreenApp> {
   var ageController = TextEditingController();
   var genderController = TextEditingController();
   var myEmailController = TextEditingController();
+  String email = FirebaseAuth.instance.currentUser!.email.toString();
+  List<String> _countryCodes = ['+91','+1','+880'];
+  String dropdownValue = "";
+  String holder ="";
+  String phone = "";
 
   Widget buildAppScreenLogo() {
     return Container(
@@ -133,46 +143,6 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
-  Widget buildEmail() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Email',
-          style: UserlabelStyle,
-        ),
-        SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: TextFormField(
-            controller: myEmailController,
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) {
-              return widget.userScreenViewModel.validateEmail(value!);
-            }, //Email validator
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.email,
-                color: Color(0xFF527DAA),
-              ),
-              hintText: 'Enter your Email',
-              hintStyle: hintTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget buildGender() {
     return Column(
@@ -226,25 +196,28 @@ class UserScreenState extends State<UserScreenApp> {
            ),
            TextButton(
              style: TextButton.styleFrom(padding: EdgeInsets.only(left: 100.0)),
-             onPressed: () => {if(phoneNumberController.text.isNotEmpty)
+             onPressed: () => {if(phoneNumberController.text.isNotEmpty && holder.isNotEmpty)
                {
-               widget.userScreenViewModel.verifyPhoneNumber(phoneNumberController, context)}
+                 phone = holder+phoneNumberController.text.toString(),
+                 print(phone),
+                 widget.userScreenViewModel.verifyPhoneNumber(phone, context)
+               }
                else{
-    showPlatformDialog(
-    context: context,
-    builder: (context) {
-    return BasicDialogAlert(
-    //title: Text("Please enter the number"),
-    content: Text("Please enter the number"),
-    actions: [
-    BasicDialogAction(
-    onPressed: () {
-    Navigator.of(context).pop();
-    },
-    title: Text("OK"))
-    ],
-    );
-    })
+                  showPlatformDialog(
+                    context: context,
+                    builder: (context) {
+                        return BasicDialogAlert(
+                          content: Text("Please enter both, Contact Number and Country code"),
+                          actions: [
+                            BasicDialogAction(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                               },
+                              title: Text("OK"))
+                          ],
+                        );
+                    }
+                    )
                }
              },
              child: Text(
@@ -267,35 +240,77 @@ class UserScreenState extends State<UserScreenApp> {
           alignment: Alignment.centerLeft,
           decoration: boxDecorationStyle,
           height: 60.0,
-          child: TextFormField(
-            controller: phoneNumberController,
-            validator: (value) {
-              return widget.userScreenViewModel.validatePhone(value!);
-            }, //Name validator
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            keyboardType: TextInputType.phone,
-            style: TextStyle(
-              color: Color(0xFF527DAA),
-              fontFamily: 'OpenSans',
-            ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              errorStyle: errorStyle,
-              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-              prefixIcon: Icon(
-                Icons.phone,
-                color: Color(0xFF527DAA),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Flexible(
+              child:Container(
+                width:60.0,
+                  child:DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    enabledBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.all(0.0)
+                  ),
+                  icon:Icon(Icons.arrow_drop_down),
+                  style:TextStyle(color: Color(0xFF527DAA),fontFamily: 'OpenSans'),
+                  hint: Text('Code',style: TextStyle(
+                    color: Color(0xFF527DAA),
+                    fontFamily: 'OpenSans',
+                  )),
+                  /*validator: (value){
+                    return widget.userScreenViewModel.validateCountryCode(value!);
+                  },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,*/
+                  onChanged: (data){
+                    setState(() {
+                      dropdownValue = data!;
+                      holder=dropdownValue;
+                      print(holder);
+                    });
+                  },
+                  items: _countryCodes.map<DropdownMenuItem<String>>((String value){
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                ),
               ),
-              hintText: ' Enter Your Contact Number',
-              hintStyle: hintTextStyle,
+            Flexible(child:TextFormField(
+              controller: phoneNumberController,
+              validator: (value) {
+                return widget.userScreenViewModel.validatePhone(value!);
+              }, //Name validator
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              keyboardType: TextInputType.phone,
+              style: TextStyle(
+                color: Color(0xFF527DAA),
+                fontFamily: 'OpenSans',
+              ),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                errorStyle: errorStyle,
+                contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
+                //prefixIcon: Icon(
+               //   Icons.phone,
+                 // color: Color(0xFF527DAA),
+                //),
+                hintText: 'Contact Number',
+                hintStyle: hintTextStyle,
+              ),
             ),
-          ),
+            )
+          ],
+          )
         ),
       ],
     );
   }
 
   Widget submitBtn(BuildContext context) {
+    phone = holder+phoneNumberController.text.toString();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
@@ -311,13 +326,33 @@ class UserScreenState extends State<UserScreenApp> {
         ),
         onPressed: () async {
           if (globalFormKey.currentState!.validate()) {
-            widget.userScreenViewModel.updateUser(
-                myFirstNameController,
-                myLastNameController,
-                phoneNumberController,
-                myEmailController,
-                genderController,
-                context);
+            if(widget.userScreenViewModel.auth.isPhoneVerified == true){
+              widget.userScreenViewModel.updateUser(
+                  myFirstNameController,
+                  myLastNameController,
+                  phone,
+                  email,
+                  genderController,
+                  context);
+            }
+            else{
+              showPlatformDialog(
+                  context: context,
+                  builder: (context) {
+                    return BasicDialogAlert(
+                      title: Text("Phone Verification"),
+                      content: Text("Please verify your phone number first."),
+                      actions: [
+                        BasicDialogAction(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            title: Text("OK"))
+                      ],
+                    );
+                  });
+            }
+
           } else {
             showPlatformDialog(
                 context: context,
@@ -423,11 +458,9 @@ class UserScreenState extends State<UserScreenApp> {
                         SizedBox(height: 15.0),
                         buildLastName(),
                         SizedBox(height: 15.0),
-                        buildPhoneNumber(),
-                        SizedBox(height: 15.0),
-                        buildEmail(),
-                        SizedBox(height: 15.0),
                         buildGender(),
+                        SizedBox(height: 15.0),
+                        buildPhoneNumber(),
                         SizedBox(height: 15.0),
                         submitBtn(context),
                         signOutBtn(context)
