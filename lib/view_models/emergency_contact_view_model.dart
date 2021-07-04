@@ -90,33 +90,34 @@ class EmergencyContactViewModel extends FireBaseModel {
   Future<void> addContactInformation(
       String contactName, String contactNumber) async {
     var uid = _fireBaseModel.auth.currentUser!.uid;
-    await _fireBaseModel.firebaseDbService
-        .addEmergencyContact(contactName, contactNumber, uid);
+    await _fireBaseModel.firebaseDbService.addEmergencyContact(
+        contactName, formatMobileNumber(contactNumber), uid);
   }
 
   //Function to add +91 if missing or replace 0 with +91.
-  Future<void> formatPhoneNumber(
-      String contactName, String contactNumber) async {
+  String formatMobileNumber(String contactNumber) {
     contactNumber = contactNumber.trim();
     var formattedNumber;
     if (contactNumber.startsWith("+91")) {
       formattedNumber = fomatter(contactNumber);
-      addContactInformation(contactName, formattedNumber);
+      return formattedNumber;
     } else if (!contactNumber.startsWith("+91") &&
         !contactNumber.startsWith("+1") &&
         !contactNumber.startsWith("+")) {
       if (contactNumber.startsWith("0")) {
         contactNumber = contactNumber.replaceFirst("0", "+91");
         formattedNumber = fomatter(contactNumber);
-        addContactInformation(contactName, formattedNumber);
+        return formattedNumber;
       } else {
         contactNumber = "+91" + contactNumber;
         formattedNumber = fomatter(contactNumber);
-        addContactInformation(contactName, formattedNumber);
+        return formattedNumber;
       }
     } else if (contactNumber.startsWith("+1")) {
       formattedNumber = fomatter(contactNumber);
-      addContactInformation(contactName, formattedNumber);
+      return formattedNumber;
+    } else {
+      return contactNumber;
     }
   }
 

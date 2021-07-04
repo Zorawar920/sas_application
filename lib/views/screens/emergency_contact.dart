@@ -111,7 +111,9 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                 } else {
                   for (var map in contactInformation) {
                     if (map["emergency-contact-name"] == contactName &&
-                        map["emergency-contact-number"] == contactNumber) {
+                        map["emergency-contact-number"] ==
+                            widget.emergencyContactViewModel
+                                .formatMobileNumber(contactNumber)) {
                       sameContact = true;
                       break;
                     } else {
@@ -157,7 +159,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                             ],
                           ));
                   widget.emergencyContactViewModel
-                      .formatPhoneNumber(contactName, contactNumber);
+                      .addContactInformation(contactName, contactNumber);
                 }
               });
             }
