@@ -23,11 +23,12 @@ class FirebaseDbService {
     return await FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
-        .collection("emergency-contacts")
+        .collection("emergencyContacts")
         .doc()
         .set({
-          'emergency-contact-name': contactName,
-          'emergency-contact-number': contactNumber,
+          'emergencyContactName': contactName,
+          'emergencyContactNumber': contactNumber,
+          'userId': uid
         })
         .then((value) => print("Contact Added"))
         .catchError((error) => print("Failed to add: $error"));
@@ -38,14 +39,13 @@ class FirebaseDbService {
         .collection("users")
         .doc(userModel.userId)
         .update({
-      'full_name': userModel.fullName,
-      'e-mail id': userModel.emailAddress,
-      'userId': userModel.userId,
-      'phone_number': userModel.phoneNumber,
-      'gender':userModel.gender,
-    })
+          'full_name': userModel.fullName,
+          'e-mail id': userModel.emailAddress,
+          'userId': userModel.userId,
+          'phone_number': userModel.phoneNumber,
+          'gender': userModel.gender,
+        })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add: $error"));
   }
-
 }

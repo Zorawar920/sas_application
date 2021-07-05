@@ -167,53 +167,45 @@ class EmergencyContactViewModel extends FireBaseModel {
   }
 
   Future<List> getList() async {
-    var snapshots = await FirebaseFirestore.instance
+    var snapshots = await _fireBaseModel.firebaseDbService.instance
         .collection('users')
         .doc(_fireBaseModel.auth.currentUser!.uid)
-        .collection("emergency-contacts")
+        .collection("emergencyContacts")
         .get();
     final allData = snapshots.docs.map((doc) => doc.data()).toList();
-    print(allData);
     return allData;
   }
 
   Future<List> getWhoAddedMeList(String myPhoneNumber) async {
-    var snapshots = await FirebaseFirestore.instance.collection('users').get();
+    var snapshots = await _fireBaseModel.firebaseDbService.instance
+        .collectionGroup("emergencyContacts")
+        .where("emergencyContactNumber", isEqualTo: myPhoneNumber)
+        .get();
     final allData = snapshots.docs.map((doc) => doc.data()).toList();
     List whoAddedMe = [];
-
-    for (Map usersMap in allData) {
-      var snapShot = await FirebaseFirestore.instance
+    for (Map map in allData) {
+      var snapshot = await _fireBaseModel.firebaseDbService.instance
           .collection("users")
-          .doc(usersMap['userId'])
-          .collection("emergency-contacts")
+          .doc(map['userId'])
           .get();
-      final data = snapShot.docs.map((doc) => doc.data()).toList();
-      for (Map map in data) {
-        if (map["emergency-contact-number"] == myPhoneNumber) {
-          whoAddedMe.add({
-            'Name': usersMap["full_name"],
-            'Phone': usersMap['phone_number'],
-            'email': usersMap['e-mail id']
-          });
-        }
-      }
+      var userData = snapshot.data();
+      whoAddedMe.add({
+        'Name': userData!["full_name"],
+        'Phone': userData['phone_number'],
+        'email': userData['e-mail id']
+      });
     }
     return whoAddedMe;
   }
 
   Future<String> getMyNumber() async {
-    var snapshots = await FirebaseFirestore.instance
+    var snapshots = await _fireBaseModel.firebaseDbService.instance
         .collection("users")
         .doc(_fireBaseModel.auth.currentUser!.uid)
         .get();
     var data = snapshots.data();
-    if (data!['phone_number'] == null) {
-      return data['phone_number'];
-    } else {
-      var num = fomatter(data['phone_number']);
-      return num;
-    }
+    //print(data!["phone_number"] + "ViewModel");
+    return data!["phone_number"];
   }
 
   Future<void> getContactDetails(BuildContext context) async {
@@ -258,7 +250,7 @@ class EmergencyContactViewModel extends FireBaseModel {
     await _fireBaseModel.firebaseDbService.instance
         .collection("users")
         .doc(_fireBaseModel.auth.currentUser!.uid)
-        .collection("emergency-contacts")
+        .collection("emergencyContacts")
         .doc(docId)
         .delete();
   }

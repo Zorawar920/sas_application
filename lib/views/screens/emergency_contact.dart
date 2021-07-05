@@ -110,8 +110,8 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                   sameContact = false;
                 } else {
                   for (var map in contactInformation) {
-                    if (map["emergency-contact-name"] == contactName &&
-                        map["emergency-contact-number"] ==
+                    if (map["emergencyContactName"] == contactName &&
+                        map["emergencyContactNumber"] ==
                             widget.emergencyContactViewModel
                                 .formatMobileNumber(contactNumber)) {
                       sameContact = true;
@@ -203,7 +203,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
           stream: widget.emergencyContactViewModel.firebaseDbService.instance
               .collection("users")
               .doc(widget.emergencyContactViewModel.auth.currentUser!.uid)
-              .collection("emergency-contacts")
+              .collection("emergencyContacts")
               .snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
             if (!streamSnapshot.hasData) return Text("");
@@ -225,11 +225,11 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                           ListTile(
                             title: Text(
                                 streamSnapshot.data!.docs[index]
-                                    ['emergency-contact-name'],
+                                    ['emergencyContactName'],
                                 style: UserlabelStyle),
                             subtitle: Text(
                                 streamSnapshot.data!.docs[index]
-                                    ['emergency-contact-number'],
+                                    ['emergencyContactNumber'],
                                 style: TextStyle(
                                   color: Color(0xFF527DAA),
                                   fontFamily: 'OpenSans',
@@ -246,13 +246,13 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                                             builder: (context) => ChatWindowScreen(
                                                 streamSnapshot
                                                     .data!
-                                                    .docs[index][
-                                                        'emergency-contact-name']
+                                                    .docs[index]
+                                                        ['emergencyContactName']
                                                     .toString(),
                                                 streamSnapshot
                                                     .data!
                                                     .docs[index][
-                                                        'emergency-contact-number']
+                                                        'emergencyContactNumber']
                                                     .toString())))
                                   },
                                   child: Text(
@@ -303,9 +303,14 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
             color: Color(0xFF527DAA),
             fontFamily: 'OpenSans',
           ));
+    } else if (number == "null") {
+      return Text("Please add your number in User Details page",
+          style: TextStyle(
+            color: Color(0xFF527DAA),
+            fontFamily: 'OpenSans',
+          ));
     } else {
       return Card(
-          //margin: EdgeInsets.only(top: 13, bottom: 13),
           shadowColor: Colors.black,
           elevation: 4,
           shape: RoundedRectangleBorder(
@@ -350,36 +355,27 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
     }
   }
 
-  String getNumber() {
-    widget.emergencyContactViewModel.getMyNumber().then((value) => {
-          if (value != null)
-            {myPhoneNumber = value}
-          else
-            {
-              showPlatformDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                        title: Text("Cannot Find Your Number"),
-                        content:
-                            Text("Please Add your Number in User Profile Page"),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                widget.emergencyContactViewModel
-                                    .onEmergencyContactAddtion(contactNumber);
-                                Navigator.pop(context, "OK");
-                              },
-                              child: Text("OK")),
-                        ],
-                      ))
-            }
+  Widget _showWhoAddedMe() {
+    return FutureBuilder<String>(
+        future: widget.emergencyContactViewModel.getMyNumber(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.connectionState == ConnectionState.done) {
+            return showWhoAddedMe(snapshot.data.toString());
+          } else if (snapshot.data == null &&
+              snapshot.connectionState == ConnectionState.done) {
+            return Expanded(
+                child: whoAddedMeDetail(
+                    noVal: false, name: " ", email: " ", number: "null"));
+          } else {
+            return CircularProgressIndicator();
+          }
         });
-    return myPhoneNumber;
   }
 
-  Widget showWhoAddedMe() {
+  Widget showWhoAddedMe(String number) {
     return FutureBuilder<List>(
-        future: widget.emergencyContactViewModel.getWhoAddedMeList(getNumber()),
+        future: widget.emergencyContactViewModel.getWhoAddedMeList(number),
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
@@ -456,7 +452,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                 ),
                 emergencyContactState
                     ? showEmergencyContacts()
-                    : showWhoAddedMe(),
+                    : _showWhoAddedMe(),
               ],
             ),
           ),
