@@ -29,13 +29,21 @@ class LoginViewModel extends FireBaseModel {
           .signInWithEmailAndPassword(_email, _password);
       _fireBaseModel.setBusy(false);
       if (_authenticatedUser!.emailVerified) {
-       /* Navigator.of(context).pushAndRemoveUntil(
+        /* Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (builder) => UserScreen()),
             (Route<dynamic> route) => false);*/
-        _fireBaseModel.auth.currentUser!.phoneNumber != null ? Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => HomePage()),
-                (Route<dynamic> route) => false) : Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => UserScreen()),
+        // ignore: await_only_futures
+        var snapShot = await _fireBaseModel.firebaseDbService.instance
+            .collection('users')
+            .doc(_fireBaseModel.auth.currentUser!.uid)
+            .get();
+        bool number = snapShot.data()!.containsKey("phone_number");
+        number
+            ? Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (builder) => HomePage()),
+                (Route<dynamic> route) => false)
+            : Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (builder) => UserScreen()),
                 (Route<dynamic> route) => false);
       } else {
         showPlatformDialog(
@@ -77,16 +85,23 @@ class LoginViewModel extends FireBaseModel {
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
       _fireBaseModel.setBusy(true);
-      var result = await _fireBaseModel.auth.signInWithGoogle(_userScreenViewModel.userModel);
+      var result = await _fireBaseModel.auth
+          .signInWithGoogle(_userScreenViewModel.userModel);
       _fireBaseModel.setBusy(false);
-      if(result != null){
-        _fireBaseModel.auth.currentUser!.phoneNumber != null ? Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => HomePage()),
-                (Route<dynamic> route) => false) : Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => UserScreen()),
+      if (result != null) {
+        var snapShot = await _fireBaseModel.firebaseDbService.instance
+            .collection('users')
+            .doc(_fireBaseModel.auth.currentUser!.uid)
+            .get();
+        bool number = snapShot.data()!.containsKey("phone_number");
+        number
+            ? Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (builder) => HomePage()),
+                (Route<dynamic> route) => false)
+            : Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (builder) => UserScreen()),
                 (Route<dynamic> route) => false);
       }
-
     } catch (e) {
       print(e.toString());
     }

@@ -92,7 +92,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 top: 10.0,
                 bottom: 10.0,
               ),
-              height: 130.0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

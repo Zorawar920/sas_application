@@ -5,6 +5,7 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sas_application/firebase_services/firebase_db.dart';
 import 'package:sas_application/models/user_model.dart';
+import 'package:sas_application/models/firebase_model.dart';
 
 abstract class AuthBase {
   User? get currentUser;
