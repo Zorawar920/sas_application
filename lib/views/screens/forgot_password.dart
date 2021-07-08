@@ -167,7 +167,6 @@ class ForgotPasswordState extends State<ForgotPassword> {
   @override
   void initState() {
     //State Management for Widgets
-    // TODO: implement initState
     super.initState();
     BackButtonInterceptor.add(myInterceptor);
   }
@@ -178,7 +177,6 @@ class ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     BackButtonInterceptor.remove(myInterceptor);
     super.dispose();
   }

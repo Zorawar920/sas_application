@@ -88,7 +88,7 @@ class EmergencyContactViewModel extends FireBaseModel {
       String contactName, String contactNumber) async {
     var uid = _fireBaseModel.auth.currentUser!.uid;
     await _fireBaseModel.firebaseDbService.addEmergencyContact(
-        contactName, formatMobileNumber(contactNumber), uid);
+        contactName, formatMobileNumber(contactNumber), uid, false);
   }
 
   //Function to add +91 if missing or replace 0 with +91.
@@ -201,7 +201,6 @@ class EmergencyContactViewModel extends FireBaseModel {
         .doc(_fireBaseModel.auth.currentUser!.uid)
         .get();
     var data = snapshots.data();
-    //print(data!["phone_number"] + "ViewModel");
     return data!["phone_number"];
   }
 
@@ -250,6 +249,17 @@ class EmergencyContactViewModel extends FireBaseModel {
         .collection("emergencyContacts")
         .doc(docId)
         .delete();
+  }
+
+  Future<void> verifyPhoneNumber(String phone, context, String docId) async {
+    try {
+      _fireBaseModel.setBusy(true);
+      await _fireBaseModel.auth.verifyNumber(
+          phone, context, docId, _fireBaseModel.auth.currentUser!.uid);
+      _fireBaseModel.setBusy(false);
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> onEmergencyContactAddtion(String phoneNumber) async {

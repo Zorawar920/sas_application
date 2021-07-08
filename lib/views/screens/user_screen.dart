@@ -10,7 +10,6 @@ import 'package:stacked/stacked.dart';
 class UserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ViewModelBuilder<UserScreenViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -39,9 +38,9 @@ class UserScreenState extends State<UserScreenApp> {
   var genderController = TextEditingController();
   var myEmailController = TextEditingController();
   String email = FirebaseAuth.instance.currentUser!.email.toString();
-  List<String> _countryCodes = ['+91','+1','+880'];
+  List<String> _countryCodes = ['+91', '+1', '+880'];
   String dropdownValue = "";
-  String holder ="";
+  String holder = "";
   String phone = "";
   String name = "";
 
@@ -136,7 +135,6 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
-
   Widget buildGender() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,129 +180,136 @@ class UserScreenState extends State<UserScreenApp> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Row(
-         children: <Widget>[
-           Text(
-             'Contact Number',
-             style: userlabelStyle,
-           ),
-           TextButton(
-             style: TextButton.styleFrom(padding: EdgeInsets.only(left: 100.0)),
-             onPressed: () => {if(phoneNumberController.text.isNotEmpty && holder.isNotEmpty)
-               {
-                 phone = holder+phoneNumberController.text.toString(),
-                 print(phone),
-                 widget.userScreenViewModel.verifyPhoneNumber(phone, context)
-               }
-               else{
-                  showPlatformDialog(
-                    context: context,
-                    builder: (context) {
-                        return BasicDialogAlert(
-                          content: Text("Please Enter both, Contact Number and Country code"),
-                          actions: [
-                            BasicDialogAction(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                               },
-                              title: Text("OK"))
-                          ],
-                        );
-                    }
-                    )
-               }
-             },
-             child: Text(
-               'Verify',
-               style: TextStyle(
-                 color: Colors.red,
-                 letterSpacing: 1.5,
-                 fontSize: 12.0,
-                 fontWeight: FontWeight.bold,
-                 fontFamily: 'OpenSans',
-               ),
-             ),
-           ),
-         ],
-
+          children: <Widget>[
+            Text(
+              'Contact Number',
+              style: userlabelStyle,
+            ),
+            TextButton(
+              style:
+                  TextButton.styleFrom(padding: EdgeInsets.only(left: 100.0)),
+              onPressed: () => {
+                if (phoneNumberController.text.isNotEmpty && holder.isNotEmpty)
+                  {
+                    phone = holder + phoneNumberController.text.toString(),
+                    print(phone),
+                    widget.userScreenViewModel.verifyPhoneNumber(phone, context)
+                  }
+                else
+                  {
+                    showPlatformDialog(
+                        context: context,
+                        builder: (context) {
+                          return BasicDialogAlert(
+                            content: Text(
+                                "Please Enter both, Contact Number and Country code"),
+                            actions: [
+                              BasicDialogAction(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  title: Text("OK"))
+                            ],
+                          );
+                        })
+                  }
+              },
+              child: Text(
+                'Verify',
+                style: TextStyle(
+                  color: Colors.red,
+                  letterSpacing: 1.5,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'OpenSans',
+                ),
+              ),
+            ),
+          ],
         ),
 
         //SizedBox(height: 5.0),
         Container(
-          alignment: Alignment.centerLeft,
-          decoration: boxDecorationStyle,
-          height: 60.0,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Flexible(
-              child:Container(
-                width:60.0,
-                  child:DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    enabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.all(0.0)
-                  ),
-                  icon:Icon(Icons.arrow_drop_down),
-                  style:TextStyle(color: Color(0xFF527DAA),fontFamily: 'OpenSans'),
-                  hint: Text('Code',style: TextStyle(
-                    color: Color(0xFF527DAA),
-                    fontFamily: 'OpenSans',
-                  )),
-                  /*validator: (value){
+            alignment: Alignment.centerLeft,
+            decoration: boxDecorationStyle,
+            height: 60.0,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Flexible(
+                  child: Container(
+                    width: 60.0,
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                          enabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.all(0.0)),
+                      icon: Icon(Icons.arrow_drop_down),
+                      style: TextStyle(
+                          color: Color(0xFF527DAA), fontFamily: 'OpenSans'),
+                      hint: Text('Code',
+                          style: TextStyle(
+                            color: Color(0xFF527DAA),
+                            fontFamily: 'OpenSans',
+                          )),
+                      /*validator: (value){
                     return widget.userScreenViewModel.validateCountryCode(value!);
                   },
                     autovalidateMode: AutovalidateMode.onUserInteraction,*/
-                  onChanged: (data){
-                    setState(() {
-                      dropdownValue = data!;
-                      holder=dropdownValue;
-                      print(holder);
-                    });
-                  },
-                  items: _countryCodes.map<DropdownMenuItem<String>>((String value){
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                      onChanged: (data) {
+                        setState(() {
+                          dropdownValue = data!;
+                          holder = dropdownValue;
+                          print(holder);
+                        });
+                      },
+                      items: _countryCodes
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
-                ),
-              ),
-            Flexible(child:TextFormField(
-              controller: phoneNumberController,
-              validator: (value) {
-                return widget.userScreenViewModel.validatePhone(value!);
-              }, //Name validator
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              keyboardType: TextInputType.phone,
-              style: TextStyle(
-                color: Color(0xFF527DAA),
-                fontFamily: 'OpenSans',
-              ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                errorStyle: errorStyle,
-                contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
-                //prefixIcon: Icon(
-               //   Icons.phone,
-                 // color: Color(0xFF527DAA),
-                //),
-                hintText: 'Contact Number',
-                hintStyle: hintTextStyle,
-              ),
-            ),
-            )
-          ],
-          )
-        ),
+                Flexible(
+                  child: TextFormField(
+                    controller: phoneNumberController,
+                    validator: (value) {
+                      return widget.userScreenViewModel.validatePhone(value!);
+                    }, //Name validator
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.phone,
+                    style: TextStyle(
+                      color: Color(0xFF527DAA),
+                      fontFamily: 'OpenSans',
+                    ),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      errorStyle: errorStyle,
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
+                      //prefixIcon: Icon(
+                      //   Icons.phone,
+                      // color: Color(0xFF527DAA),
+                      //),
+                      hintText: 'Contact Number',
+                      hintStyle: hintTextStyle,
+                    ),
+                  ),
+                )
+              ],
+            )),
       ],
     );
   }
 
   Widget submitBtn(BuildContext context) {
-    phone = holder+phoneNumberController.text.toString();
-    name  = myFirstNameController.text.toString() +" "+ myLastNameController.text.toString();
+    phone = holder + phoneNumberController.text.toString();
+    name = myFirstNameController.text.toString() +
+        " " +
+        myLastNameController.text.toString();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
@@ -320,13 +325,10 @@ class UserScreenState extends State<UserScreenApp> {
         ),
         onPressed: () async {
           if (globalFormKey.currentState!.validate()) {
-            if(widget.userScreenViewModel.auth.isPhoneVerified == true){
-              widget.userScreenViewModel.updateUser(
-                  phone,
-                  genderController,
-                  context);
-            }
-            else{
+            if (widget.userScreenViewModel.auth.isPhoneVerified == true) {
+              widget.userScreenViewModel
+                  .updateUser(phone, genderController, context);
+            } else {
               showPlatformDialog(
                   context: context,
                   builder: (context) {
@@ -343,7 +345,6 @@ class UserScreenState extends State<UserScreenApp> {
                     );
                   });
             }
-
           } else {
             showPlatformDialog(
                 context: context,
@@ -409,7 +410,6 @@ class UserScreenState extends State<UserScreenApp> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       body: Form(
         key: globalFormKey,

@@ -6,6 +6,7 @@ import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/emergency_contact_view_model.dart';
 import 'package:stacked/stacked.dart';
+import 'package:intl/intl.dart';
 import '../../enums.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:contact_picker/contact_picker.dart';
@@ -15,7 +16,6 @@ import 'chat_window.dart';
 class EmergencyContactScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ViewModelBuilder<EmergencyContactViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -47,6 +47,8 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
   Contact? _contact;
   List contactInformation = [];
   String myPhoneNumber = " ";
+  late DateTime now;
+  int timeStamp = -1;
 
   Widget buildAppScreenLogo() {
     return Container(
@@ -284,6 +286,38 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                                   ),
                                 ),
                                 const SizedBox(width: 8),
+                                streamSnapshot.data!.docs[index]['verified'] ==
+                                        false
+                                    ? TextButton(
+                                        onPressed: () async => {
+                                          sendOTP(
+                                              streamSnapshot.data!.docs[index]
+                                                  ['emergencyContactNumber'],
+                                              streamSnapshot
+                                                  .data!.docs[index].id)
+                                        }, //Code Goes here
+                                        child: Text(
+                                          'Verify',
+                                          style: TextStyle(
+                                            color: Color(0xFF527DAA),
+                                            letterSpacing: 1.5,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'OpenSans',
+                                          ),
+                                        ),
+                                      )
+                                    : Text(
+                                        'Verified',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          letterSpacing: 1.5,
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'OpenSans',
+                                        ),
+                                      ),
+                                const SizedBox(width: 8),
                               ])
                         ],
                       ));
@@ -404,10 +438,64 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
         });
   }
 
+  void sendOTP(String number, String id) {
+    showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+              title: Text("An OTP will be sent on this number"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      if (timeStamp == -1) {
+                        timeStamp = findTime() + 15;
+                        widget.emergencyContactViewModel
+                            .verifyPhoneNumber(number, context, id);
+                      } else if (timeStamp > findTime()) {
+                        showPlatformDialog(
+                            context: context,
+                            builder: (contextt) => BasicDialogAlert(
+                                  title: Text(
+                                      "You cannot send another OTP right away"),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(contextt, "OK");
+                                        },
+                                        child: Text("OK"))
+                                  ],
+                                ));
+                      } else {
+                        timeStamp = findTime() + 15;
+                        widget.emergencyContactViewModel
+                            .verifyPhoneNumber(number, context, id);
+                      }
+                    },
+                    child: Text("OK")),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, "Cancel");
+                    },
+                    child: Text("Cancel"))
+              ],
+            ));
+  }
+
+  int findTime() {
+    now = DateTime.now();
+    String format = DateFormat('kk:mm:ss').format(now);
+    List time = format.split(":");
+    return int.parse(time[0]) * 60 + int.parse(time[1]);
+  }
+
   @override
   void initState() {
     super.initState();
     widget.emergencyContactViewModel.askPermissions(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -463,6 +551,5 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sas_application/models/user_model.dart';
 
-
 class FirebaseDbService {
   final instance = FirebaseFirestore.instance;
-
-
 
   Future<void> addUserData(UserModel userModel) async {
     return await FirebaseFirestore.instance
@@ -20,8 +17,8 @@ class FirebaseDbService {
         .catchError((error) => print("Failed to add: $error"));
   }
 
-  Future<void> addEmergencyContact(
-      String contactName, String contactNumber, String uid) async {
+  Future<void> addEmergencyContact(String contactName, String contactNumber,
+      String uid, bool verified) async {
     return await FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
@@ -30,13 +27,14 @@ class FirebaseDbService {
         .set({
           'emergencyContactName': contactName,
           'emergencyContactNumber': contactNumber,
-          'userId': uid
+          'userId': uid,
+          'verified': verified
         })
         .then((value) => print("Contact Added"))
         .catchError((error) => print("Failed to add: $error"));
   }
 
-  Future<void> updateUserData(_userModel,phoneNumber,gender) async {
+  Future<void> updateUserData(_userModel, phoneNumber, gender) async {
     return await FirebaseFirestore.instance
         .collection("users")
         .doc(_userModel.userId)
@@ -46,5 +44,17 @@ class FirebaseDbService {
         })
         .then((value) => print("Additional User Details Added"))
         .catchError((error) => print("Failed to add: $error"));
+  }
+
+  Future<void> updateEmergencyContact(
+      String uid, String docId, bool verified) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("emergencyContacts")
+        .doc(docId)
+        .update({'verified': verified})
+        .then((value) => print("Emergency Contact Updated"))
+        .catchError((e) => print(e));
   }
 }

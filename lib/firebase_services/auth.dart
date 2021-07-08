@@ -8,7 +8,7 @@ import 'package:sas_application/models/user_model.dart';
 
 abstract class AuthBase {
   User? get currentUser;
-  bool isPhoneVerified =false;
+  bool isPhoneVerified = false;
 
   Future<User?> signInAnonymously();
   Future<User?> signOut();
@@ -18,13 +18,12 @@ abstract class AuthBase {
   Future<User?> createUserWithEmailAndPassword(String email, String password);
   Future forgotPasswordWithEmail(String email);
   Future<void> verifyNumber(
-      String phone, BuildContext context);
-
+      String phone, BuildContext context, String docId, String uid);
 }
 
 class Auth implements AuthBase {
-
   User? get currentUser => FirebaseAuth.instance.currentUser;
+
   var _codeController = TextEditingController();
   Stream<User?> authStateChanges() => FirebaseAuth.instance.authStateChanges();
 
@@ -41,7 +40,7 @@ class Auth implements AuthBase {
   }
 
   @override
-  bool isPhoneVerified=false;
+  bool isPhoneVerified = false;
 
   Future<User?> signInWithGoogle(UserModel usermodel) async {
     final googleSignIn = GoogleSignIn();
@@ -55,7 +54,7 @@ class Auth implements AuthBase {
           accessToken: googleAuth.accessToken,
         ));
         if (userCredential.additionalUserInfo!.isNewUser) {
-          usermodel.userId= currentUser!.uid;
+          usermodel.userId = currentUser!.uid;
           usermodel.emailAddress = currentUser!.email.toString();
           usermodel.fullName = currentUser!.displayName.toString();
           await FirebaseDbService().addUserData(usermodel);
@@ -99,25 +98,21 @@ class Auth implements AuthBase {
 
   @override
   Future forgotPasswordWithEmail(String email) async {
-    // TODO: implement forgotPasswordWithEmail
-
     return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
   @override
   Future<void> verifyNumber(
-      String phone, context) async {
+      String phone, context, String docId, String uid) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.verifyPhoneNumber(
-
       phoneNumber: phone,
       timeout: Duration(seconds: 120),
 
-      verificationCompleted: (AuthCredential credential) async
-        {},
+      verificationCompleted: (AuthCredential credential) async {},
 
       verificationFailed: (FirebaseAuthException e) {
-        isPhoneVerified=false;
+        isPhoneVerified = false;
         showPlatformDialog(
             context: context,
             builder: (context) {
@@ -157,27 +152,55 @@ class Auth implements AuthBase {
                       onPressed: () async {
                         final code = _codeController.text.trim();
 
-                          try{
-                            AuthCredential authCredential = PhoneAuthProvider
-                                .credential(
-                                verificationId: verificationId, smsCode: code);
-                            UserCredential result = await _auth.currentUser!.linkWithCredential(authCredential);
-                            User? user = result.user;
+                        try {
+                          AuthCredential authCredential =
+                              PhoneAuthProvider.credential(
+                                  verificationId: verificationId,
+                                  smsCode: code);
+                          UserCredential result = await _auth.currentUser!
+                              .linkWithCredential(authCredential);
+                          User? user = result.user;
 
-                            if (user != null) {
-                              print('Number Verified');
-                              isPhoneVerified =true;
-                              numberVerified(context);
+                          if (user != null) {
+                            print('Number Verified');
+                            isPhoneVerified = true;
+                            if (docId.isNotEmpty) {
+                              FirebaseDbService fdb = new FirebaseDbService();
+                              fdb.updateEmergencyContact(uid, docId, true);
                             }
-                            else{
-                              print("Error");
-                              isPhoneVerified=false;
+                            numberVerified(context);
+                            unLinkContact();
+                          } else {
+                            print("Error");
+                            isPhoneVerified = false;
+                            showPlatformDialog(
+                                context: context,
+                                builder: (context) {
+                                  return BasicDialogAlert(
+                                    title: Text("Phone Verification"),
+                                    content: Text(
+                                        "Phone number not verified. Please try again."),
+                                    actions: [
+                                      BasicDialogAction(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          title: Text("OK"))
+                                    ],
+                                  );
+                                });
+                          }
+                        } on FirebaseAuthException catch (e) {
+                          switch (e.code) {
+                            case "invalid-verification-code":
+                              isPhoneVerified = false;
                               showPlatformDialog(
                                   context: context,
                                   builder: (context) {
                                     return BasicDialogAlert(
                                       title: Text("Phone Verification"),
-                                      content: Text("Phone number not verified. Please try again."),
+                                      content: Text(
+                                          "OTP entered is not correct. Please enter correct OTP"),
                                       actions: [
                                         BasicDialogAction(
                                             onPressed: () {
@@ -187,28 +210,8 @@ class Auth implements AuthBase {
                                       ],
                                     );
                                   });
-                            }
-                          }on FirebaseAuthException catch (e) {
-                            switch (e.code) {
-                              case "invalid-verification-code":
-                                isPhoneVerified=false;
-                                showPlatformDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return BasicDialogAlert(
-                                        title: Text("Phone Verification"),
-                                        content: Text("OTP entered is not correct. Please enter correct OTP"),
-                                        actions: [
-                                          BasicDialogAction(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              title: Text("OK"))
-                                        ],
-                                      );
-                                    });
-                            }
                           }
+                        }
                         //Navigator.of(context).pop();
                       },
                       title: Text("Confirm")),
@@ -240,15 +243,27 @@ class Auth implements AuthBase {
                   onPressed: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
-                    _codeController.text="";
+                    _codeController.text = "";
                   },
                   title: Text("OK"))
             ],
           );
         });
   }
+
+  void unLinkContact() async {
+    try {
+      List<UserInfo> list = FirebaseAuth.instance.currentUser!.providerData;
+      print(PhoneAuthProvider.PROVIDER_ID + " PROVIDER ID");
+      list.forEach((element) async => {
+            if (element.providerId == PhoneAuthProvider.PROVIDER_ID)
+              {
+                await FirebaseAuth.instance.currentUser!
+                    .unlink(element.providerId)
+              }
+          });
+    } on FirebaseAuthException catch (e) {
+      print("Error $e");
+    }
+  }
 }
-
-
-
-

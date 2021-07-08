@@ -8,12 +8,13 @@ class VarGradient extends StatefulWidget {
 
 class _VarGradientState extends State<VarGradient> {
   int index = 0;
+  late Timer timer;
   @override
   void initState() {
     super.initState();
     // defines a timer
 
-    Timer.periodic(Duration(milliseconds: 1200), (Timer t) {
+    timer = new Timer.periodic(Duration(milliseconds: 1200), (Timer t) {
       if (mounted) {
         setState(() {
           if (index < 4) {
@@ -22,6 +23,8 @@ class _VarGradientState extends State<VarGradient> {
             index = 0;
           }
         });
+      } else {
+        t.cancel();
       }
     });
   }
@@ -55,7 +58,7 @@ class _VarGradientState extends State<VarGradient> {
   ];
   @override
   void dispose() {
-    // TODO: implement dispose
+    timer.cancel();
     super.dispose();
   }
 

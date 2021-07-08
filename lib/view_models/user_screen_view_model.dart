@@ -9,7 +9,6 @@ import 'package:sas_application/singleton_instance.dart';
 import 'package:sas_application/views/screens/emergency_contact.dart';
 import 'package:sas_application/views/screens/log_in.dart';
 
-
 class UserScreenViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
   User? get currentUser => FirebaseAuth.instance.currentUser;
@@ -40,37 +39,37 @@ class UserScreenViewModel extends FireBaseModel {
     }
   }
 
-  Future<void> updateUser(phoneNumber, gender,
-      BuildContext context) async {
+  Future<void> updateUser(phoneNumber, gender, BuildContext context) async {
     try {
       _fireBaseModel.setBusy(true);
       String _phoneNumber = phoneNumber;
       String _gender = gender.text.trim();
-      userModel.gender =_gender;
+      userModel.gender = _gender;
       userModel.phoneNumber = _phoneNumber;
-      await _fireBaseModel.firebaseDbService.updateUserData(userModel, _phoneNumber,_gender);
+      await _fireBaseModel.firebaseDbService
+          .updateUserData(userModel, _phoneNumber, _gender);
       _fireBaseModel.setBusy(false);
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (builder) => EmergencyContactScreen()),
-              (Route<dynamic> route) => false);
+          (Route<dynamic> route) => false);
     } catch (e) {
       print(e.toString());
     }
   }
 
-  Future<void> verifyPhoneNumber(
-      String phone, BuildContext context) async {
+  Future<void> verifyPhoneNumber(String phone, BuildContext context) async {
     try {
       _fireBaseModel.setBusy(true);
-      await _fireBaseModel.auth.verifyNumber(phone, context);
+      await _fireBaseModel.auth.verifyNumber(
+          phone, context, "", _fireBaseModel.auth.currentUser!.uid);
       _fireBaseModel.setBusy(false);
     } catch (e) {
       print(e.toString());
     }
   }
 
-  String? validateCountryCode(value){
-    if(value==null){
+  String? validateCountryCode(value) {
+    if (value == null) {
       return 'Please enter the country code';
     }
   }

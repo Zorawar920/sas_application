@@ -12,7 +12,6 @@ import 'log_in.dart';
 class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ViewModelBuilder<SignUpViewModel>.reactive(
         builder: (context, viewModel, child) => MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -45,7 +44,6 @@ class SignUpState extends State<SignUp> {
   var myLastNameController = TextEditingController();
   String? passwordValue;
   final globalFormKey = GlobalKey<FormState>();
-
 
   // ignore: non_constant_identifier_names
   Widget signUpBtn(BuildContext context) {

@@ -278,7 +278,6 @@ class LogInState extends State<LogIn> {
   @override
   void initState() {
     //State Management for Widgets
-    // TODO: implement initState
     super.initState();
     BackButtonInterceptor.add(myInterceptor);
   }

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:sas_application/view_models/chat_window_view_model.dart';
 import 'package:stacked/stacked.dart';
 
-
 class ChatWindowScreen extends StatelessWidget {
   String? contactName;
   String? contactPhoneNumber;
   ChatWindowScreen(this.contactName, this.contactPhoneNumber);
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ViewModelBuilder<ChatWindowViewModel>.reactive(
         builder: (
           context,
