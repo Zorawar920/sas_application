@@ -5,12 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/models/firebase_model.dart';
-import 'package:sas_application/models/user_model.dart';
+import 'package:sas_application/view_models/user_screen_view_model.dart';
 import 'package:sas_application/views/screens/log_in.dart';
 
 class SignUpViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
-
+  final UserScreenViewModel _userScreenViewModel = new UserScreenViewModel();
   Future<void> createUserWithCredentials(
       emailAddress, password, firstName, lastName, BuildContext context) async {
     try {
@@ -24,15 +24,11 @@ class SignUpViewModel extends FireBaseModel {
       await _fireBaseModel.auth
           .createUserWithEmailAndPassword(_email, _password);
 
-      UserModel userModel = new UserModel(
-          userId: _fireBaseModel.auth.currentUser!.uid,
-          fullName: name,
-          emailAddress: _email,
-          phoneNumber: "",
-          gender: ""
-        );
+      _userScreenViewModel.userModel.userId = _fireBaseModel.auth.currentUser!.uid;
+      _userScreenViewModel.userModel.fullName = name;
+      _userScreenViewModel.userModel.emailAddress = _email;
 
-      _fireBaseModel.firebaseDbService.addUserData(userModel);
+      _fireBaseModel.firebaseDbService.addUserData(_userScreenViewModel.userModel);
 
       _fireBaseModel.setBusy(false);
       showPlatformDialog(

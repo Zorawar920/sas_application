@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter_sms/flutter_sms.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contact_picker/contact_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sas_application/models/firebase_model.dart';
-import 'package:sas_application/views/screens/emergency_contact.dart';
 import 'package:sms/sms.dart';
 
 class EmergencyContactViewModel extends FireBaseModel {

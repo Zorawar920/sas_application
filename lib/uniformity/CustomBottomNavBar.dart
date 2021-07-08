@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sas_application/views/screens/chat_window.dart';
 import 'package:sas_application/views/screens/emergency_contact.dart';
 import 'package:sas_application/views/screens/home_page.dart';
-import 'package:sas_application/views/screens/user_screen.dart';
+import 'package:sas_application/views/screens/user_profile.dart';
 import '../enums.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -101,7 +100,7 @@ class CustomBottomNavBar extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (builder) => UserScreen()))
+                                    builder: (builder) => UserProfile()))
                           }
                       }),
             ],

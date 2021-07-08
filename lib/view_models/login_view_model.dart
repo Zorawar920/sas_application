@@ -2,12 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/models/firebase_model.dart';
+import 'package:sas_application/view_models/user_screen_view_model.dart';
 import 'package:sas_application/views/screens/home_page.dart';
 import 'package:sas_application/views/screens/user_screen.dart';
 
 class LoginViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
-
+  final UserScreenViewModel _userScreenViewModel = new UserScreenViewModel();
   void printLatest(TextEditingController textEditingController) {}
 
   Future getFuture() {
@@ -28,9 +29,14 @@ class LoginViewModel extends FireBaseModel {
           .signInWithEmailAndPassword(_email, _password);
       _fireBaseModel.setBusy(false);
       if (_authenticatedUser!.emailVerified) {
-        Navigator.of(context).pushAndRemoveUntil(
+       /* Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (builder) => UserScreen()),
-            (Route<dynamic> route) => false);
+            (Route<dynamic> route) => false);*/
+        _fireBaseModel.auth.currentUser!.phoneNumber != null ? Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (builder) => HomePage()),
+                (Route<dynamic> route) => false) : Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (builder) => UserScreen()),
+                (Route<dynamic> route) => false);
       } else {
         showPlatformDialog(
             context: context,
@@ -71,13 +77,16 @@ class LoginViewModel extends FireBaseModel {
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
       _fireBaseModel.setBusy(true);
-      var result = await _fireBaseModel.auth.signInWithGoogle();
+      var result = await _fireBaseModel.auth.signInWithGoogle(_userScreenViewModel.userModel);
       _fireBaseModel.setBusy(false);
-      if (result != null) {
-        Navigator.of(context).pushAndRemoveUntil(
+      if(result != null){
+        _fireBaseModel.auth.currentUser!.phoneNumber != null ? Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (builder) => HomePage()),
+                (Route<dynamic> route) => false) : Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (builder) => UserScreen()),
-            (Route<dynamic> route) => false);
+                (Route<dynamic> route) => false);
       }
+
     } catch (e) {
       print(e.toString());
     }

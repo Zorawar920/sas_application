@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sas_application/singleton_instance.dart';
-import 'package:sas_application/views/screens/log_in.dart';
 import 'package:sas_application/views/screens/splash_screen.dart';
 
 Future<void> main() async {

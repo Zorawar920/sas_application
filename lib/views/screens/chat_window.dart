@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/view_models/chat_window_view_model.dart';
 import 'package:stacked/stacked.dart';
 
-import '../../enums.dart';
 
 class ChatWindowScreen extends StatelessWidget {
   String? contactName;

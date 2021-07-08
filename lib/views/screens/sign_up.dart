@@ -1,4 +1,3 @@
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
@@ -46,7 +45,7 @@ class SignUpState extends State<SignUp> {
   var myLastNameController = TextEditingController();
   String? passwordValue;
   final globalFormKey = GlobalKey<FormState>();
-  String get _email => myEmailController.text;
+
 
   // ignore: non_constant_identifier_names
   Widget signUpBtn(BuildContext context) {

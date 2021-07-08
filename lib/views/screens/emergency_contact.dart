@@ -226,7 +226,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                             title: Text(
                                 streamSnapshot.data!.docs[index]
                                     ['emergencyContactName'],
-                                style: UserlabelStyle),
+                                style: userlabelStyle),
                             subtitle: Text(
                                 streamSnapshot.data!.docs[index]
                                     ['emergencyContactNumber'],
@@ -321,7 +321,7 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
             children: <Widget>[
               ListTile(
                   contentPadding: EdgeInsets.all(10),
-                  title: Text(name, style: UserlabelStyle),
+                  title: Text(name, style: userlabelStyle),
                   subtitle: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,

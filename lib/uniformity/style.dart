@@ -11,7 +11,7 @@ final labelStyle = TextStyle(
   fontFamily: 'OpenSans',
 );
 
-final UserlabelStyle = TextStyle(
+final userlabelStyle = TextStyle(
   color: Colors.blueGrey,
   fontWeight: FontWeight.bold,
   fontFamily: 'OpenSans',

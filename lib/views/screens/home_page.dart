@@ -1,12 +1,9 @@
-import 'dart:async';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/view_models/home_view_model.dart';
 import 'package:stacked/stacked.dart';
-import 'package:sas_application/views/screens/user_screen.dart';
-import 'package:sas_application/view_models/user_screen_view_model.dart';
+
 
 import 'package:sas_application/enums.dart';
 
@@ -40,6 +37,19 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:<Widget>[
+              Center(
+                child: TextButton(
+                  onPressed: () async{
+                    widget.homeViewModel.signOutAnonymously(context);
+                  },
+                  child: Text("Logout"),
+                ),
+              ),
+            ],
+          ),
           bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
         ),
         onWillPop: () async => false);

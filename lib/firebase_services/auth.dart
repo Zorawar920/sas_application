@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,19 +9,21 @@ import 'package:sas_application/models/user_model.dart';
 abstract class AuthBase {
   User? get currentUser;
   bool isPhoneVerified =false;
+
   Future<User?> signInAnonymously();
   Future<User?> signOut();
   Stream<User?> authStateChanges();
-  Future<User?> signInWithGoogle();
+  Future<User?> signInWithGoogle(UserModel usermodel);
   Future<User?> signInWithEmailAndPassword(String email, String password);
   Future<User?> createUserWithEmailAndPassword(String email, String password);
   Future forgotPasswordWithEmail(String email);
-  Future<void> VerifyNumber(
+  Future<void> verifyNumber(
       String phone, BuildContext context);
 
 }
 
 class Auth implements AuthBase {
+
   User? get currentUser => FirebaseAuth.instance.currentUser;
   var _codeController = TextEditingController();
   Stream<User?> authStateChanges() => FirebaseAuth.instance.authStateChanges();
@@ -42,7 +43,7 @@ class Auth implements AuthBase {
   @override
   bool isPhoneVerified=false;
 
-  Future<User?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle(UserModel usermodel) async {
     final googleSignIn = GoogleSignIn();
     final googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
@@ -54,13 +55,10 @@ class Auth implements AuthBase {
           accessToken: googleAuth.accessToken,
         ));
         if (userCredential.additionalUserInfo!.isNewUser) {
-          UserModel userModel = new UserModel(
-              userId: userCredential.user!.uid,
-              emailAddress: userCredential.user!.email.toString(),
-              fullName: userCredential.user!.displayName.toString(),
-              phoneNumber: "",
-              gender: "");
-          await FirebaseDbService().addUserData(userModel);
+          usermodel.userId= currentUser!.uid;
+          usermodel.emailAddress = currentUser!.email.toString();
+          usermodel.fullName = currentUser!.displayName.toString();
+          await FirebaseDbService().addUserData(usermodel);
         }
         return userCredential.user;
       } else {
@@ -107,7 +105,7 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<void> VerifyNumber(
+  Future<void> verifyNumber(
       String phone, context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     _auth.verifyPhoneNumber(
@@ -241,6 +239,8 @@ class Auth implements AuthBase {
               BasicDialogAction(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    _codeController.text="";
                   },
                   title: Text("OK"))
             ],

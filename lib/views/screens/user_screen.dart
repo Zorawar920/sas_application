@@ -1,19 +1,11 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:sas_application/models/firebase_model.dart';
-import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/user_screen_view_model.dart';
-import 'package:sas_application/view_models/user_screen_view_model.dart';
-import 'package:sas_application/view_models/user_screen_view_model.dart';
 import 'package:stacked/stacked.dart';
-
-import '../../enums.dart';
 
 class UserScreen extends StatelessWidget {
   @override
@@ -51,6 +43,7 @@ class UserScreenState extends State<UserScreenApp> {
   String dropdownValue = "";
   String holder ="";
   String phone = "";
+  String name = "";
 
   Widget buildAppScreenLogo() {
     return Container(
@@ -67,7 +60,7 @@ class UserScreenState extends State<UserScreenApp> {
       children: <Widget>[
         Text(
           'First Name',
-          style: UserlabelStyle,
+          style: userlabelStyle,
         ),
         SizedBox(height: 5.0),
         Container(
@@ -108,7 +101,7 @@ class UserScreenState extends State<UserScreenApp> {
       children: <Widget>[
         Text(
           'Last Name',
-          style: UserlabelStyle,
+          style: userlabelStyle,
         ),
         SizedBox(height: 5.0),
         Container(
@@ -150,7 +143,7 @@ class UserScreenState extends State<UserScreenApp> {
       children: <Widget>[
         Text(
           'Gender',
-          style: UserlabelStyle,
+          style: userlabelStyle,
         ),
         SizedBox(height: 5.0),
         Container(
@@ -192,7 +185,7 @@ class UserScreenState extends State<UserScreenApp> {
          children: <Widget>[
            Text(
              'Contact Number',
-             style: UserlabelStyle,
+             style: userlabelStyle,
            ),
            TextButton(
              style: TextButton.styleFrom(padding: EdgeInsets.only(left: 100.0)),
@@ -207,7 +200,7 @@ class UserScreenState extends State<UserScreenApp> {
                     context: context,
                     builder: (context) {
                         return BasicDialogAlert(
-                          content: Text("Please enter both, Contact Number and Country code"),
+                          content: Text("Please Enter both, Contact Number and Country code"),
                           actions: [
                             BasicDialogAction(
                               onPressed: () {
@@ -311,6 +304,7 @@ class UserScreenState extends State<UserScreenApp> {
 
   Widget submitBtn(BuildContext context) {
     phone = holder+phoneNumberController.text.toString();
+    name  = myFirstNameController.text.toString() +" "+ myLastNameController.text.toString();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
@@ -328,10 +322,7 @@ class UserScreenState extends State<UserScreenApp> {
           if (globalFormKey.currentState!.validate()) {
             if(widget.userScreenViewModel.auth.isPhoneVerified == true){
               widget.userScreenViewModel.updateUser(
-                  myFirstNameController,
-                  myLastNameController,
                   phone,
-                  email,
                   genderController,
                   context);
             }
@@ -444,19 +435,21 @@ class UserScreenState extends State<UserScreenApp> {
                         SizedBox(
                           height: 10.0,
                         ),
-                        Text(
-                          'User Details',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontFamily: 'OpenSans',
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
+                        Center(
+                          child: Text(
+                            ' Additional User Details',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontFamily: 'OpenSans',
+                              fontSize: 30.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        SizedBox(height: 25.0),
+                        /*SizedBox(height: 25.0),
                         buildFirstName(),
                         SizedBox(height: 15.0),
-                        buildLastName(),
+                        buildLastName(),*/
                         SizedBox(height: 15.0),
                         buildGender(),
                         SizedBox(height: 15.0),
@@ -473,7 +466,6 @@ class UserScreenState extends State<UserScreenApp> {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.profile),
     );
   }
 }
