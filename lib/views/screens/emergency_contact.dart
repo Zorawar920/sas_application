@@ -240,35 +240,35 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                           Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                TextButton(
-                                  onPressed: () => {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ChatWindowScreen(
-                                                streamSnapshot
-                                                    .data!
-                                                    .docs[index]
-                                                        ['emergencyContactName']
-                                                    .toString(),
-                                                streamSnapshot
-                                                    .data!
-                                                    .docs[index][
-                                                        'emergencyContactNumber']
-                                                    .toString())))
-                                  },
-                                  child: Text(
-                                    'Connect',
-                                    style: TextStyle(
-                                      color: Color(0xFF527DAA),
-                                      letterSpacing: 1.5,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'OpenSans',
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
+                                // TextButton(
+                                //   onPressed: () => {
+                                //     Navigator.push(
+                                //         context,
+                                //         MaterialPageRoute(
+                                //             builder: (context) => ChatWindowScreen(
+                                //                 streamSnapshot
+                                //                     .data!
+                                //                     .docs[index]
+                                //                         ['emergencyContactName']
+                                //                     .toString(),
+                                //                 streamSnapshot
+                                //                     .data!
+                                //                     .docs[index][
+                                //                         'emergencyContactNumber']
+                                //                     .toString())))
+                                //   },
+                                //   child: Text(
+                                //     'Connect',
+                                //     style: TextStyle(
+                                //       color: Color(0xFF527DAA),
+                                //       letterSpacing: 1.5,
+                                //       fontSize: 16.0,
+                                //       fontWeight: FontWeight.bold,
+                                //       fontFamily: 'OpenSans',
+                                //     ),
+                                //   ),
+                                // ),
+                                // const SizedBox(width: 8),
                                 TextButton(
                                   onPressed: () async => {
                                     widget.emergencyContactViewModel.deleteData(

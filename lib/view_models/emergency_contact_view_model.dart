@@ -87,12 +87,15 @@ class EmergencyContactViewModel extends FireBaseModel {
   Future<void> addContactInformation(
       String contactName, String contactNumber) async {
     var uid = _fireBaseModel.auth.currentUser!.uid;
-    await _fireBaseModel.firebaseDbService.addEmergencyContact(
-        contactName, formatMobileNumber(contactNumber), uid, false);
+    String changedNumber = formatMobileNumber(contactNumber);
+    await _fireBaseModel.firebaseDbService
+        .addEmergencyContact(contactName, changedNumber, uid, false);
   }
 
-  //Function to add +91 if missing or replace 0 with +91.
+  //Function to add +91 or +1 if missing or replace 0 with +91.
   String formatMobileNumber(String contactNumber) {
+    final RegExp candianPhone =
+        new RegExp(r'^(\+0?1\s)?((\d{3})|(\(\d{3}\)))?(\s|-)\d{3}(\s|-)\d{4}$');
     contactNumber = contactNumber.trim();
     var formattedNumber;
     if (contactNumber.startsWith("+91")) {
@@ -106,8 +109,13 @@ class EmergencyContactViewModel extends FireBaseModel {
         formattedNumber = fomatter(contactNumber);
         return formattedNumber;
       } else {
-        contactNumber = "+91" + contactNumber;
-        formattedNumber = fomatter(contactNumber);
+        if (candianPhone.hasMatch(contactNumber)) {
+          contactNumber = "+1" + contactNumber;
+          formattedNumber = fomatter(contactNumber);
+        } else {
+          contactNumber = "+91" + contactNumber;
+          formattedNumber = fomatter(contactNumber);
+        }
         return formattedNumber;
       }
     } else if (contactNumber.startsWith("+1")) {
