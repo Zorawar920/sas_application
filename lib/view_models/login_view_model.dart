@@ -5,6 +5,8 @@ import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/view_models/user_screen_view_model.dart';
 import 'package:sas_application/views/screens/home_page.dart';
 import 'package:sas_application/views/screens/user_screen.dart';
+import 'package:firestore_cache/firestore_cache.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
@@ -33,12 +35,13 @@ class LoginViewModel extends FireBaseModel {
             MaterialPageRoute(builder: (builder) => UserScreen()),
             (Route<dynamic> route) => false);*/
         // ignore: await_only_futures
+
         var snapShot = await _fireBaseModel.firebaseDbService.instance
             .collection('users')
             .doc(_fireBaseModel.auth.currentUser!.uid)
-            .get();
-        bool number = snapShot.data()!.containsKey("phone_number");
-        number
+            .get(GetOptions(source: Source.cache));
+
+        snapShot.data()!["phone_number"].toString().isNotEmpty
             ? Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (builder) => HomePage()),
                 (Route<dynamic> route) => false)
@@ -92,9 +95,9 @@ class LoginViewModel extends FireBaseModel {
         var snapShot = await _fireBaseModel.firebaseDbService.instance
             .collection('users')
             .doc(_fireBaseModel.auth.currentUser!.uid)
-            .get();
-        bool number = snapShot.data()!.containsKey("phone_number");
-        number
+            .get(GetOptions(source: Source.cache));
+
+        snapShot.data()!["phone_number"].toString().isNotEmpty
             ? Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (builder) => HomePage()),
                 (Route<dynamic> route) => false)

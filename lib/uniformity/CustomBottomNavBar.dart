@@ -1,11 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/views/screens/emergency_contact.dart';
 import 'package:sas_application/views/screens/home_page.dart';
+import 'package:sas_application/views/screens/log_in.dart';
 import 'package:sas_application/views/screens/user_profile.dart';
 import '../enums.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
+  final FireBaseModel _fireBaseModel = new FireBaseModel();
   CustomBottomNavBar({
     Key? key,
     required this.selectedMenu,
@@ -103,8 +110,39 @@ class CustomBottomNavBar extends StatelessWidget {
                                     builder: (builder) => UserProfile()))
                           }
                       }),
+              IconButton(
+                icon: SvgPicture.asset(
+                  "assets/icons/Log out.svg",
+                  color: kPrimaryColor,
+                ),
+                onPressed: () => {signOutAnonymously(context)},
+              )
             ],
           )),
     );
+  }
+
+  Future<void> signOutAnonymously(BuildContext context) async {
+    try {
+      await _fireBaseModel.auth.signOut();
+      showPlatformDialog(
+          context: context,
+          builder: (context) => FutureProgressDialog(getFuture(),
+              message: Text('Signing Out.....')));
+      Timer(Duration(seconds: 3), () {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (builder) => LoginPage()),
+            (Route<dynamic> route) => false);
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future getFuture() {
+    return Future(() async {
+      await Future.delayed(Duration(seconds: 5));
+      return 'Hello, Future Progress Dialog!';
+    });
   }
 }
