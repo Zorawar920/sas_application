@@ -54,8 +54,6 @@ class HomeViewModel extends FireBaseModel {
       }
     }
   }
-}
-
   Future<void> signOutAnonymously(BuildContext context) async {
     try {
       await _fireBaseModel.auth.signOut();
@@ -81,3 +79,5 @@ class HomeViewModel extends FireBaseModel {
     });
   }
 }
+
+

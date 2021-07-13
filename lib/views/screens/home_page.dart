@@ -45,10 +45,7 @@ class _HomeState extends State<Home> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                RaisedButton(
-                    padding: const EdgeInsets.all(20),
-                    textColor: Colors.white,
-                    color: Colors.red,
+                TextButton(
                     onPressed: () async {
                       await widget.homeViewModel.map();
                        // Navigator.push(context, MaterialPageRoute(builder: (builder) => SosMap()));
@@ -61,23 +58,15 @@ class _HomeState extends State<Home> {
                     fontWeight: FontWeight.bold,
                     fontFamily: 'OpenSans',
                   ),
-                ))
+                )),
+                   TextButton(
+                      onPressed: () async{
+                         widget.homeViewModel.signOutAnonymously(context);
+                       },
+                       child: Text("Logout"),
+                    ),
               ],
             )
-          ),
-
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children:<Widget>[
-              Center(
-                child: TextButton(
-                  onPressed: () async{
-                    widget.homeViewModel.signOutAnonymously(context);
-                  },
-                  child: Text("Logout"),
-                ),
-              ),
-            ],
           ),
           bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
         );
