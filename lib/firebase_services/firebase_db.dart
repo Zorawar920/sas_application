@@ -1,9 +1,14 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sas_application/firebase_services/auth.dart';
+
 import 'package:sas_application/models/user_model.dart';
 
 class FirebaseDbService {
   final instance = FirebaseFirestore.instance;
-
+  String emergencyContactUserId = " ";
   Future<void> addUserData(UserModel userModel) async {
     return await FirebaseFirestore.instance
         .collection("users")
@@ -19,6 +24,17 @@ class FirebaseDbService {
 
   Future<void> addEmergencyContact(String contactName, String contactNumber,
       String uid, bool verified) async {
+
+    var dataIdSnapshot = await FirebaseFirestore.instance
+        .collectionGroup("users")
+        .where("phone_number", isEqualTo: contactNumber)
+        .get();
+
+    if (dataIdSnapshot.docs.isNotEmpty) {
+      var data = dataIdSnapshot.docs.single;
+      emergencyContactUserId = data['userId'];
+    }
+
     return await FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
@@ -28,7 +44,8 @@ class FirebaseDbService {
           'emergencyContactName': contactName,
           'emergencyContactNumber': contactNumber,
           'userId': uid,
-          'verified': verified
+          'verified': verified,
+          'emergencyContactUserId': emergencyContactUserId
         })
         .then((value) => print("Contact Added"))
         .catchError((error) => print("Failed to add: $error"));
