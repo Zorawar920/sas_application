@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
+import 'package:sas_application/uniformity/custom_bottom_nav_bar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/user_profile_view_model.dart';
 import 'package:sas_application/views/screens/emergency_contact.dart';
