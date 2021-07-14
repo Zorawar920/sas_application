@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:sas_application/singleton_instance.dart';
-import 'package:sas_application/uniformity/widgets.dart';
+import 'package:sas_application/uniformity/custom_widget.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
 import 'package:sas_application/view_models/login_view_model.dart';
