@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sas_application/firebase_services/auth.dart';
@@ -8,7 +7,7 @@ import 'package:sas_application/models/user_model.dart';
 
 class FirebaseDbService {
   final instance = FirebaseFirestore.instance;
-  String emergencyContactUserId = " ";
+  String emergencyContactUserId = "";
   Future<void> addUserData(UserModel userModel) async {
     return await FirebaseFirestore.instance
         .collection("users")
@@ -24,7 +23,7 @@ class FirebaseDbService {
 
   Future<void> addEmergencyContact(String contactName, String contactNumber,
       String uid, bool verified) async {
-
+    emergencyContactUserId = "";
     var dataIdSnapshot = await FirebaseFirestore.instance
         .collectionGroup("users")
         .where("phone_number", isEqualTo: contactNumber)

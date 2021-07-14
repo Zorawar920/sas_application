@@ -5,6 +5,7 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:sas_application/models/firebase_model.dart';
+import 'package:sas_application/views/screens/chat_window.dart';
 import 'package:sas_application/views/screens/emergency_contact.dart';
 import 'package:sas_application/views/screens/home_page.dart';
 import 'package:sas_application/views/screens/log_in.dart';
@@ -69,12 +70,12 @@ class CustomBottomNavBar extends StatelessWidget {
                         ? kPrimaryColor
                         : inActiveIconColor),
                 onPressed: () {
-                  // if (MenuState.message != selectedMenu) {
-                  //   Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) => ChatWindowScreen()));
-                  // }
+                  if (MenuState.message != selectedMenu) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ChatWindowScreen()));
+                  }
                 },
               ),
               IconButton(

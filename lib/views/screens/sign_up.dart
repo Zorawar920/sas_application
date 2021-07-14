@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:sas_application/uniformity/Widgets.dart';
+import 'package:sas_application/uniformity/widgets.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
 import 'package:sas_application/view_models/sign_up_view_model.dart';
