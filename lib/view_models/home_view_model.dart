@@ -54,23 +54,6 @@ class HomeViewModel extends FireBaseModel {
       }
     }
   }
-  Future<void> signOutAnonymously(BuildContext context) async {
-    try {
-      await _fireBaseModel.auth.signOut();
-      showPlatformDialog(
-          context: context,
-          builder: (context) =>
-              FutureProgressDialog(getFuture(),
-                  message: Text('Signing Out.....')));
-      Timer(Duration(seconds: 3), () {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => LoginPage()),
-                (Route<dynamic> route) => false);
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-  }
 
   Future getFuture() {
     return Future(() async {
