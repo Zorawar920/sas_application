@@ -56,13 +56,15 @@ class _ChatScreenState extends State<ChatScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 doc.get('content'),
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Colors.white, fontSize: 15, fontFamily: 'OpenSans'),
               ),
-              padding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 20.0),
+              padding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
               width: 200.0,
               decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(8.0)),
-              margin: EdgeInsets.only(left: 10.0, bottom: 10.0),
+                  color: Color(0xFF527DAA),
+                  borderRadius: BorderRadius.circular(10.0)),
+              margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
             )
           ],
         );
@@ -147,8 +149,21 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextFormField(
                         controller: _controller,
                         focusNode: _focusNode,
+                        style: TextStyle(
+                          color: Color(0xFF527DAA),
+                          fontFamily: 'OpenSans',
+                        ),
                         decoration: const InputDecoration(
                           hintText: 'Leave a message',
+                          focusColor: Colors.blueGrey,
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blueGrey),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blueGrey),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -169,9 +184,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                       child: Row(
                         children: [
-                          Icon(Icons.send),
+                          Icon(
+                            Icons.send,
+                            color: Colors.blueGrey,
+                          ),
                           SizedBox(width: 4),
-                          Text('SEND'),
+                          Text('SEND',
+                              style: TextStyle(color: Colors.blueGrey)),
                         ],
                       ),
                     ),
