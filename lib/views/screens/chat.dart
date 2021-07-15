@@ -6,21 +6,23 @@ import 'package:flutter/material.dart';
 
 class ChatPage extends StatelessWidget {
   final String chatId;
-  ChatPage({Key? key, required this.chatId}) : super(key: key);
+  final String name;
+  ChatPage({Key? key, required this.chatId, required this.name})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ChatScreen(
-        chatId: chatId,
-      ),
+      body: ChatScreen(chatId: chatId, name: name),
     );
   }
 }
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
-  ChatScreen({Key? key, required this.chatId}) : super(key: key);
+  final String name;
+  ChatScreen({Key? key, required this.chatId, required this.name})
+      : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -47,51 +49,66 @@ class _ChatScreenState extends State<ChatScreen> {
     return true;
   }
 
-  Widget buildItem(int index, DocumentSnapshot? doc) {
+  Widget showChat(int index, DocumentSnapshot? doc) {
     if (doc != null) {
       if (doc.get('idFrom') == FirebaseAuth.instance.currentUser!.uid) {
-        return Row(
-          children: <Widget>[
-            Container(
-              alignment: Alignment.centerLeft,
+        return Column(children: <Widget>[
+          Container(
+            alignment: Alignment.topRight,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.80,
+              ),
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Color(0xFF527DAA),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 2,
+                  ),
+                ],
+              ),
               child: Text(
                 doc.get('content'),
                 style: TextStyle(
-                    color: Colors.white, fontSize: 15, fontFamily: 'OpenSans'),
+                  color: Colors.white,
+                ),
               ),
-              padding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
-              width: 200.0,
-              decoration: BoxDecoration(
-                  color: Color(0xFF527DAA),
-                  borderRadius: BorderRadius.circular(10.0)),
-              margin: EdgeInsets.only(left: 10.0, bottom: 5.0, top: 5.0),
-            )
-          ],
-        );
+            ),
+          )
+        ]);
       } else {
-        return Container(
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      doc.get('content'),
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                    width: 200.0,
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(8.0)),
-                    margin: EdgeInsets.only(left: 10.0, bottom: 10.0),
-                  )
+        return Column(children: <Widget>[
+          Container(
+            alignment: Alignment.topLeft,
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.80,
+              ),
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    blurRadius: 2,
+                  ),
                 ],
-              )
-            ],
-          ),
-        );
+              ),
+              child: Text(
+                doc.get('content'),
+                style: TextStyle(
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          )
+        ]);
       }
     }
     return SizedBox.shrink();
@@ -100,108 +117,113 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+            brightness: Brightness.dark,
+            backgroundColor: Color(0xFF527DAA),
+            centerTitle: true,
+            title: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    text: widget.name,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontFamily: 'OpenSans')))),
         body: Stack(
-      children: <Widget>[
-        Column(
           children: <Widget>[
-            Flexible(
-              child: groupChatId.isNotEmpty
-                  ? StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('messages')
-                          .doc(groupChatId)
-                          .collection(groupChatId)
-                          .orderBy('timestamp', descending: true)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            padding: EdgeInsets.all(10.0),
-                            itemBuilder: (context, index) =>
-                                buildItem(index, snapshot.data?.docs[index]),
-                            itemCount: snapshot.data?.docs.length,
-                            reverse: true,
-                          );
-                        } else {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.black),
-                            ),
-                          );
-                        }
-                      },
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                      ),
-                    ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formKey,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _controller,
-                        focusNode: _focusNode,
-                        style: TextStyle(
-                          color: Color(0xFF527DAA),
-                          fontFamily: 'OpenSans',
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: 'Leave a message',
-                          focusColor: Colors.blueGrey,
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blueGrey),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blueGrey),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Enter your message to continue';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    TextButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          _focusNode.requestFocus();
-                          onSendMessage(_controller.text);
-                          _controller.clear();
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.send,
-                            color: Colors.blueGrey,
+            Column(
+              children: <Widget>[
+                Flexible(
+                  child: groupChatId.isNotEmpty
+                      ? StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('messages')
+                              .doc(groupChatId)
+                              .collection(groupChatId)
+                              .orderBy('timestamp', descending: true)
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData) {
+                              return ListView.builder(
+                                padding: EdgeInsets.all(10.0),
+                                itemBuilder: (context, index) =>
+                                    showChat(index, snapshot.data?.docs[index]),
+                                itemCount: snapshot.data?.docs.length,
+                                reverse: true,
+                              );
+                            } else {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.black),
+                                ),
+                              );
+                            }
+                          },
+                        )
+                      : Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.black),
                           ),
-                          SizedBox(width: 4),
-                          Text('SEND',
-                              style: TextStyle(color: Colors.blueGrey)),
-                        ],
-                      ),
-                    ),
-                  ],
+                        ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _controller,
+                            focusNode: _focusNode,
+                            style: TextStyle(
+                              color: Color(0xFF527DAA),
+                              fontFamily: 'OpenSans',
+                            ),
+                            decoration: InputDecoration.collapsed(
+                              hintText: 'Leave a message..',
+                            ),
+                            textCapitalization: TextCapitalization.sentences,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter your message to continue';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        TextButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              _focusNode.requestFocus();
+                              onSendMessage(_controller.text);
+                              _controller.clear();
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.send,
+                                color: Colors.blueGrey,
+                              ),
+                              SizedBox(width: 4),
+                              Text('SEND',
+                                  style: TextStyle(color: Colors.blueGrey)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
             )
           ],
-        )
-      ],
-    ));
+        ));
   }
 
   void onSendMessage(String message) {
@@ -209,7 +231,7 @@ class _ChatScreenState extends State<ChatScreen> {
         .collection('messages')
         .doc(groupChatId)
         .collection(groupChatId)
-        .doc(DateTime.now().millisecondsSinceEpoch.toString());
+        .doc(DateTime.now().microsecondsSinceEpoch.toString());
 
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.set(
@@ -217,7 +239,7 @@ class _ChatScreenState extends State<ChatScreen> {
         {
           'idFrom': FirebaseAuth.instance.currentUser!.uid.toString(),
           'idTo': widget.chatId,
-          'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+          'timestamp': DateTime.now().microsecondsSinceEpoch.toString(),
           'content': message
         },
       );

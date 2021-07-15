@@ -179,9 +179,10 @@ class ChatWindowSate extends State<ChatWindow> {
                               Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                       builder: (builder) => ChatPage(
-                                            chatId: snapShots.data![index]
-                                                ['userId'],
-                                          )),
+                                          chatId: snapShots.data![index]
+                                              ['userId'],
+                                          name: snapShots.data![index]
+                                              ['emergencyContactName'])),
                                   (Route<dynamic> route) => false);
                             }
                           },
@@ -306,7 +307,6 @@ class ChatWindowSate extends State<ChatWindow> {
             "color3": Colors.orangeAccent
           });
         } else if (user['userId'] == whoAddedMeListDetails['userId']) {
-          print("dsfsdfsdfdsfdsfsdfdsfjh");
           users[counter - 1]["color3"] = Colors.orangeAccent;
         }
       }
