@@ -12,6 +12,7 @@ class LoginViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
   final UserScreenViewModel _userScreenViewModel = new UserScreenViewModel();
   void printLatest(TextEditingController textEditingController) {}
+  bool phonePresent = false;
 
   Future getFuture() {
     return Future(() async {
@@ -36,12 +37,20 @@ class LoginViewModel extends FireBaseModel {
             (Route<dynamic> route) => false);*/
         // ignore: await_only_futures
 
-        var snapShot = await _fireBaseModel.firebaseDbService.instance
-            .collection('users')
-            .doc(_fireBaseModel.auth.currentUser!.uid)
-            .get(GetOptions(source: Source.cache));
+        try {
+          var snapShot = await _fireBaseModel.firebaseDbService.instance
+              .collection('users')
+              .doc(_fireBaseModel.auth.currentUser!.uid)
+              .get(GetOptions(source: Source.cache));
 
-        snapShot.data()!["phone_number"].toString().isNotEmpty
+          print(snapShot.data()!["phone_number"].toString());
+          if (snapShot.data()!["phone_number"].toString().length > 9) {
+            phonePresent = true;
+          }
+        } on FirebaseException catch (e) {
+          print(e);
+        }
+        phonePresent
             ? Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (builder) => HomePage()),
                 (Route<dynamic> route) => false)
@@ -92,12 +101,20 @@ class LoginViewModel extends FireBaseModel {
           .signInWithGoogle(_userScreenViewModel.userModel);
       _fireBaseModel.setBusy(false);
       if (result != null) {
-        var snapShot = await _fireBaseModel.firebaseDbService.instance
-            .collection('users')
-            .doc(_fireBaseModel.auth.currentUser!.uid)
-            .get(GetOptions(source: Source.cache));
+        try {
+          var snapShot = await _fireBaseModel.firebaseDbService.instance
+              .collection('users')
+              .doc(_fireBaseModel.auth.currentUser!.uid)
+              .get(GetOptions(source: Source.cache));
 
-        snapShot.data()!["phone_number"].toString().isNotEmpty
+          print(snapShot.data()!["phone_number"].toString());
+          if (snapShot.data()!["phone_number"].toString().length > 9) {
+            phonePresent = true;
+          }
+        } on FirebaseException catch (e) {
+          print(e);
+        }
+        phonePresent
             ? Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (builder) => HomePage()),
                 (Route<dynamic> route) => false)

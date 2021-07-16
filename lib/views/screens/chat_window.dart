@@ -152,114 +152,131 @@ class ChatWindowSate extends State<ChatWindow> {
                     return Center(
                       child: CircularProgressIndicator(),
                     );
-                  }
-                  final documents = snapShots.data!;
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.only(right: 15, left: 15),
-                      itemCount: documents.length,
-                      itemBuilder: (ctx, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            if (snapShots.data![index]['userId'] == "") {
-                              showPlatformDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: Text(
-                                            "This User is not on our Application"),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context, "OK");
-                                              },
-                                              child: Text("OK"))
-                                        ],
-                                      ));
-                            } else {
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (builder) => ChatPage(
-                                          chatId: snapShots.data![index]
-                                              ['userId'],
-                                          name: snapShots.data![index]
-                                              ['emergencyContactName'])),
-                                  (Route<dynamic> route) => false);
-                            }
-                          },
-                          child: Card(
-                            shadowColor: Colors.black,
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                ListTile(
-                                  title: Text(
-                                      snapShots.data![index]
-                                          ['emergencyContactName'],
-                                      style: TextStyle(
-                                        color: Color(0xFF527DAA),
-                                        fontFamily: 'OpenSans',
-                                      )),
-                                  subtitle: Text(
-                                      snapShots.data![index]
-                                          ['emergencyContactNumber'],
-                                      style: TextStyle(
-                                        color: Color(0xFF527DAA),
-                                        fontFamily: 'OpenSans',
-                                      )),
+                  } else if (snapShots.connectionState ==
+                          ConnectionState.done &&
+                      snapShots.hasData) {
+                    final documents = snapShots.data!;
+                    if (documents.length == 0) {
+                      print("You have nobody to connect");
+                      return Text(
+                        "You have nobody to connect",
+                        style: TextStyle(
+                            fontFamily: 'OpenSans',
+                            fontSize: 15,
+                            color: Colors.blueGrey),
+                      );
+                    } else {
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(right: 15, left: 15),
+                          itemCount: documents.length,
+                          itemBuilder: (ctx, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                if (snapShots.data![index]['userId'] == "") {
+                                  showPlatformDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            title: Text(
+                                                "This User is not on our Application"),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                        context, "OK");
+                                                  },
+                                                  child: Text("OK"))
+                                            ],
+                                          ));
+                                } else {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (builder) => ChatPage(
+                                              chatId: snapShots.data![index]
+                                                  ['userId'],
+                                              name: snapShots.data![index]
+                                                  ['emergencyContactName'])),
+                                      (Route<dynamic> route) => false);
+                                }
+                              },
+                              child: Card(
+                                shadowColor: Colors.black,
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      width: 10,
-                                      height: 10,
-                                      decoration: BoxDecoration(
-                                          color: snapShots.data![index]
-                                              ['color'],
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50))),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    ListTile(
+                                      title: Text(
+                                          snapShots.data![index]
+                                              ['emergencyContactName'],
+                                          style: TextStyle(
+                                            color: Color(0xFF527DAA),
+                                            fontFamily: 'OpenSans',
+                                          )),
+                                      subtitle: Text(
+                                          snapShots.data![index]
+                                              ['emergencyContactNumber'],
+                                          style: TextStyle(
+                                            color: Color(0xFF527DAA),
+                                            fontFamily: 'OpenSans',
+                                          )),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          width: 10,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                              color: snapShots.data![index]
+                                                  ['color'],
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50))),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Container(
+                                          width: 10,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                              color: snapShots.data![index]
+                                                  ['color2'],
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50))),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Container(
+                                          width: 10,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                              color: snapShots.data![index]
+                                                  ['color3'],
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50))),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        )
+                                      ],
                                     ),
                                     SizedBox(
-                                      width: 5,
-                                    ),
-                                    Container(
-                                      width: 10,
                                       height: 10,
-                                      decoration: BoxDecoration(
-                                          color: snapShots.data![index]
-                                              ['color2'],
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50))),
-                                    ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Container(
-                                      width: 10,
-                                      height: 10,
-                                      decoration: BoxDecoration(
-                                          color: snapShots.data![index]
-                                              ['color3'],
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(50))),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
                                     )
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 10,
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      });
+                              ),
+                            );
+                          });
+                    }
+                  } else {
+                    return Text("Something went wrong");
+                  }
                 }),
           )
         ])),
@@ -290,28 +307,47 @@ class ChatWindowSate extends State<ChatWindow> {
         "color3": Colors.grey
       });
     }
+
     var whoAddedMeList = await widget.chatWindowViewModel.getWhoAddedMeList();
 
     for (var whoAddedMeListDetails in whoAddedMeList) {
-      int counter = 0;
-      for (var user in users) {
-        counter += 1;
-        if (user['userId'] != whoAddedMeListDetails['userId'] &&
-            users.length == counter) {
-          users.add({
-            "emergencyContactName": whoAddedMeListDetails['Name'],
-            "emergencyContactNumber": whoAddedMeListDetails['Phone'],
-            "userId": whoAddedMeListDetails['userId'],
-            "color": Colors.grey,
-            "color2": Colors.grey,
-            "color3": Colors.orangeAccent
-          });
-        } else if (user['userId'] == whoAddedMeListDetails['userId']) {
-          users[counter - 1]["color3"] = Colors.orangeAccent;
+      if (users.isEmpty) {
+        users.add({
+          "emergencyContactName": whoAddedMeListDetails['Name'],
+          "emergencyContactNumber": whoAddedMeListDetails['Phone'],
+          "userId": whoAddedMeListDetails['userId'],
+          "color": Colors.grey,
+          "color2": Colors.grey,
+          "color3": Colors.orangeAccent
+        });
+      } else if (users.isNotEmpty) {
+        int counter = 0;
+        List id = [];
+        try {
+          for (Map user in users) {
+            counter += 1;
+            id.add(user['userId']);
+            if (user['userId'] == whoAddedMeListDetails['userId']) {
+              user['color3'] = Colors.orangeAccent;
+            } else if (user['userId'] != whoAddedMeListDetails['userId'] &&
+                users.length == counter &&
+                !id.contains(whoAddedMeListDetails['userId'])) {
+              users.add({
+                "emergencyContactName": whoAddedMeListDetails['Name'],
+                "emergencyContactNumber": whoAddedMeListDetails['Phone'],
+                "userId": whoAddedMeListDetails['userId'],
+                "color": Colors.grey,
+                "color2": Colors.grey,
+                "color3": Colors.orangeAccent
+              });
+            }
+          }
+        } catch (error) {
+          print("Error while adding WhoAddedMeList $error");
         }
       }
     }
-
+    print(users);
     return users;
   }
 }
