@@ -141,10 +141,12 @@ class Auth implements AuthBase {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('Enter the verification code:'),
+                     Text('Enter the verification code:'),
                     SizedBox(height: 5.0),
-                    TextField(
-                      controller: _codeController,
+                    Material(
+                        child: TextField(
+                          controller: _codeController,
+                        )
                     ),
                   ],
                 ),
