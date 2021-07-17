@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sas_application/uniformity/custom_bottom_nav_bar.dart';
@@ -8,6 +9,7 @@ import 'dart:math' as math show sin, pi, sqrt;
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<HomeViewModel>.reactive(
@@ -27,6 +29,8 @@ class Home extends StatefulWidget {
   Home({Key? key, required this.homeViewModel});
   @override
   _HomeState createState() => _HomeState();
+
+  void onStop(String s) {}
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
@@ -37,6 +41,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     return GestureDetector(
         onTap: () {
           setState(() {
+            widget.homeViewModel.stopRecord();
             voice_button_clicked = false;
             _controller.dispose();
           });
@@ -98,6 +103,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         ),
         onPressed: () {
           setState(() {
+            widget.homeViewModel.startRecord();
             voice_button_clicked = true;
             _controller = AnimationController(
               duration: const Duration(milliseconds: 2000),
@@ -197,4 +203,6 @@ class CirclePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CirclePainter oldDelegate) => true;
+
+
 }

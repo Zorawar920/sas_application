@@ -39,8 +39,6 @@ class ChatWindow extends StatefulWidget {
 }
 
 class ChatWindowSate extends State<ChatWindow> {
-  final _formKey = GlobalKey<FormState>(debugLabel: 'ChatWindowSate');
-  final _controller = TextEditingController();
 
   @override
   void initState() {

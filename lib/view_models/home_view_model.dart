@@ -1,21 +1,18 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:record/record.dart';
 import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/view_models/emergency_contact_view_model.dart';
-import 'package:sas_application/views/screens/emergency_contact.dart';
-import 'package:sas_application/views/screens/log_in.dart';
 import 'package:sms/sms.dart';
 
 
 class HomeViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
+  final _audioRecorder = Record();
 
   final EmergencyContactViewModel es = new EmergencyContactViewModel();
 
@@ -61,6 +58,27 @@ class HomeViewModel extends FireBaseModel {
       return 'Hello, Future Progress Dialog!';
     });
   }
+
+  Future<void> startRecord() async {
+    try {
+      if (await _audioRecorder.hasPermission()) {
+        await _audioRecorder.start(
+            encoder: AudioEncoder.AAC, bitRate: 128000, samplingRate: 44100);
+        bool isRecording = await _audioRecorder.isRecording();
+        if (isRecording) {
+          print("Audio Recording Started");
+        }
+      }
+    } catch (e) {
+      print("Error while recording $e");
+    }
+  }
+
+  Future<void> stopRecord() async {
+    final path = await _audioRecorder.stop();
+    print("Path of recorded audio    $path");
+  }
+
 }
 
 

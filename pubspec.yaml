@@ -48,6 +48,7 @@ dependencies:
   geolocator: ^7.1.0
   maps_launcher: ^2.0.0
 
+  record: ^3.0.0
 
   #Firebase dependencies
    
