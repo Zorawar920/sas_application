@@ -46,8 +46,8 @@ class UserScreenViewModel extends FireBaseModel {
       String _gender = gender.text.trim();
       userModel.gender = _gender;
       userModel.phoneNumber = _phoneNumber;
-      await _fireBaseModel.firebaseDbService
-          .updateUserData(userModel, _phoneNumber, _gender);
+      await _fireBaseModel.firebaseDbService.updateUserData(
+          _fireBaseModel.auth.currentUser!.uid, _phoneNumber, _gender);
       _fireBaseModel.setBusy(false);
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (builder) => EmergencyContactScreen()),

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:sas_application/uniformity/CustomBottomNavBar.dart';
+import 'package:sas_application/uniformity/custom_bottom_nav_bar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/emergency_contact_view_model.dart';
 import 'package:stacked/stacked.dart';
@@ -10,8 +10,6 @@ import 'package:intl/intl.dart';
 import '../../enums.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:contact_picker/contact_picker.dart';
-
-import 'chat_window.dart';
 
 class EmergencyContactScreen extends StatelessWidget {
   @override
@@ -240,35 +238,6 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                           Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                // TextButton(
-                                //   onPressed: () => {
-                                //     Navigator.push(
-                                //         context,
-                                //         MaterialPageRoute(
-                                //             builder: (context) => ChatWindowScreen(
-                                //                 streamSnapshot
-                                //                     .data!
-                                //                     .docs[index]
-                                //                         ['emergencyContactName']
-                                //                     .toString(),
-                                //                 streamSnapshot
-                                //                     .data!
-                                //                     .docs[index][
-                                //                         'emergencyContactNumber']
-                                //                     .toString())))
-                                //   },
-                                //   child: Text(
-                                //     'Connect',
-                                //     style: TextStyle(
-                                //       color: Color(0xFF527DAA),
-                                //       letterSpacing: 1.5,
-                                //       fontSize: 16.0,
-                                //       fontWeight: FontWeight.bold,
-                                //       fontFamily: 'OpenSans',
-                                //     ),
-                                //   ),
-                                // ),
-                                // const SizedBox(width: 8),
                                 TextButton(
                                   onPressed: () async => {
                                     widget.emergencyContactViewModel.deleteData(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:sas_application/uniformity/Widgets.dart';
+import 'package:sas_application/uniformity/custom_widget.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/uniformity/var_gradient.dart';
 import 'package:sas_application/view_models/forgot_password_view_model.dart';
@@ -183,47 +183,59 @@ class ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: Colors.lightBlueAccent,
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Stack(
-            children: <Widget>[
-              _varGradient,
-              Form(
-                key: globalKey,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      right: 40.0, left: 40.0, top: 20.0, bottom: 20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      buildAppScreenLogo(),
-                      SizedBox(height: 40),
-                      Text(
-                        'Forgot Password',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
+    return Form(
+      key: globalKey,
+      child: Scaffold(
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Stack(
+              children: <Widget>[
+                _varGradient,
+                Container(
+                  height: double.infinity,
+                  child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      right: 40.0,
+                      left: 40.0,
+                      top: 20.0,
+                      bottom: 20.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        buildAppScreenLogo(),
+                        SizedBox(
+                          height: 10.0,
                         ),
-                      ),
-                      SizedBox(height: 30.0),
-                      buildEmailLoginSignup(),
-                      signUpBtn(context),
-                      SizedBox(height: 10.0),
-                      buildRememberPasswordBtn(context)
-                    ],
+                        Text(
+                          'Forgot Password',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'OpenSans',
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 20.0),
+                        buildEmailLoginSignup(),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        signUpBtn(context),
+                        SizedBox(height: 10.0),
+                        buildRememberPasswordBtn(context),
+                            ],
+                          ),
+                         ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }

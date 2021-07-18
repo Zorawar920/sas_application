@@ -192,7 +192,6 @@ class UserScreenState extends State<UserScreenApp> {
                 if (phoneNumberController.text.isNotEmpty && holder.isNotEmpty)
                   {
                     phone = holder + phoneNumberController.text.toString(),
-                    print(phone),
                     widget.userScreenViewModel.verifyPhoneNumber(phone, context)
                   }
                 else
@@ -260,7 +259,6 @@ class UserScreenState extends State<UserScreenApp> {
                         setState(() {
                           dropdownValue = data!;
                           holder = dropdownValue;
-                          print(holder);
                         });
                       },
                       items: _countryCodes
@@ -306,7 +304,6 @@ class UserScreenState extends State<UserScreenApp> {
   }
 
   Widget submitBtn(BuildContext context) {
-    phone = holder + phoneNumberController.text.toString();
     name = myFirstNameController.text.toString() +
         " " +
         myLastNameController.text.toString();
@@ -326,6 +323,7 @@ class UserScreenState extends State<UserScreenApp> {
         onPressed: () async {
           if (globalFormKey.currentState!.validate()) {
             if (widget.userScreenViewModel.auth.isPhoneVerified == true) {
+              phone = holder + phoneNumberController.text.toString();
               widget.userScreenViewModel
                   .updateUser(phone, genderController, context);
             } else {
