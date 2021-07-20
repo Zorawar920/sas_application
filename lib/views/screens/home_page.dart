@@ -37,6 +37,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   late AnimationController _controller;
   bool voice_button_clicked = false;
 
+  String dropDownValue = "";
+  List<String> cityList = [
+    '1. I may call you',
+    '2. Please come to me, I maybe in Danger',
+    '3. I need immediate help !'
+  ];
+
   Widget animatedButton() {
     return GestureDetector(
         onTap: () {
@@ -130,14 +137,21 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         ),
       ),
       onPressed: () async {
-        await widget.homeViewModel.map();
+        await widget.homeViewModel.map(dropDownValue);
       },
     );
   }
 
   @override
   void initState() {
+    setFilters();
     super.initState();
+  }
+
+  setFilters() {
+    setState(() {
+      dropDownValue = cityList[0];
+    });
   }
 
   @override
@@ -148,19 +162,48 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      child: Scaffold(
       body: Center(
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
+          mainAxisAlignment: MainAxisAlignment.center,
+           children: <Widget>[
           voice_button_clicked ? afterButton() : beforeButton(),
+             SizedBox(
+               height: 20,
+             ),
+             DropdownButtonFormField(
+               decoration: InputDecoration(
+                   border: OutlineInputBorder(
+                     borderRadius: const BorderRadius.all(
+                       const Radius.circular(30.0),
+                     ),
+                   ),
+                   filled: true,
+                   hintStyle: TextStyle(color: Colors.grey[800]),
+                   hintText: "Message",
+                   fillColor: Colors.blue[200]),
+               value: dropDownValue,
+               onChanged: (value) {
+                 setState(() {
+                   dropDownValue = value.toString();
+                 });
+               },
+               items: cityList
+                   .map((cityTitle) => DropdownMenuItem(
+                   value: cityTitle, child: Text("$cityTitle")))
+                   .toList(),
+             ),
           SizedBox(
             height: 20,
           ),
           sosButton(),
+
         ],
       )),
       bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
+      ),
+      onWillPop: () async => false
     );
   }
 }
@@ -203,6 +246,4 @@ class CirclePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CirclePainter oldDelegate) => true;
-
-
 }

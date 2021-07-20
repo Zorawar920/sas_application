@@ -14,10 +14,15 @@ class HomeViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
   final _audioRecorder = Record();
 
-  final EmergencyContactViewModel es = new EmergencyContactViewModel();
 
-  getContactList() async {
-    return es.getList();
+  Future<List> getRecipientsList() async {
+    var snapshots = await _fireBaseModel.firebaseDbService.instance
+        .collection('users')
+        .doc(_fireBaseModel.auth.currentUser!.uid)
+        .collection("emergencyContacts")
+        .get();
+    final allData = snapshots.docs.map((doc) => doc.data()).toList();
+    return allData;
   }
 
   void _sendSMS(
@@ -29,17 +34,24 @@ class HomeViewModel extends FireBaseModel {
     print(_result);
   }
 
-  Future<void> map() async {
+  Future getFuture() {
+    return Future(() async {
+      await Future.delayed(Duration(seconds: 5));
+      return 'Hello, Future Progress Dialog!';
+    });
+  }
+
+  Future<void> map(String dropDownValue) async {
     Geolocator.checkPermission();
     final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     print(position);
-    var list = await getContactList();
+    var list = await getRecipientsList();
     for (var map in list) {
-      var address = map["emergency-contact-number"];
+      var address = map["emergencyContactNumber"];
       String url =
           "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
-      String encodedURl = Uri.encodeFull(url) + " HELP...!!!";
+      String encodedURl = Uri.encodeFull(url) + " " + dropDownValue;
       if (Platform.isIOS) {
         List<String> recipents = [];
         recipents.add(address);
@@ -50,13 +62,6 @@ class HomeViewModel extends FireBaseModel {
         sender.sendSms(new SmsMessage(address, encodedURl));
       }
     }
-  }
-
-  Future getFuture() {
-    return Future(() async {
-      await Future.delayed(Duration(seconds: 5));
-      return 'Hello, Future Progress Dialog!';
-    });
   }
 
   Future<void> startRecord() async {
@@ -78,7 +83,6 @@ class HomeViewModel extends FireBaseModel {
     final path = await _audioRecorder.stop();
     print("Path of recorded audio    $path");
   }
-
 }
 
 
