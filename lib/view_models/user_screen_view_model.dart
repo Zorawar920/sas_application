@@ -43,8 +43,7 @@ class UserScreenViewModel extends FireBaseModel {
     try {
       _fireBaseModel.setBusy(true);
       String _phoneNumber = phoneNumber;
-      String _gender = gender.text.trim();
-      userModel.gender = _gender;
+      userModel.gender = gender;
       userModel.phoneNumber = _phoneNumber;
       await _fireBaseModel.firebaseDbService.updateUserData(
           _fireBaseModel.auth.currentUser!.uid, _phoneNumber, _gender);

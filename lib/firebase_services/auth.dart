@@ -35,7 +35,6 @@ class Auth implements AuthBase {
 
   Future<User?> signOut() async {
     await FirebaseAuth.instance.signOut();
-
     final signInApi = GoogleSignIn();
     await signInApi.signOut();
   }
@@ -88,6 +87,7 @@ class Auth implements AuthBase {
       print(e.toString());
     }
   }
+
 
   @override
   Future<User?> signInWithEmailAndPassword(
