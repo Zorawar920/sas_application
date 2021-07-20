@@ -42,15 +42,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   String number = "";
   String email = "";
   String gender = "";
-  List initialDetails=[];
+  List initialDetails = [];
 
- @override
+  @override
   void initState() {
     super.initState();
     userDetails();
     BackButtonInterceptor.add(myInterceptor);
   }
-
 
   bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
     return true;
@@ -88,16 +87,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  onPressed: () {
-                    //var code = await widget.userProfileViewModel.getCode();
-                    var code ="IN";
+                  onPressed: () async {
+                    var code = await widget.userProfileViewModel.getCode();
 
-
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (builder) => UpdateDetails(codeflag: code,initialDetails: initialDetails,)),
-                                (Route<dynamic> route) => false);
-
-
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (builder) => UpdateDetails(
+                                  codeflag: code,
+                                  initialDetails: initialDetails,
+                                )),
+                        (Route<dynamic> route) => false);
                   },
                   icon: Icon(Icons.edit),
                   color: Colors.blueGrey,
@@ -217,7 +216,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           number = details['phone_number'].toString();
           gender = details['gender'].toString();
           email = details['e-mail id'].toString();
-          initialDetails = [name,number,gender,email];
+          initialDetails = [name, number, gender, email];
         });
       }
     });
@@ -304,55 +303,56 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      child:Scaffold(
-      body: Scaffold(
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(
-                    right: 10.0,
-                    left: 10.0,
-                    top: 60.0,
-                    bottom: 30.0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      buildAppScreenLogo(),
-                      SizedBox(
-                        height: 10.0,
+        child: Scaffold(
+          body: Scaffold(
+            body: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.light,
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: double.infinity,
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        right: 10.0,
+                        left: 10.0,
+                        top: 60.0,
+                        bottom: 30.0,
                       ),
-                      Text(
-                        ' User Profile',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          buildAppScreenLogo(),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            ' User Profile',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontFamily: 'OpenSans',
+                              fontSize: 30.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 25.0),
+                          buildPersonalDetails(),
+                          SizedBox(height: 25.0),
+                          buildEmergencyContacts(),
+                          showEmergencyContacts(),
+                          SizedBox(height: 25.0),
+                        ],
                       ),
-                      SizedBox(height: 25.0),
-                      buildPersonalDetails(),
-                      SizedBox(height: 25.0),
-                      buildEmergencyContacts(),
-                      showEmergencyContacts(),
-                      SizedBox(height: 25.0),
-                    ],
-                  ),
-                ),
-              )
-            ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
+          bottomNavigationBar:
+              CustomBottomNavBar(selectedMenu: MenuState.profile),
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.profile),
-    ),
         onWillPop: () async => false);
   }
 }
