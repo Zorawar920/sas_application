@@ -40,7 +40,7 @@ class UpdateDetailsViewModel extends FireBaseModel {
       _userScreenViewModel.userModel.phoneNumber = details[1];
       email = details[1];
       await _fireBaseModel.firebaseDbService
-          .updateUserData(_userScreenViewModel.userModel, details);
+          .updateUserProfileData(_userScreenViewModel.userModel, details);
       _fireBaseModel.setBusy(false);
 
       Navigator.of(context).pushAndRemoveUntil(
