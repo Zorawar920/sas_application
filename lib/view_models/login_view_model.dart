@@ -5,7 +5,6 @@ import 'package:sas_application/models/firebase_model.dart';
 import 'package:sas_application/view_models/user_screen_view_model.dart';
 import 'package:sas_application/views/screens/home_page.dart';
 import 'package:sas_application/views/screens/user_screen.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginViewModel extends FireBaseModel {
@@ -36,7 +35,6 @@ class LoginViewModel extends FireBaseModel {
             MaterialPageRoute(builder: (builder) => UserScreen()),
             (Route<dynamic> route) => false);*/
         // ignore: await_only_futures
-
         try {
           var snapShot = await _fireBaseModel.firebaseDbService.instance
               .collection('users')

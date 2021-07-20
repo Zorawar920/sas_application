@@ -43,7 +43,7 @@ dependencies:
   flutter_dialogs: ^2.1.0
   flutter_sms: ^2.3.1
   get_it: ^7.1.2
-  
+  intl_phone_field: ^2.0.1
 
   geolocator: ^7.1.0
   maps_launcher: ^2.0.0
@@ -60,6 +60,7 @@ dependencies:
   permission_handler: ^8.1.1
   future_progress_dialog: ^0.2.0
   sms: ^0.2.4
+
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.0"

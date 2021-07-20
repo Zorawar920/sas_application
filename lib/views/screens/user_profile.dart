@@ -1,3 +1,4 @@
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:sas_application/uniformity/custom_bottom_nav_bar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/user_profile_view_model.dart';
 import 'package:sas_application/views/screens/emergency_contact.dart';
-import 'package:sas_application/views/screens/user_screen.dart';
+import 'package:sas_application/views/screens/update_details.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../enums.dart';
@@ -41,10 +42,24 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   String number = "";
   String email = "";
   String gender = "";
+  List initialDetails=[];
 
+ @override
   void initState() {
     super.initState();
     userDetails();
+    BackButtonInterceptor.add(myInterceptor);
+  }
+
+
+  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    return true;
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(myInterceptor);
+    super.dispose();
   }
 
   Widget buildAppScreenLogo() {
@@ -74,8 +89,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (builder) => UserScreen()));
+                    //var code = await widget.userProfileViewModel.getCode();
+                    var code ="IN";
+
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (builder) => UpdateDetails(codeflag: code,initialDetails: initialDetails,)),
+                                (Route<dynamic> route) => false);
+
+
                   },
                   icon: Icon(Icons.edit),
                   color: Colors.blueGrey,
@@ -195,6 +217,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           number = details['phone_number'].toString();
           gender = details['gender'].toString();
           email = details['e-mail id'].toString();
+          initialDetails = [name,number,gender,email];
         });
       }
     });
@@ -280,7 +303,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      child:Scaffold(
       body: Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light,
@@ -328,6 +352,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.profile),
-    );
+    ),
+        onWillPop: () async => false);
   }
 }

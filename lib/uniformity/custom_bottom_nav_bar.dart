@@ -114,7 +114,7 @@ class CustomBottomNavBar extends StatelessWidget {
               IconButton(
                 icon: SvgPicture.asset(
                   "assets/icons/Log out.svg",
-                  color: kPrimaryColor,
+                  color: inActiveIconColor,
                 ),
                 onPressed: () => {signOutAnonymously(context)},
               )
