@@ -4,4 +4,5 @@ class UserModel {
    String emailAddress=" ";
    String phoneNumber=" ";
    String gender=" ";
+   String countryCode = "";
 }

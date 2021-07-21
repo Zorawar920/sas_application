@@ -10,10 +10,9 @@ import 'package:stacked/stacked.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 class UpdateDetails extends StatelessWidget {
-  final String codeflag;
   final List initialDetails;
   const UpdateDetails(
-      {Key? key, required this.codeflag, required this.initialDetails})
+      {Key? key, required this.initialDetails})
       : super(key: key);
 
   @override
@@ -22,7 +21,6 @@ class UpdateDetails extends StatelessWidget {
         builder: (context, viewModel, child) => MaterialApp(
               debugShowCheckedModeBanner: false,
               home: UpdateDetailsScreen(
-                codeflag: codeflag,
                 initialDetails: initialDetails,
                 updateDetailsViewModel: viewModel,
               ),
@@ -33,12 +31,10 @@ class UpdateDetails extends StatelessWidget {
 
 class UpdateDetailsScreen extends StatefulWidget {
   final List initialDetails;
-  final String codeflag;
   final UpdateDetailsViewModel updateDetailsViewModel;
 
   UpdateDetailsScreen(
       {required this.updateDetailsViewModel,
-      required this.codeflag,
       required this.initialDetails});
 
   @override
@@ -63,8 +59,6 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
       initialPhone = "",
       initialEmail = "",
       initialGender = "";
-  bool isphoneVerified = false;
-  bool isEmailVerified = false;
   String radioItem = "";
 
   @override
@@ -125,15 +119,184 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
       phoneNumberController.text = detail['Phone']
           .toString()
           .substring(detail['Phone'].toString().length - 10);
-      code = detail['Phone']
-          .toString()
-          .substring(0, detail['Phone'].toString().length - 10);
+      code = detail['CountryCode']
+          .toString();
+      if(code == '+91'){
+        initialCode = 'IN';
+      }
+      if(code == '+1'){
+        initialCode = 'CA';
+      }
       initialPhone = detail['Phone'].toString();
       initialEmail = detail['Email'].toString();
       initialGender = detail['Gender'].toString();
     }
 
     return details;
+  }
+
+  Widget buildGender(){
+    return Column(
+      crossAxisAlignment:
+      CrossAxisAlignment
+          .start,
+      children: <Widget>[
+        Text(
+          'Gender',
+          style: userlabelStyle,
+        ),
+        SizedBox(height: 5.0),
+        RadioListTile(
+          groupValue: radioItem,
+          title: Text('Male'),
+          value: 'Male',
+          onChanged: (val) {
+            setState(() {
+              radioItem =
+                  val.toString();
+            });
+          },
+        ),
+        RadioListTile(
+          groupValue: radioItem,
+          title: Text('Female'),
+          value: 'Female',
+          onChanged: (val) {
+            setState(() {
+              radioItem =
+                  val.toString();
+            });
+          },
+        ),
+        RadioListTile(
+          groupValue: radioItem,
+          title: Text(
+              'Third Gender'),
+          value: 'Third Gender',
+          onChanged: (val) {
+            setState(() {
+              radioItem =
+                  val.toString();
+            });
+          },
+        ),
+        RadioListTile(
+          groupValue: radioItem,
+          title: Text(
+              'Not preferred to reveal'),
+          value:
+          'Not preferred to reveal',
+          onChanged: (val) {
+            setState(() {
+              radioItem =
+                  val.toString();
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget buildSubmit(){
+    return Container(
+      padding:
+      EdgeInsets.symmetric(
+          vertical: 30.0),
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton
+            .styleFrom(
+          primary:
+          Colors.blueGrey,
+          onPrimary: Colors.white,
+          elevation: 10.0,
+          padding: EdgeInsets.all(
+              15.0),
+          shape:
+          RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius
+                .circular(
+                30.0),
+          ),
+        ),
+        onPressed: () {
+          name = myFirstNameController.text;
+          gender = radioItem;
+          phone = code + phoneNumberController.text;
+          List<String> details = [
+            name,
+            phone,
+            gender
+          ];
+          if (globalFormKey.currentState!.validate()) {
+            if(initialPhone != phone && widget.updateDetailsViewModel.auth.isPhoneVerified == true){
+              widget.updateDetailsViewModel.auth.isPhoneVerified = false;
+              widget.updateDetailsViewModel.updateUser(details, this.context);
+            }
+
+            else if ( initialPhone == phone){
+              widget.updateDetailsViewModel.updateUser(details, this.context);
+            }
+            else{
+              showPlatformDialog(
+                  context: context,
+                  builder: (context) {
+                    return BasicDialogAlert(
+                      title: Text(
+                          "Phone Verification"),
+                      content: Text(
+                          "Please verify your phone number first."),
+                      actions: [
+                        BasicDialogAction(
+                            onPressed:
+                                () {
+                              Navigator.of(context).pop();
+                            },
+                            title:
+                            Text("OK"))
+                      ],
+                    );
+                  });
+            }
+          } else {
+            showPlatformDialog(
+                context: context,
+                builder:
+                    (context) {
+                  return BasicDialogAlert(
+                    title: Text(
+                        "Enter proper details"),
+                    content: Text(
+                        "Please check the format and values of text fields."),
+                    actions: [
+                      BasicDialogAction(
+                          onPressed:
+                              () {
+                            Navigator.of(context)
+                                .pop();
+                          },
+                          title: Text(
+                              "OK"))
+                    ],
+                  );
+                });
+          }
+        },
+        child: Text(
+          'SUBMIT',
+          style: TextStyle(
+            color: Colors.white,
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight:
+            FontWeight.bold,
+            fontFamily:
+            'OpenSans',
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -287,17 +450,9 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                                       phoneNumberController
                                                                           .text
                                                                           .toString(),
-                                                                  if (initialPhone ==
-                                                                      phone)
-                                                                    {
-                                                                      isphoneVerified =
-                                                                          true,
-                                                                    },
-                                                                  print(
-                                                                      initialPhone),
+
                                                                   print(phone),
-                                                                  if (isphoneVerified ==
-                                                                      true)
+                                                                  if (initialPhone == phone)
                                                                     {
                                                                       showPlatformDialog(
                                                                           context:
@@ -372,7 +527,7 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                         height: 60.0,
                                                         child: IntlPhoneField(
                                                           initialCountryCode:
-                                                              widget.codeflag,
+                                                              initialCode,
                                                           decoration:
                                                               InputDecoration(
                                                             border: InputBorder
@@ -391,15 +546,9 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                             hintStyle:
                                                                 hintTextStyle,
                                                           ),
-                                                          controller:
-                                                              phoneNumberController,
+                                                          controller: phoneNumberController,
                                                           autoValidate: true,
-                                                          onChanged: (Phone) {
-                                                            print(Phone
-                                                                .completeNumber);
-                                                          },
-                                                          onCountryChanged:
-                                                              (Phone) {
+                                                          onCountryChanged: (Phone) {
                                                             print('Country code changed to: ' +
                                                                 Phone
                                                                     .countryCode
@@ -414,6 +563,8 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                     ],
                                                   ),
                                                   SizedBox(height: 15.0),
+
+                                                  /*
                                                   Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -496,77 +647,44 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                         ),
                                                       ),
                                                       onPressed: () {
-                                                        name =
-                                                            myFirstNameController
-                                                                .text;
+                                                        name = myFirstNameController.text;
                                                         gender = radioItem;
-
-                                                        print(countryCode);
-                                                        print(code);
-                                                        phone = code +
-                                                            phoneNumberController
-                                                                .text;
-                                                        print(phone);
-                                                        print(initialPhone);
-
-                                                        if (phone ==
-                                                            initialPhone) {
-                                                          isphoneVerified =
-                                                              true;
-                                                        } else {
-                                                          isphoneVerified =
-                                                              false;
-                                                        }
+                                                        phone = code + phoneNumberController.text;
                                                         List<String> details = [
                                                           name,
                                                           phone,
                                                           gender
                                                         ];
-                                                        print(isphoneVerified);
+                                                        if (globalFormKey.currentState!.validate()) {
+                                                         if(initialPhone != phone && widget.updateDetailsViewModel.auth.isPhoneVerified == true){
+                                                           widget.updateDetailsViewModel.auth.isPhoneVerified = false;
+                                                             widget.updateDetailsViewModel.updateUser(details, this.context);
+                                                           }
 
-                                                        if (globalFormKey
-                                                            .currentState!
-                                                            .validate()) {
-                                                          if (widget
-                                                                  .updateDetailsViewModel
-                                                                  .auth
-                                                                  .isPhoneVerified ==
-                                                              true) {
-                                                            widget
-                                                                .updateDetailsViewModel
-                                                                .updateUser(
-                                                                    details,
-                                                                    this.context);
-                                                          } else if (isphoneVerified ==
-                                                              true) {
-                                                            widget
-                                                                .updateDetailsViewModel
-                                                                .updateUser(
-                                                                    details,
-                                                                    this.context);
-                                                          } else {
-                                                            showPlatformDialog(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (context) {
-                                                                  return BasicDialogAlert(
-                                                                    title: Text(
-                                                                        "Phone Verification"),
-                                                                    content: Text(
-                                                                        "Please verify your phone number first."),
-                                                                    actions: [
-                                                                      BasicDialogAction(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.of(context).pop();
-                                                                          },
-                                                                          title:
-                                                                              Text("OK"))
-                                                                    ],
-                                                                  );
-                                                                });
-                                                          }
+                                                         else if ( initialPhone == phone){
+                                                           widget.updateDetailsViewModel.updateUser(details, this.context);
+                                                         }
+                                                         else{
+                                                           showPlatformDialog(
+                                                               context: context,
+                                                               builder: (context) {
+                                                                 return BasicDialogAlert(
+                                                                   title: Text(
+                                                                       "Phone Verification"),
+                                                                   content: Text(
+                                                                       "Please verify your phone number first."),
+                                                                   actions: [
+                                                                     BasicDialogAction(
+                                                                         onPressed:
+                                                                             () {
+                                                                           Navigator.of(context).pop();
+                                                                         },
+                                                                         title:
+                                                                         Text("OK"))
+                                                                   ],
+                                                                 );
+                                                               });
+                                                         }
                                                         } else {
                                                           showPlatformDialog(
                                                               context: context,
@@ -604,12 +722,15 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                  )
+                                                  )*/
                                                 ],
                                               ),
                                             );
                                           });
-                                    })
+                                    }),
+                                buildGender(),
+                                SizedBox(height: 25.0),
+                                buildSubmit()
                               ],
                             ),
                           ),

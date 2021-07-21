@@ -21,7 +21,8 @@ class UpdateDetailsViewModel extends FireBaseModel {
       'Name': data!["full_name"],
       'Phone': data['phone_number'],
       'Email': data['e-mail id'],
-      'Gender': data['gender']
+      'Gender': data['gender'],
+      'CountryCode': data['country code']
     });
     return userDetails;
   }

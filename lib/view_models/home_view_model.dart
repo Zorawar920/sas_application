@@ -1,12 +1,9 @@
 import 'dart:io';
 import 'dart:async';
-
-
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:record/record.dart';
 import 'package:sas_application/models/firebase_model.dart';
-import 'package:sas_application/view_models/emergency_contact_view_model.dart';
 import 'package:sms/sms.dart';
 
 

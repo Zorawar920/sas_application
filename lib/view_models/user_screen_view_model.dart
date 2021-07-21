@@ -39,14 +39,15 @@ class UserScreenViewModel extends FireBaseModel {
     }
   }
 
-  Future<void> updateUser(phoneNumber, gender, BuildContext context) async {
+  Future<void> updateUser(phoneNumber, gender,code, BuildContext context) async {
     try {
       _fireBaseModel.setBusy(true);
       String _phoneNumber = phoneNumber;
       userModel.gender = gender;
       userModel.phoneNumber = _phoneNumber;
+      userModel.countryCode = code;
       await _fireBaseModel.firebaseDbService.updateUserData(
-          _fireBaseModel.auth.currentUser!.uid, _phoneNumber, gender);
+          _fireBaseModel.auth.currentUser!.uid, _phoneNumber, gender,code);
       _fireBaseModel.setBusy(false);
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (builder) => EmergencyContactScreen()),

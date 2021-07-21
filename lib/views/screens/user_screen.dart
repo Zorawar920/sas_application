@@ -165,7 +165,7 @@ class UserScreenState extends State<UserScreenApp> {
                             onPressed: () {
                                   widget.userScreenViewModel
                                       .updateUser(
-                                      phone, radioItem, context);
+                                      phone, radioItem,code, context);
                             },
                             title: Text("I Agree")),
                         BasicDialogAction(

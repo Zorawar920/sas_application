@@ -88,12 +88,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 IconButton(
                   onPressed: () async {
-                    var code = await widget.userProfileViewModel.getCode();
-
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
                             builder: (builder) => UpdateDetails(
-                                  codeflag: code,
                                   initialDetails: initialDetails,
                                 )),
                         (Route<dynamic> route) => false);

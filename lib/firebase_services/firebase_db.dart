@@ -49,13 +49,14 @@ class FirebaseDbService {
         .catchError((error) => print("Failed to add: $error"));
   }
 
-  Future<void> updateUserData(_userId, phoneNumber, gender) async {
+  Future<void> updateUserData(_userId, phoneNumber, gender,code) async {
     return await FirebaseFirestore.instance
         .collection("users")
         .doc(_userId)
         .update({
           'phone_number': phoneNumber,
           'gender': gender,
+          'country code': code,
         })
         .then((value) => print("Additional User Details Added"))
         .catchError((error) => print("Failed to add: $error"));
