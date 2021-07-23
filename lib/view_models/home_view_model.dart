@@ -1,16 +1,24 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:record/record.dart';
 import 'package:sas_application/models/firebase_model.dart';
 import 'package:sms/sms.dart';
-
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:sentiment_dart/sentiment_dart.dart';
 
 class HomeViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
-  final _audioRecorder = Record();
-
+  final _modelFile = 'text_classification.tflite';
+  final SpeechToText speech = SpeechToText();
+  var resultListened;
+  final sentiment = Sentiment();
+  String text = "";
 
   Future<List> getRecipientsList() async {
     var snapshots = await _fireBaseModel.firebaseDbService.instance
@@ -53,33 +61,63 @@ class HomeViewModel extends FireBaseModel {
         List<String> recipents = [];
         recipents.add(address);
         _sendSMS(message: encodedURl, recipents: recipents);
-      }
-      else{
+      } else {
         SmsSender sender = new SmsSender();
         sender.sendSms(new SmsMessage(address, encodedURl));
       }
     }
   }
 
-  Future<void> startRecord() async {
-    try {
-      if (await _audioRecorder.hasPermission()) {
-        await _audioRecorder.start(
-            encoder: AudioEncoder.AAC, bitRate: 128000, samplingRate: 44100);
-        bool isRecording = await _audioRecorder.isRecording();
-        if (isRecording) {
-          print("Audio Recording Started");
-        }
-      }
-    } catch (e) {
-      print("Error while recording $e");
+  Future<void> startRecord(BuildContext context) async {
+    bool available = await speech.initialize(
+        onStatus: statusListener, onError: errorListener);
+    if (available) {
+      speech.listen(
+          onResult: resultListener,
+          listenFor: Duration(seconds: 30),
+          pauseFor: Duration(seconds: 5),
+          listenMode: ListenMode.confirmation,
+          cancelOnError: true);
+    } else {
+      showPlatformDialog(
+          context: context,
+          builder: (context) {
+            return BasicDialogAlert(
+              title: Text("Permission Issue"),
+              content: Text(
+                  "The user has denied the permission for speech recognition"),
+              actions: [
+                BasicDialogAction(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    title: Text("OK"))
+              ],
+            );
+          });
     }
   }
 
   Future<void> stopRecord() async {
-    final path = await _audioRecorder.stop();
-    print("Path of recorded audio    $path");
+    speech.stop();
+    var result = sentiment.analysis(text);
+    if (result.isNotEmpty) {
+      var score = result['score'];
+      if (score <= 0) {
+        map(text);
+      }
+    }
+  }
+
+  void errorListener(SpeechRecognitionError errorNotification) {
+    var lastError =
+        '${errorNotification.errorMsg} - ${errorNotification.permanent}';
+    print(lastError);
+  }
+
+  void statusListener(String status) {}
+
+  void resultListener(SpeechRecognitionResult result) {
+    text = '${result.recognizedWords}';
   }
 }
-
-

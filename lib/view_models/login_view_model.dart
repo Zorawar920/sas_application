@@ -31,10 +31,6 @@ class LoginViewModel extends FireBaseModel {
           .signInWithEmailAndPassword(_email, _password);
       _fireBaseModel.setBusy(false);
       if (_authenticatedUser!.emailVerified) {
-        /* Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (builder) => UserScreen()),
-            (Route<dynamic> route) => false);*/
-        // ignore: await_only_futures
         try {
           var snapShot = await _fireBaseModel.firebaseDbService.instance
               .collection('users')

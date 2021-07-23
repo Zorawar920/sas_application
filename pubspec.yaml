@@ -48,7 +48,6 @@ dependencies:
   geolocator: ^7.1.0
   maps_launcher: ^2.0.0
 
-  record: ^3.0.0
 
   #Firebase dependencies
    
@@ -60,6 +59,9 @@ dependencies:
   permission_handler: ^8.1.1
   future_progress_dialog: ^0.2.0
   sms: ^0.2.4
+  firebase_messaging: ^10.0.4
+  speech_to_text: ^4.2.2
+  sentiment_dart: ^0.0.4
 
 
 dev_dependencies:

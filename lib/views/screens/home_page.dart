@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sas_application/uniformity/custom_bottom_nav_bar.dart';
@@ -97,7 +96,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
-  Widget beforeButton() {
+  Widget beforeButton(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
             shape: CircleBorder(),
@@ -110,7 +109,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         ),
         onPressed: () {
           setState(() {
-            widget.homeViewModel.startRecord();
+            widget.homeViewModel.startRecord(this.context);
             voice_button_clicked = true;
             _controller = AnimationController(
               duration: const Duration(milliseconds: 2000),
@@ -163,48 +162,50 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      child: Scaffold(
-      body: Center(
-          child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-           children: <Widget>[
-          voice_button_clicked ? afterButton() : beforeButton(),
-             SizedBox(
-               height: 20,
-             ),
-             DropdownButtonFormField(
-               decoration: InputDecoration(
-                   border: OutlineInputBorder(
-                     borderRadius: const BorderRadius.all(
-                       const Radius.circular(30.0),
-                     ),
-                   ),
-                   filled: true,
-                   hintStyle: TextStyle(color: Colors.grey[800]),
-                   hintText: "Message",
-                   fillColor: Colors.blue[200]),
-               value: dropDownValue,
-               onChanged: (value) {
-                 setState(() {
-                   dropDownValue = value.toString();
-                 });
-               },
-               items: cityList
-                   .map((cityTitle) => DropdownMenuItem(
-                   value: cityTitle, child: Text("$cityTitle")))
-                   .toList(),
-             ),
-          SizedBox(
-            height: 20,
-          ),
-          sosButton(),
-
-        ],
-      )),
-      bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
-      ),
-      onWillPop: () async => false
-    );
+        child: Scaffold(
+          body: Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              voice_button_clicked ? afterButton() : beforeButton(this.context),
+              SizedBox(
+                height: 20,
+              ),
+              DropdownButtonFormField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        const Radius.circular(30.0),
+                      ),
+                    ),
+                    filled: true,
+                    hintStyle: TextStyle(color: Colors.grey[800]),
+                    hintText: "Message",
+                    fillColor: Colors.blue[200]),
+                value: dropDownValue,
+                onChanged: (value) {
+                  setState(() {
+                    dropDownValue = value.toString();
+                  });
+                },
+                items: cityList
+                    .map((cityTitle) => DropdownMenuItem(
+                        value: cityTitle, child: Text("$cityTitle")))
+                    .toList(),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              sosButton(),
+              Text(
+                widget.homeViewModel.text,
+                textAlign: TextAlign.center,
+              )
+            ],
+          )),
+          bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
+        ),
+        onWillPop: () async => false);
   }
 }
 
