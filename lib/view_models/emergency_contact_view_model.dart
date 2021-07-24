@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:contact_picker/contact_picker.dart';
 import 'package:flutter/material.dart';
@@ -285,6 +286,29 @@ class EmergencyContactViewModel extends FireBaseModel {
         print("Error while sending a message : $e");
       }
     }
+  }
+
+  Future<void> saveTimeStamp(int time) async {
+    await _fireBaseModel.firebaseDbService
+        .addTimeStamp(_fireBaseModel.auth.currentUser!.uid, time);
+  }
+
+  Future<int> getTimeStamp() async {
+    try {
+      var snapShot = await _fireBaseModel.firebaseDbService.instance
+          .collection('users')
+          .doc(_fireBaseModel.auth.currentUser!.uid)
+          .get(GetOptions(source: Source.cache));
+      print(snapShot.data()!['timeStamp']);
+      if (snapShot.data()!['timeStamp'] == null) {
+        return -1;
+      } else {
+        return int.parse(snapShot.data()!['timeStamp'].toString());
+      }
+    } on FirebaseException catch (error) {
+      print("Error occured while getting timeStamp: $error");
+    }
+    return -1;
   }
 
   String? validatePhone(phoneValue) {

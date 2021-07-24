@@ -29,7 +29,7 @@ dependencies:
   firebase_analytics: ^8.1.0
   cloud_firestore: ^2.2.1
   firestore_cache: ^2.1.1
-
+  
   google_sign_in: ^5.0.4
   provider: ^5.0.0
   stacked: ^2.1.4
