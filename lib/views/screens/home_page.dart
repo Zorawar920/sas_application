@@ -196,11 +196,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               SizedBox(
                 height: 20,
               ),
-              sosButton(),
-              Text(
-                widget.homeViewModel.text,
-                textAlign: TextAlign.center,
-              )
+              sosButton()
             ],
           )),
           bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),

@@ -541,20 +541,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
-  remove_emoji:
-    dependency: transitive
-    description:
-      name: remove_emoji
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.6"
-  sentiment_dart:
-    dependency: "direct main"
-    description:
-      name: sentiment_dart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.4"
   shared_preferences:
     dependency: transitive
     description:

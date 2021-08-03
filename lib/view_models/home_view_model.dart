@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -6,15 +7,14 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sas_application/models/firebase_model.dart';
+import 'package:sas_application/models/sentiment_model.dart';
 import 'package:sms/sms.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:sentiment_dart/sentiment_dart.dart';
 
 class HomeViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
-  final _modelFile = 'text_classification.tflite';
   final SpeechToText speech = SpeechToText();
   var resultListened;
   final sentiment = Sentiment();
@@ -100,13 +100,6 @@ class HomeViewModel extends FireBaseModel {
 
   Future<void> stopRecord() async {
     speech.stop();
-    var result = sentiment.analysis(text);
-    if (result.isNotEmpty) {
-      var score = result['score'];
-      if (score <= 0) {
-        map(text);
-      }
-    }
   }
 
   void errorListener(SpeechRecognitionError errorNotification) {
@@ -119,5 +112,15 @@ class HomeViewModel extends FireBaseModel {
 
   void resultListener(SpeechRecognitionResult result) {
     text = '${result.recognizedWords}';
+    if (speech.isNotListening) {
+      var languageCode = ui.window.locale.languageCode;
+      var result = sentiment.analysis(text, languageCode: languageCode);
+      if (result.isNotEmpty) {
+        var score = result['score'];
+        if (score < 0) {
+          map(text);
+        }
+      }
+    }
   }
 }
