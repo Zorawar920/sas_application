@@ -11,8 +11,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 
 class UpdateDetails extends StatelessWidget {
   final List initialDetails;
-  const UpdateDetails(
-      {Key? key, required this.initialDetails})
+  const UpdateDetails({Key? key, required this.initialDetails})
       : super(key: key);
 
   @override
@@ -34,8 +33,7 @@ class UpdateDetailsScreen extends StatefulWidget {
   final UpdateDetailsViewModel updateDetailsViewModel;
 
   UpdateDetailsScreen(
-      {required this.updateDetailsViewModel,
-      required this.initialDetails});
+      {required this.updateDetailsViewModel, required this.initialDetails});
 
   @override
   _UpdateDetailsScreenState createState() => _UpdateDetailsScreenState();
@@ -65,6 +63,7 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
   void initState() {
     super.initState();
     radioItem = widget.initialDetails[2].toString();
+    widget.updateDetailsViewModel.auth.isPhoneVerified = false;
     BackButtonInterceptor.add(myInterceptor);
   }
 
@@ -119,12 +118,11 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
       phoneNumberController.text = detail['Phone']
           .toString()
           .substring(detail['Phone'].toString().length - 10);
-      code = detail['CountryCode']
-          .toString();
-      if(code == '+91'){
+      code = detail['CountryCode'].toString();
+      if (code == '+91') {
         initialCode = 'IN';
       }
-      if(code == '+1'){
+      if (code == '+1') {
         initialCode = 'CA';
       }
       initialPhone = detail['Phone'].toString();
@@ -135,11 +133,9 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
     return details;
   }
 
-  Widget buildGender(){
+  Widget buildGender() {
     return Column(
-      crossAxisAlignment:
-      CrossAxisAlignment
-          .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           'Gender',
@@ -152,8 +148,7 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
           value: 'Male',
           onChanged: (val) {
             setState(() {
-              radioItem =
-                  val.toString();
+              radioItem = val.toString();
             });
           },
         ),
@@ -163,33 +158,27 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
           value: 'Female',
           onChanged: (val) {
             setState(() {
-              radioItem =
-                  val.toString();
+              radioItem = val.toString();
             });
           },
         ),
         RadioListTile(
           groupValue: radioItem,
-          title: Text(
-              'Third Gender'),
+          title: Text('Third Gender'),
           value: 'Third Gender',
           onChanged: (val) {
             setState(() {
-              radioItem =
-                  val.toString();
+              radioItem = val.toString();
             });
           },
         ),
         RadioListTile(
           groupValue: radioItem,
-          title: Text(
-              'Not preferred to reveal'),
-          value:
-          'Not preferred to reveal',
+          title: Text('Not preferred to reveal'),
+          value: 'Not preferred to reveal',
           onChanged: (val) {
             setState(() {
-              radioItem =
-                  val.toString();
+              radioItem = val.toString();
             });
           },
         ),
@@ -197,64 +186,45 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
     );
   }
 
-  Widget buildSubmit(){
+  Widget buildSubmit() {
     return Container(
-      padding:
-      EdgeInsets.symmetric(
-          vertical: 30.0),
+      padding: EdgeInsets.symmetric(vertical: 30.0),
       width: double.infinity,
       child: ElevatedButton(
-        style: ElevatedButton
-            .styleFrom(
-          primary:
-          Colors.blueGrey,
+        style: ElevatedButton.styleFrom(
+          primary: Colors.blueGrey,
           onPrimary: Colors.white,
           elevation: 10.0,
-          padding: EdgeInsets.all(
-              15.0),
-          shape:
-          RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius
-                .circular(
-                30.0),
+          padding: EdgeInsets.all(15.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
           ),
         ),
         onPressed: () {
           name = myFirstNameController.text;
           gender = radioItem;
           phone = code + phoneNumberController.text;
-          List<String> details = [
-            name,
-            phone,
-            gender
-          ];
+          List<String> details = [name, phone, gender];
           if (globalFormKey.currentState!.validate()) {
-            if(initialPhone != phone && widget.updateDetailsViewModel.auth.isPhoneVerified == true){
+            if (initialPhone != phone &&
+                widget.updateDetailsViewModel.auth.isPhoneVerified == true) {
               widget.updateDetailsViewModel.auth.isPhoneVerified = false;
               widget.updateDetailsViewModel.updateUser(details, this.context);
-            }
-
-            else if ( initialPhone == phone){
+            } else if (initialPhone == phone) {
               widget.updateDetailsViewModel.updateUser(details, this.context);
-            }
-            else{
+            } else {
               showPlatformDialog(
                   context: context,
                   builder: (context) {
                     return BasicDialogAlert(
-                      title: Text(
-                          "Phone Verification"),
-                      content: Text(
-                          "Please verify your phone number first."),
+                      title: Text("Phone Verification"),
+                      content: Text("Please verify your phone number first."),
                       actions: [
                         BasicDialogAction(
-                            onPressed:
-                                () {
+                            onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            title:
-                            Text("OK"))
+                            title: Text("OK"))
                       ],
                     );
                   });
@@ -262,22 +232,17 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
           } else {
             showPlatformDialog(
                 context: context,
-                builder:
-                    (context) {
+                builder: (context) {
                   return BasicDialogAlert(
-                    title: Text(
-                        "Enter proper details"),
+                    title: Text("Enter proper details"),
                     content: Text(
                         "Please check the format and values of text fields."),
                     actions: [
                       BasicDialogAction(
-                          onPressed:
-                              () {
-                            Navigator.of(context)
-                                .pop();
+                          onPressed: () {
+                            Navigator.of(context).pop();
                           },
-                          title: Text(
-                              "OK"))
+                          title: Text("OK"))
                     ],
                   );
                 });
@@ -289,10 +254,8 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
             color: Colors.white,
             letterSpacing: 1.5,
             fontSize: 18.0,
-            fontWeight:
-            FontWeight.bold,
-            fontFamily:
-            'OpenSans',
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
           ),
         ),
       ),
@@ -450,9 +413,9 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                                       phoneNumberController
                                                                           .text
                                                                           .toString(),
-
                                                                   print(phone),
-                                                                  if (initialPhone == phone)
+                                                                  if (initialPhone ==
+                                                                      phone)
                                                                     {
                                                                       showPlatformDialog(
                                                                           context:
@@ -546,9 +509,11 @@ class _UpdateDetailsScreenState extends State<UpdateDetailsScreen> {
                                                             hintStyle:
                                                                 hintTextStyle,
                                                           ),
-                                                          controller: phoneNumberController,
+                                                          controller:
+                                                              phoneNumberController,
                                                           autoValidate: true,
-                                                          onCountryChanged: (Phone) {
+                                                          onCountryChanged:
+                                                              (Phone) {
                                                             print('Country code changed to: ' +
                                                                 Phone
                                                                     .countryCode

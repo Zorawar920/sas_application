@@ -6,7 +6,6 @@ import 'package:sas_application/uniformity/custom_bottom_nav_bar.dart';
 import 'package:sas_application/uniformity/style.dart';
 import 'package:sas_application/view_models/emergency_contact_view_model.dart';
 import 'package:stacked/stacked.dart';
-import 'package:intl/intl.dart';
 import '../../enums.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:contact_picker/contact_picker.dart';
@@ -146,8 +145,8 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                               TextButton(
                                   onPressed: () {
                                     widget.emergencyContactViewModel
-                                        .onEmergencyContactAddtion(
-                                            contactNumber);
+                                        .addContactInformation(
+                                            contactName, contactNumber);
                                     Navigator.pop(context, "Yes");
                                   },
                                   child: Text("Yes")),
@@ -158,8 +157,6 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                                   child: Text('No'))
                             ],
                           ));
-                  widget.emergencyContactViewModel
-                      .addContactInformation(contactName, contactNumber);
                 }
               });
             }
@@ -258,12 +255,12 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                                 streamSnapshot.data!.docs[index]['verified'] ==
                                         false
                                     ? TextButton(
-                                        onPressed: () async => {
+                                        onPressed: () {
                                           sendOTP(
                                               streamSnapshot.data!.docs[index]
                                                   ['emergencyContactNumber'],
                                               streamSnapshot
-                                                  .data!.docs[index].id)
+                                                  .data!.docs[index].id);
                                         }, //Code Goes here
                                         child: Text(
                                           'Verify',
@@ -407,53 +404,49 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
         });
   }
 
-  void sendOTP(String number, String id) {
-    showPlatformDialog(
-        context: context,
-        builder: (context) => BasicDialogAlert(
-              title: Text("An OTP will be sent on this number"),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      if (timeStamp == -1) {
-                        timeStamp = findTime() + 15;
+  void sendOTP(String number, String id) async {
+    timeStamp = await widget.emergencyContactViewModel.getTimeStamp();
+    int currentTime = findCurrentTimeStamp();
+    if (timeStamp == -1 || timeStamp < currentTime) {
+      showPlatformDialog(
+          context: context,
+          builder: (context) => BasicDialogAlert(
+                title: Text("An OTP will be sent on this number"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, "OK");
                         widget.emergencyContactViewModel
-                            .verifyPhoneNumber(number, context, id);
-                      } else if (timeStamp > findTime()) {
-                        showPlatformDialog(
-                            context: context,
-                            builder: (contextt) => BasicDialogAlert(
-                                  title: Text(
-                                      "You cannot send another OTP right away"),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(contextt, "OK");
-                                        },
-                                        child: Text("OK"))
-                                  ],
-                                ));
-                      } else {
-                        timeStamp = findTime() + 15;
+                            .saveTimeStamp(currentTime + 180000);
                         widget.emergencyContactViewModel
-                            .verifyPhoneNumber(number, context, id);
-                      }
-                    },
-                    child: Text("OK")),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context, "Cancel");
-                    },
-                    child: Text("Cancel"))
-              ],
-            ));
+                            .verifyPhoneNumber(number, this.context, id);
+                      },
+                      child: Text("OK")),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, "Cancel");
+                      },
+                      child: Text("Cancel"))
+                ],
+              ));
+    } else if (timeStamp > currentTime) {
+      showPlatformDialog(
+          context: this.context,
+          builder: (context) => BasicDialogAlert(
+                title: Text("You cannot send another OTP for Three minutes"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, "OK");
+                      },
+                      child: Text("OK"))
+                ],
+              ));
+    }
   }
 
-  int findTime() {
-    now = DateTime.now();
-    String format = DateFormat('kk:mm:ss').format(now);
-    List time = format.split(":");
-    return int.parse(time[0]) * 60 + int.parse(time[1]);
+  int findCurrentTimeStamp() {
+    return DateTime.now().millisecondsSinceEpoch.abs();
   }
 
   @override

@@ -1,6 +1,4 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 
 import 'package:sas_application/models/user_model.dart';
 
@@ -49,7 +47,7 @@ class FirebaseDbService {
         .catchError((error) => print("Failed to add: $error"));
   }
 
-  Future<void> updateUserData(_userId, phoneNumber, gender,code) async {
+  Future<void> updateUserData(_userId, phoneNumber, gender, code) async {
     return await FirebaseFirestore.instance
         .collection("users")
         .doc(_userId)
@@ -62,16 +60,16 @@ class FirebaseDbService {
         .catchError((error) => print("Failed to add: $error"));
   }
 
-  Future<void> updateUserProfileData(UserModel userModel,details) async {
+  Future<void> updateUserProfileData(UserModel userModel, details) async {
     return await FirebaseFirestore.instance
         .collection("users")
         .doc(userModel.userId)
         .update({
-      'full_name':userModel.fullName,
-      'phone_number': userModel.phoneNumber,
-      'gender': userModel.gender,
-      'e-mail id':userModel.emailAddress
-    })
+          'full_name': userModel.fullName,
+          'phone_number': userModel.phoneNumber,
+          'gender': userModel.gender,
+          'e-mail id': userModel.emailAddress
+        })
         .then((value) => print(" User Details Updated"))
         .catchError((error) => print("Failed to add: $error"));
   }
@@ -86,5 +84,15 @@ class FirebaseDbService {
         .update({'verified': verified})
         .then((value) => print("Emergency Contact Updated"))
         .catchError((e) => print(e));
+  }
+
+  Future<void> addTimeStamp(String uid, int timeStamp) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .update({'timeStamp': timeStamp})
+        .then((value) => print("TimeStamp Added"))
+        .catchError(
+            (onError) => print("Error while adding timeStamp $onError"));
   }
 }
