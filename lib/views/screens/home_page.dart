@@ -34,7 +34,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _logoController;
   bool voice_button_clicked = false;
+
+  late Animation<Offset> _animation =
+      Tween(begin: Offset.zero, end: Offset(0, 0.4)).animate(CurvedAnimation(
+          parent: _logoController, curve: Curves.fastOutSlowIn));
 
   String dropDownValue = "";
   List<String> cityList = [
@@ -89,8 +94,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         color: Colors.blueAccent,
       ),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width * 0.75,
+        height: MediaQuery.of(context).size.width * 0.75,
         child: animatedButton(),
       ),
     );
@@ -105,7 +110,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         child: Icon(
           Icons.mic,
           color: Colors.white,
-          size: 100,
+          size: 70,
         ),
         onPressed: () {
           setState(() {
@@ -141,9 +146,37 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
+  Widget hoverIcon() {
+    return SizedBox(
+        width: double.infinity,
+        //height: 250,
+        child: Stack(
+          children: [
+            Container(
+              child: Image.asset("assets/logos/home_Screen_empty_logo.png"),
+              height: 270,
+              width: MediaQuery.of(context).size.width,
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+              child: SlideTransition(
+                  position: _animation,
+                  child: Image.asset(
+                    "assets/logos/sos.png",
+                    height: 80,
+                  )),
+              width: double.infinity,
+            )
+          ],
+        ));
+  }
+
   @override
   void initState() {
     setFilters();
+    _logoController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000))
+      ..repeat(reverse: true);
     super.initState();
   }
 
@@ -156,6 +189,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   void dispose() {
     _controller.dispose();
+    _logoController.dispose();
     super.dispose();
   }
 
@@ -164,40 +198,66 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     return WillPopScope(
         child: Scaffold(
           body: Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              voice_button_clicked ? afterButton() : beforeButton(this.context),
-              SizedBox(
-                height: 20,
-              ),
-              DropdownButtonFormField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        const Radius.circular(30.0),
-                      ),
-                    ),
-                    filled: true,
-                    hintStyle: TextStyle(color: Colors.grey[800]),
-                    hintText: "Message",
-                    fillColor: Colors.blue[200]),
-                value: dropDownValue,
-                onChanged: (value) {
-                  setState(() {
-                    dropDownValue = value.toString();
-                  });
-                },
-                items: cityList
-                    .map((cityTitle) => DropdownMenuItem(
-                        value: cityTitle, child: Text("$cityTitle")))
-                    .toList(),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              sosButton()
-            ],
+              child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                hoverIcon(),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text(
+                  'Welcome To Safe Society',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontFamily: 'OpenSans',
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                voice_button_clicked
+                    ? afterButton()
+                    : beforeButton(this.context),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          gapPadding: 10,
+                          borderRadius: const BorderRadius.all(
+                            const Radius.circular(20.0),
+                          ),
+                        ),
+                        filled: true,
+                        hintStyle: TextStyle(color: Colors.grey[800]),
+                        hintText: "Message",
+                        fillColor: Colors.white70),
+                    value: dropDownValue,
+                    onChanged: (value) {
+                      setState(() {
+                        dropDownValue = value.toString();
+                      });
+                    },
+                    items: cityList
+                        .map((cityTitle) => DropdownMenuItem(
+                            value: cityTitle, child: Text("$cityTitle")))
+                        .toList(),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                sosButton()
+              ],
+            ),
           )),
           bottomNavigationBar: CustomBottomNavBar(selectedMenu: MenuState.home),
         ),
