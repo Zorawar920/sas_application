@@ -26,7 +26,7 @@ class ChatWindowViewModel extends FireBaseModel {
       var userPhone = await _fireBaseModel.firebaseDbService.instance
           .collection("users")
           .doc(_fireBaseModel.auth.currentUser!.uid)
-          .get(GetOptions(source: Source.serverAndCache));
+          .get(GetOptions(source: Source.cache));
 
       var phoneNumberList = emergencyContactsPresent.docs.where((element) =>
           element['emergencyContactNumber'] == userPhone['phone_number']);
@@ -55,7 +55,7 @@ class ChatWindowViewModel extends FireBaseModel {
 
     var dataShots = await FirebaseFirestore.instance
         .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(_fireBaseModel.auth.currentUser!.uid)
         .collection("emergencyContacts")
         .get(GetOptions(source: Source.cache));
 
@@ -76,44 +76,29 @@ class ChatWindowViewModel extends FireBaseModel {
 
     var whoAddedMeList = await getWhoAddedMeList();
 
-    for (var whoAddedMeListDetails in whoAddedMeList) {
-      if (users.isEmpty) {
+    whoAddedMeList.forEach((element) {
+      var userDetails = users.where((x) => x['userId'] == element['userId']);
+      var userId;
+      if (userDetails.isNotEmpty) {
+        userDetails.single['color3'] = Colors.orangeAccent;
+        userId = userDetails.single["userId"];
+      }
+      var userIdMatch = userId.toString().contains(element['userId']);
+      if (!userIdMatch) {
         users.add({
-          "emergencyContactName": whoAddedMeListDetails['Name'],
-          "emergencyContactNumber": whoAddedMeListDetails['Phone'],
-          "userId": whoAddedMeListDetails['userId'],
-          "color": Colors.grey,
-          "color2": Colors.grey,
+          "emergencyContactName": element['Name'],
+          "emergencyContactNumber": element['Phone'],
+          "userId": element['userId'],
+          "color": element['emergencyContactUserId'] == ""
+              ? Colors.redAccent
+              : Colors.grey,
+          "color2": element['emergencyContactUserId'] == ""
+              ? Colors.grey
+              : Colors.green,
           "color3": Colors.orangeAccent
         });
-      } else if (users.isNotEmpty) {
-        int counter = 0;
-        List id = [];
-        try {
-          for (Map user in users) {
-            counter += 1;
-            id.add(user['userId']);
-            if (user['userId'] == whoAddedMeListDetails['userId']) {
-              user['color3'] = Colors.orangeAccent;
-            } else if (user['userId'] != whoAddedMeListDetails['userId'] &&
-                users.length == counter &&
-                !id.contains(whoAddedMeListDetails['userId'])) {
-              users.add({
-                "emergencyContactName": whoAddedMeListDetails['Name'],
-                "emergencyContactNumber": whoAddedMeListDetails['Phone'],
-                "userId": whoAddedMeListDetails['userId'],
-                "color": Colors.grey,
-                "color2": Colors.grey,
-                "color3": Colors.orangeAccent
-              });
-            }
-          }
-        } catch (error) {
-          print("Error while adding WhoAddedMeList $error");
-        }
       }
-    }
-    print(users);
+    });
     return users;
   }
 }
