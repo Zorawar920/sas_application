@@ -34,7 +34,6 @@ dependencies:
   provider: ^5.0.0
   stacked: ^2.1.4
   sqflite: ^2.0.0+3
-  flutter_otp: ^0.3.2
   path_provider: ^2.0.2
   simple_animations: ^3.1.1
   form_field_validator: ^1.1.0
@@ -55,12 +54,12 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   back_button_interceptor: ^5.0.1
-  contact_picker: ^0.0.2
   permission_handler: ^8.1.1
   future_progress_dialog: ^0.2.0
   sms: ^0.2.4
-  firebase_messaging: ^10.0.4
   speech_to_text: ^4.2.2
+  telephony: ^0.1.4
+  fluttercontactpicker: ^4.5.1
 
 
 dev_dependencies:

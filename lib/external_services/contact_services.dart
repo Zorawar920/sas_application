@@ -1,8 +1,8 @@
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:contact_picker/contact_picker.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 
 class Services {
-  Future<Contact> contacts() async {
-    return await ContactPicker().selectContact();
+  Future<PhoneContact?> contacts() async {
+    final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
+    return contact;
   }
 }

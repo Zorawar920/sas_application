@@ -7,8 +7,10 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sas_application/models/firebase_model.dart';
+import 'package:sas_application/view_models/emergency_contact_view_model.dart';
+import 'package:sas_application/views/screens/log_in.dart';
 import 'package:sas_application/models/sentiment_model.dart';
-import 'package:sms/sms.dart';
+import 'package:telephony/telephony.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -69,8 +71,8 @@ class HomeViewModel extends FireBaseModel {
         });
         _sendSMS(message: encodedURl, recipents: recipents);
       } else {
-        SmsSender sender = new SmsSender();
-        sender.sendSms(new SmsMessage(address, encodedURl));
+        final Telephony telephony = Telephony.instance;
+        telephony.sendSms(to: address, message: encodedURl);
       }
 
       if (currentUserId.hashCode <= peerUserId.hashCode) {

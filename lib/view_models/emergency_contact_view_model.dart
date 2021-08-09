@@ -2,18 +2,18 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_sms/flutter_sms.dart';
-import 'package:contact_picker/contact_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sas_application/models/firebase_model.dart';
-import 'package:sms/sms.dart';
+import 'package:telephony/telephony.dart';
 
 class EmergencyContactViewModel extends FireBaseModel {
   final FireBaseModel _fireBaseModel = new FireBaseModel();
   bool? _hasPermission;
-  Contact? contact;
+  PhoneContact? phoneContact;
   String? emergencyContactName;
   String? emergencyContactDetail;
   List emergencyContactDetails = [];
@@ -216,7 +216,7 @@ class EmergencyContactViewModel extends FireBaseModel {
   Future<void> getContactDetails(BuildContext context) async {
     try {
       if (_hasPermission == true) {
-        contact = await _fireBaseModel.services.contacts();
+        phoneContact = await _fireBaseModel.services.contacts();
       } else {
         if (await showPlatformDialog(
                 context: context,
@@ -274,9 +274,9 @@ class EmergencyContactViewModel extends FireBaseModel {
   Future<void> onEmergencyContactAddtion(String phoneNumber) async {
     String address = phoneNumber;
     if (Platform.isAndroid) {
-      SmsSender sender = new SmsSender();
-      sender.sendSms(new SmsMessage(
-          address, "You have been added as an Emergency contact"));
+      final Telephony telephony = Telephony.instance;
+      telephony.sendSms(
+          to: address, message: "You have been added as a emergency contact");
     } else if (Platform.isIOS) {
       try {
         await sendSMS(

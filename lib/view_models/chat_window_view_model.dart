@@ -27,26 +27,25 @@ class ChatWindowViewModel extends FireBaseModel {
           .doc(_fireBaseModel.auth.currentUser!.uid)
           .get(GetOptions(source: Source.serverAndCache));
 
-      var phoneNumber = emergencyContactsPresent.docs.where((element) =>
+      var phoneNumberList = emergencyContactsPresent.docs.where((element) =>
           element['emergencyContactNumber'] == userPhone['phone_number']);
 
-      if (phoneNumber.isNotEmpty) {
-        var snapshotUserId = phoneNumber.first;
+      if (phoneNumberList.isNotEmpty) {
+        for (var phoneNumber in phoneNumberList) {
+          var userDetails = await _fireBaseModel.firebaseDbService.instance
+              .collection("users")
+              .doc(phoneNumber['userId'])
+              .get();
 
-        var userDetails = await _fireBaseModel.firebaseDbService.instance
-            .collection("users")
-            .doc(snapshotUserId['userId'])
-            .get();
-
-        var userDetailsData = userDetails.data();
-        whoAddedMe.add({
-          'Name': userDetailsData!["full_name"],
-          'Phone': userDetailsData['phone_number'],
-          'userId': userDetailsData['userId']
-        });
+          var userDetailsData = userDetails.data();
+          whoAddedMe.add({
+            'Name': userDetailsData!["full_name"],
+            'Phone': userDetailsData['phone_number'],
+            'userId': userDetailsData['userId']
+          });
+        }
       }
     }
-
     return whoAddedMe;
   }
 
