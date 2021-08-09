@@ -43,9 +43,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   String dropDownValue = "";
   List<String> cityList = [
-    '1. I may call you',
-    '2. Please come to me, I maybe in Danger',
-    '3. I need immediate help !'
+    'I may call you',
+    'Please come to me, I maybe in Danger',
+    'I need immediate help !'
   ];
 
   Widget animatedButton() {

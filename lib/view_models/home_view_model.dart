@@ -54,9 +54,14 @@ class HomeViewModel extends FireBaseModel {
     var list = await getRecipientsList();
     for (var map in list) {
       var address = map["emergencyContactNumber"];
+      var currentUserId = FireBaseModel().auth.currentUser!.uid;
+      var peerUserId = map["emergencyContactUserId"];
+      var groupChatId = "";
       String url =
           "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
+
       String encodedURl = Uri.encodeFull(url) + " " + dropDownValue;
+
       if (Platform.isIOS) {
         List<String> recipents = [];
         recipents.add(address);
@@ -65,6 +70,31 @@ class HomeViewModel extends FireBaseModel {
         SmsSender sender = new SmsSender();
         sender.sendSms(new SmsMessage(address, encodedURl));
       }
+
+      if (currentUserId.hashCode <= peerUserId.hashCode) {
+        groupChatId = '$currentUserId-$peerUserId';
+      } else {
+        groupChatId = '$peerUserId-$currentUserId';
+      }
+      var documentReference = FireBaseModel()
+          .firebaseDbService
+          .instance
+          .collection('messages')
+          .doc(groupChatId)
+          .collection(groupChatId)
+          .doc(DateTime.now().microsecondsSinceEpoch.toString());
+
+      FireBaseModel()
+          .firebaseDbService
+          .instance
+          .runTransaction((transaction) async {
+        transaction.set(documentReference, {
+          'idFrom': currentUserId,
+          'idTo': peerUserId,
+          'timestamp': DateTime.now().microsecondsSinceEpoch.toString(),
+          'content': dropDownValue
+        });
+      });
     }
   }
 

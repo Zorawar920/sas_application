@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sas_application/views/screens/chat_window.dart';
 
 class ChatPage extends StatelessWidget {
   final String chatId;
@@ -37,6 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     generateGroupChatId();
+    BackButtonInterceptor.add(myInterceptor);
   }
 
   @override
@@ -118,17 +120,26 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            brightness: Brightness.dark,
-            backgroundColor: Color(0xFF527DAA),
-            centerTitle: true,
-            title: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                    text: widget.name,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontFamily: 'OpenSans')))),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            tooltip: "Return to Chat Window Screen",
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChatWindowScreen()));
+            },
+          ),
+          brightness: Brightness.dark,
+          backgroundColor: Color(0xFF527DAA),
+          centerTitle: true,
+          title: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                  text: widget.name,
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                      fontFamily: 'OpenSans'))),
+        ),
         body: Stack(
           children: <Widget>[
             Column(
