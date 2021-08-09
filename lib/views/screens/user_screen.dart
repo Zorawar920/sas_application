@@ -163,14 +163,13 @@ class UserScreenState extends State<UserScreenApp> {
                       actions: [
                         BasicDialogAction(
                             onPressed: () {
-                                  widget.userScreenViewModel
-                                      .updateUser(
-                                      phone, radioItem,code, context);
+                              widget.userScreenViewModel.updateUser(
+                                  phone, radioItem, code, this.context);
                             },
                             title: Text("I Agree")),
                         BasicDialogAction(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              Navigator.of(this.context).pop();
                             },
                             title: Text("I do not agree"))
                       ],

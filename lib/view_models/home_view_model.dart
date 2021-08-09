@@ -1,14 +1,11 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sas_application/models/firebase_model.dart';
-import 'package:sas_application/view_models/emergency_contact_view_model.dart';
-import 'package:sas_application/views/screens/log_in.dart';
 import 'package:sas_application/models/sentiment_model.dart';
 import 'package:telephony/telephony.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -58,7 +55,7 @@ class HomeViewModel extends FireBaseModel {
       var address = map["emergencyContactNumber"];
       var currentUserId = FireBaseModel().auth.currentUser!.uid;
       var peerUserId = map["emergencyContactUserId"];
-      var groupChatId ="";
+      var groupChatId = "";
       String url =
           "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
 
@@ -70,10 +67,10 @@ class HomeViewModel extends FireBaseModel {
           recipents.add(element["emergencyContactNumber"]);
         });
         _sendSMS(message: encodedURl, recipents: recipents);
-      } else {
-        final Telephony telephony = Telephony.instance;
-        telephony.sendSms(to: address, message: encodedURl);
+        break;
       }
+      final Telephony telephony = Telephony.instance;
+      telephony.sendSms(to: address, message: encodedURl);
 
       if (currentUserId.hashCode <= peerUserId.hashCode) {
         groupChatId = '$currentUserId-$peerUserId';
