@@ -244,6 +244,9 @@ PODS:
   - Firebase/Firestore (8.3.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 8.3.0)
+  - Firebase/Messaging (8.3.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (~> 8.3.0)
   - firebase_analytics (8.2.0):
     - Firebase/Analytics (= 8.3.0)
     - firebase_core
@@ -254,6 +257,10 @@ PODS:
     - Flutter
   - firebase_core (1.4.0):
     - Firebase/CoreOnly (= 8.3.0)
+    - Flutter
+  - firebase_messaging (10.0.4):
+    - Firebase/Messaging (= 8.3.0)
+    - firebase_core
     - Flutter
   - FirebaseAnalytics (8.3.0):
     - FirebaseAnalytics/AdIdSupport (= 8.3.0)
@@ -304,6 +311,13 @@ PODS:
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/UserDefaults (~> 7.4)
     - PromisesObjC (~> 1.2)
+  - FirebaseMessaging (8.3.0):
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
+    - GoogleUtilities/Environment (~> 7.4)
+    - GoogleUtilities/Reachability (~> 7.4)
+    - GoogleUtilities/UserDefaults (~> 7.4)
   - Flutter (1.0.0)
   - flutter_sms (1.1.0):
     - Flutter
@@ -396,15 +410,17 @@ PODS:
   - "permission_handler (5.1.0+2)":
     - Flutter
   - PromisesObjC (1.2.12)
-  - record (0.0.1):
-    - Flutter
   - shared_preferences (0.0.1):
     - Flutter
   - sms (0.0.1):
     - Flutter
+  - speech_to_text (0.0.1):
+    - Flutter
+    - Try
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
+  - Try (2.1.1)
   - url_launcher (0.0.1):
     - Flutter
 
@@ -415,6 +431,7 @@ DEPENDENCIES:
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
+  - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
   - flutter_sms (from `.symlinks/plugins/flutter_sms/ios`)
   - geolocator (from `.symlinks/plugins/geolocator/ios`)
@@ -422,9 +439,9 @@ DEPENDENCIES:
   - maps_launcher (from `.symlinks/plugins/maps_launcher/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
-  - record (from `.symlinks/plugins/record/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sms (from `.symlinks/plugins/sms/ios`)
+  - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
@@ -440,6 +457,7 @@ SPEC REPOS:
     - FirebaseCoreDiagnostics
     - FirebaseFirestore
     - FirebaseInstallations
+    - FirebaseMessaging
     - FMDB
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -452,6 +470,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - PromisesObjC
+    - Try
 
 EXTERNAL SOURCES:
   cloud_firestore:
@@ -466,6 +485,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
+  firebase_messaging:
+    :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
   flutter_sms:
@@ -480,12 +501,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider/ios"
   permission_handler:
     :path: ".symlinks/plugins/permission_handler/ios"
-  record:
-    :path: ".symlinks/plugins/record/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sms:
     :path: ".symlinks/plugins/sms/ios"
+  speech_to_text:
+    :path: ".symlinks/plugins/speech_to_text/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
   url_launcher:
@@ -502,12 +523,14 @@ SPEC CHECKSUMS:
   firebase_analytics: 25a03006c041a3be10bbd8e7313f87f59b9857bf
   firebase_auth: 5d48a6c2c9de6d8f7946269ef904136298c6aa12
   firebase_core: 72374607c8c6f5a0adc0559e5c5bf57deda975e3
+  firebase_messaging: 55c5b8184efd330b9d1f1765b55c4ae57e015c5e
   FirebaseAnalytics: 456f2c51599870a15ded4548d1f1f7b2cabf65a7
   FirebaseAuth: fd12c82de44e7ad3b821610c387b8251f03aa0f9
   FirebaseCore: a6dba751680d7033b9d3831e1cfc95ead0605118
   FirebaseCoreDiagnostics: 7e873baabcfaa9512f538554ae4fa0817aaafbdb
   FirebaseFirestore: f4f42828c6d82f6945575611c23dd343e0e7d0aa
   FirebaseInstallations: b69db7680870dbac17bba7a51fc0b5c4b365baa7
+  FirebaseMessaging: 42252b79b860482021483748669ec32e22196462
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_sms: 91ce41530f55c85d6524d82307a5d555844c086a
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
@@ -527,10 +550,11 @@ SPEC CHECKSUMS:
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
-  record: 7ee2393532f8553bbb09fa19e95478323b7c0a99
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sms: 1e6c3082da09f2a4961d61bc254cc86865993ffd
+  speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
+  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
 
 PODFILE CHECKSUM: 6f0fbd5a41ae268a89e97deeb0db9ae0cc97bb6d

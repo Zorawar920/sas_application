@@ -56,7 +56,7 @@ class HomeViewModel extends FireBaseModel {
       var address = map["emergencyContactNumber"];
       var currentUserId = FireBaseModel().auth.currentUser!.uid;
       var peerUserId = map["emergencyContactUserId"];
-      var groupChatId = "";
+      var groupChatId ="";
       String url =
           "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
 
@@ -64,7 +64,9 @@ class HomeViewModel extends FireBaseModel {
 
       if (Platform.isIOS) {
         List<String> recipents = [];
-        recipents.add(address);
+        list.forEach((element) {
+          recipents.add(element["emergencyContactNumber"]);
+        });
         _sendSMS(message: encodedURl, recipents: recipents);
       } else {
         SmsSender sender = new SmsSender();
