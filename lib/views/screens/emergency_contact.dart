@@ -146,6 +146,9 @@ class _EmergencyContactScreenAppState extends State<EmergencyContactScreenApp>
                                     widget.emergencyContactViewModel
                                         .addContactInformation(
                                             contactName, contactNumber);
+                                    widget.emergencyContactViewModel
+                                        .onEmergencyContactAddtion(
+                                            contactNumber);
                                     Navigator.pop(context, "Yes");
                                   },
                                   child: Text("Yes")),

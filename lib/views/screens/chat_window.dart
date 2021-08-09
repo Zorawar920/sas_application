@@ -79,7 +79,7 @@ class ChatWindowSate extends State<ChatWindow> {
             SizedBox(
               width: 5,
             ),
-            Text("User is not on our Application")
+            Text("User is not available on our Application")
           ]),
           SizedBox(
             height: 5,
@@ -95,7 +95,7 @@ class ChatWindowSate extends State<ChatWindow> {
             SizedBox(
               width: 5,
             ),
-            Text("User is available on our Application")
+            Text("User available and You've added the user")
           ]),
           SizedBox(
             height: 5,
