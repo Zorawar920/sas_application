@@ -101,7 +101,6 @@ class LoginViewModel extends FireBaseModel {
               .doc(_fireBaseModel.auth.currentUser!.uid)
               .get(GetOptions(source: Source.cache));
 
-          print(snapShot.data()!["phone_number"].toString());
           if (snapShot.data()!["phone_number"].toString().length > 9) {
             phonePresent = true;
           }

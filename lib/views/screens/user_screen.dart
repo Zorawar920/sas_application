@@ -146,44 +146,42 @@ class UserScreenState extends State<UserScreenApp> {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        onPressed: () async {
-          if(globalFormKey.currentState!.validate() && radioItem !="") {
-            if (widget.userScreenViewModel.auth
-                .isPhoneVerified == true) {
+        onPressed: () {
+          if (globalFormKey.currentState!.validate() && radioItem != "") {
+            if (widget.userScreenViewModel.auth.isPhoneVerified == true) {
               showPlatformDialog(
                   context: context,
-                  builder: (context) {
+                  builder: (dialogcontext) {
                     return BasicDialogAlert(
                       title: Text("Terms and Conditions"),
                       content: Text(
                           "We care about your privacy and think it is important that you know why and how we collect your data in accordance with applicable data protection and provacy laws.\n"
-                              "We collect personal information like name, email, phone number and location in case of SOS call.\n"
-                              "We will retain your data for 3 years from the last date you use this application and data will be shared with third party APIs.\n"
-                              "\nIf you do not agree to these terms, you will not be able to use this application."),
+                          "We collect personal information like name, email, phone number and location in case of SOS call.\n"
+                          "We will retain your data for 3 years from the last date you use this application and data will be shared with third party APIs.\n"
+                          "\nIf you do not agree to these terms, you will not be able to use this application."),
                       actions: [
                         BasicDialogAction(
                             onPressed: () {
+                              Navigator.pop(dialogcontext);
                               widget.userScreenViewModel.updateUser(
                                   phone, radioItem, code, this.context);
                             },
                             title: Text("I Agree")),
                         BasicDialogAction(
                             onPressed: () {
-                              Navigator.of(this.context).pop();
+                              Navigator.of(dialogcontext).pop();
                             },
                             title: Text("I do not agree"))
                       ],
                     );
                   });
-            }
-            else {
+            } else {
               showPlatformDialog(
                   context: context,
                   builder: (context) {
                     return BasicDialogAlert(
                       title: Text("Phone Verification"),
-                      content: Text(
-                          "Please verify your phone number first."),
+                      content: Text("Please verify your phone number first."),
                       actions: [
                         BasicDialogAction(
                             onPressed: () {
@@ -194,15 +192,13 @@ class UserScreenState extends State<UserScreenApp> {
                     );
                   });
             }
-          }
-          else {
+          } else {
             showPlatformDialog(
                 context: context,
                 builder: (context) {
                   return BasicDialogAlert(
                     title: Text("Missing Details"),
-                    content: Text(
-                        "Please Enter all Details"),
+                    content: Text("Please Enter all Details"),
                     actions: [
                       BasicDialogAction(
                           onPressed: () {
@@ -228,7 +224,7 @@ class UserScreenState extends State<UserScreenApp> {
     );
   }
 
-  Widget buildPhone()  {
+  Widget buildPhone() {
     //getInitialCode(code);
     code = "+1";
     return Column(
@@ -242,14 +238,12 @@ class UserScreenState extends State<UserScreenApp> {
             ),
             TextButton(
               style:
-              TextButton.styleFrom(padding: EdgeInsets.only(left: 100.0)),
-              onPressed: () =>
-              {
+                  TextButton.styleFrom(padding: EdgeInsets.only(left: 100.0)),
+              onPressed: () => {
                 if (phoneNumberController.text.isNotEmpty)
                   {
-                    phone = code+phoneNumberController.text.toString(),
-                        widget.userScreenViewModel.verifyPhoneNumber(
-                            phone, context)
+                    phone = code + phoneNumberController.text.toString(),
+                    widget.userScreenViewModel.verifyPhoneNumber(phone, context)
                   }
                 else
                   {
@@ -294,8 +288,7 @@ class UserScreenState extends State<UserScreenApp> {
             decoration: InputDecoration(
               border: InputBorder.none,
               errorStyle: errorStyle,
-              contentPadding:
-              EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
+              contentPadding: EdgeInsets.fromLTRB(20.0, 14.0, 20.0, 14.0),
               hintText: 'Contact Number',
               hintStyle: hintTextStyle,
             ),
@@ -305,12 +298,12 @@ class UserScreenState extends State<UserScreenApp> {
               print(Phone.completeNumber);
             },
             onCountryChanged: (Phone) {
-              print(
-                  'Country code changed to: ' + Phone.countryCode.toString());
+              print('Country code changed to: ' + Phone.countryCode.toString());
               countryCode = Phone.countryCode.toString();
               code = countryCode;
             },
-          ),),
+          ),
+        ),
       ],
     );
   }
@@ -348,61 +341,61 @@ class UserScreenState extends State<UserScreenApp> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(child:
-      Scaffold(
-      body: Form(
-        key: globalFormKey,
+    return WillPopScope(
         child: Scaffold(
-          body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light,
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  height: double.infinity,
-                  child: SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(
-                      right: 40.0,
-                      left: 40.0,
-                      top: 60.0,
-                      bottom: 30.0,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        buildAppScreenLogo(),
-                        SizedBox(
-                          height: 10.0,
+          body: Form(
+            key: globalFormKey,
+            child: Scaffold(
+              body: AnnotatedRegion<SystemUiOverlayStyle>(
+                value: SystemUiOverlayStyle.light,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(
+                          right: 40.0,
+                          left: 40.0,
+                          top: 60.0,
+                          bottom: 30.0,
                         ),
-                        Center(
-                          child: Text(
-                            ' Additional User Details',
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontFamily: 'OpenSans',
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            buildAppScreenLogo(),
+                            SizedBox(
+                              height: 10.0,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
+                            Center(
+                              child: Text(
+                                ' Additional User Details',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontFamily: 'OpenSans',
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(height: 15.0),
+                            buildGender(),
+                            SizedBox(height: 15.0),
+                            buildPhone(),
+                            SizedBox(height: 15.0),
+                            submitBtn(context),
+                            signOutBtn(context)
+                          ],
                         ),
-                        SizedBox(height: 15.0),
-                        buildGender(),
-                        SizedBox(height: 15.0),
-                        buildPhone(),
-                        SizedBox(height: 15.0),
-                        submitBtn(context),
-                        signOutBtn(context)
-                      ],
-                    ),
-                  ),
-                )
-              ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-      ),
-    ),
-    onWillPop: () async => false);
+        onWillPop: () async => false);
   }
 }
