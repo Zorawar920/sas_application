@@ -23,15 +23,55 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+      # Add the dependency for the Firebase Core Flutter SDK
+  firebase_core: ^1.2.0
+  firebase_auth: ^1.2.0
+  firebase_analytics: ^8.1.0
+  cloud_firestore: ^2.2.1
+  firestore_cache: ^2.1.1
+  
+  google_sign_in: ^5.0.4
+  provider: ^5.0.0
+  stacked: ^2.1.4
+  sqflite: ^2.0.0+3
+  path_provider: ^2.0.2
+  simple_animations: ^3.1.1
+  form_field_validator: ^1.1.0
+  flutter_svg: ^0.20.0-nullsafety.3 # help us to use SVG in our app
+  contacts_service: ^0.6.1
+  flutter_dialogs: ^2.1.0
+  flutter_sms: ^2.3.1
+  get_it: ^7.1.2
+  intl_phone_field: ^2.0.1
+
+  geolocator: ^7.1.0
+  maps_launcher: ^2.0.0
 
 
+  #Firebase dependencies
+   
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  back_button_interceptor: ^5.0.1
+  permission_handler: ^8.1.1
+  future_progress_dialog: ^0.2.0
+  sms: ^0.2.4
+  speech_to_text: ^4.2.2
+  telephony: ^0.1.4
+  fluttercontactpicker: ^4.5.1
+
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.9.0"
   flutter_test:
     sdk: flutter
+  splashscreen: ^1.3.5
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/sos.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -43,6 +83,33 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/logos/google.jpg
+    - assets/logos/
+    - assets/icons/
+
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans.ttf
+    - family: Roboto-Bold
+      fonts: 
+        - asset: assets/fonts/Roboto-Bold.ttf
+    - family: SigmarOneRegular
+      fonts:
+        - asset: assets/fonts/SigmarOneRegular.ttf
+
+  # fonts:
+  #   -family : SigmarOneRegular
+  #    fonts:
+  #      -asset: assets/fonts/SigmarOneRegular.ttf
+  #   -family : OpenSans
+  #    fonts:
+  #      -asset: assets/fonts/OpenSans.ttf
+  #   -family: Roboto-Bold
+  #    fonts: 
+  #      -asset: assets/fonts/Roboto-Bold.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
